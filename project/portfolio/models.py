@@ -4,6 +4,68 @@ from django.db import models
 
 # Create your models here.
 class Loan(models.Model):
+    SF = 'SF'
+    TwoF = '2F'
+    ThreeF = '3F'
+    FourF = '4F'
+    CO = 'CO'
+    MH = 'MH'
+    PU = 'PU'
+    TH = 'TH'
+    CP = 'CP'
+    FF = 'FF'
+    FB = 'FB'
+    FR = 'FR'
+    MA = 'MA'
+    MF = 'MF'
+    MX = 'MX'
+    OT = 'OT'
+    PD = 'PD'
+    UN = 'UN'
+    US = 'US'
+    VA = 'VA'
+    CMA = 'CMA'
+    CMC = 'CMC'
+    CMF = 'CMF'
+    CMH = 'CMH'
+    CMI = 'CMI'
+    CMM = 'CMM'
+    CMN = 'CMN'
+    CMO = 'CMO'
+    CMR = 'CMR'
+    CMS = 'CMS'
+    CMW = 'CMW'
+    CMX = 'CMX'
+    PROPERTY_TYPE_CODE_CHOICES = (
+        (SF, '1 Family'),
+        (TwoF, '2 Family'),
+        (ThreeF, '3 Family'),
+        (FourF, '4 Family'),
+        (CO, 'Condominium'),
+        (MH, 'Manufactured Housing'),
+        (PU, 'Planned Unit Development'),
+        (TH, 'Townhouse'),
+        (CP, 'Cooperative'),
+        (FF, '1 - 4 Family with Farm'),
+        (FB, '1 - 4 Family with Business'),
+        (FR, 'FR'),
+        (MA, 'MA'),
+        (MF, 'Multifamily including Co-op Building'),
+        (MX, 'Multifamily Mixed Use'),
+        (CMA, 'CMA'),
+        (CMC, 'CMC'),
+        (CMF, 'CMF'),
+        (CMH, 'CMH'),
+        (CMI, 'CMI'),
+        (CMM, 'CMM'),
+        (CMN, 'CMN'),
+        (CMO, 'CMO'),
+        (CMR, 'CMR'),
+        (CMS, 'CMS'),
+        (CMW, 'CMW'),
+        (CMX, 'CMX')
+    )
+
     portfolio = models.ForeignKey(Portfolio)
     as_of_date = models.DateField()
     property_type_code = models.CharField(max_length=3, choices=PROPERTY_TYPE_CODE_CHOICES)
