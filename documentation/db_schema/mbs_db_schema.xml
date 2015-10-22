@@ -37,7 +37,7 @@
 		<type label="SET" length="1" sql="SET" quote=""/>
 		<type label="Bit" length="0" sql="bit" quote=""/>
 	</group>
-</datatypes><table x="388" y="51" name="loan_static_information">
+</datatypes><table x="276" y="253" name="loan_static_information">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -84,12 +84,6 @@
 <row name="original_term" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="remaining_term" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default></row>
-<row name="amoritized_term" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default></row>
 <row name="PMI" null="0" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 <default>'NULL'</default></row>
@@ -120,9 +114,6 @@
 <row name="PCAP" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
 <default>NULL</default></row>
-<row name="IO_Term" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default></row>
 <row name="interest_reset_interval" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -148,18 +139,21 @@
 <part>id</part>
 </key>
 </table>
-<table x="751" y="64" name="portfolios">
+<table x="621" y="582" name="portfolios">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="name" null="0" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 <default>'NULL'</default></row>
+<row name="date_created" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="101" y="55" name="loan_snapshot">
+<table x="23" y="36" name="loan_snapshot">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -169,6 +163,15 @@
 </row>
 <row name="status" null="1" autoincrement="0">
 <datatype>VARCHAR(10)</datatype>
+<default>NULL</default></row>
+<row name="remaining_term" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="amoritized_term" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="IO_term" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="deferred_balance" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
@@ -222,18 +225,21 @@
 <part>id</part>
 </key>
 </table>
-<table x="1096" y="243" name="risk_profile">
+<table x="1497" y="225" name="risk_profile">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="name" null="0" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 <default>'NULL'</default></row>
+<row name="date_created" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="1329" y="221" name="risk_factor">
+<table x="1582" y="471" name="risk_factor">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -257,18 +263,21 @@
 <part>id</part>
 </key>
 </table>
-<table x="908" y="65" name="scenario">
+<table x="999" y="278" name="scenario">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="name" null="1" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 <default>NULL</default></row>
+<row name="date_created" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="1084" y="49" name="scenario_assumption_profile_risk_profile_join">
+<table x="1209" y="41" name="scenario_assumption_profile_risk_profile_join">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -288,13 +297,16 @@
 <part>id</part>
 </key>
 </table>
-<table x="733" y="259" name="assumption_profile">
+<table x="1243" y="196" name="assumption_profile">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="name" null="0" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 <default>'NULL'</default></row>
+<row name="date_created" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
 <row name="gdp" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
 <default>NULL</default></row>
@@ -318,6 +330,67 @@
 <default>NULL</default></row>
 <row name="lag" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="665" y="368" name="calculation_snap_shot">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="scenario_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="scenario" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="309" y="38" name="calcluation_snapshot_loans">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="calculation_snapshot_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="calculation_snap_shot" row="id" />
+</row>
+<row name="loan_snapshot_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="loan_snapshot" row="id" />
+</row>
+<row name="adjusted_cdr" null="1" autoincrement="0">
+<datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<row name="adjusted_cpr" null="1" autoincrement="0">
+<datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<row name="adjusted_recovery" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="adjusted_lag" null="1" autoincrement="0">
+<datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="683" y="73" name="calculation_results">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="calculation_snapshot_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="calculation_snap_shot" row="id" />
+</row>
+<row name="result1" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="result2" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="result3" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
