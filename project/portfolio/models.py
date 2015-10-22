@@ -66,6 +66,17 @@ class Loan(models.Model):
         (CMX, 'CMX')
     )
 
+    P = 'P'
+    S = 'S'
+    I = 'I'
+    O = 'O'
+    OWNER_OCCUPANCY_CODE_CHOICES = (
+        (P, 'Owner Occupied - Primary Residence'),
+        (S, 'Owner Occupied - Second Home'),
+        (I, 'Not Owner Occupied - Investment Property'),
+        (O, 'Owner Occupied - Commercial')
+    )
+
     portfolio = models.ForeignKey(Portfolio)
     as_of_date = models.DateField()
     property_type_code = models.CharField(max_length=3, choices=PROPERTY_TYPE_CODE_CHOICES)
