@@ -9,6 +9,7 @@
 [Ss]cripts
 pyvenv.cfg
 pip-selfcheck.json
+
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 
@@ -56,6 +57,7 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
+
 ### SublimeText template
 # cache files for sublime text
 *.tmlanguage.cache
@@ -71,6 +73,7 @@ crashlytics-build.properties
 
 # sftp configuration file
 sftp-config.json
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -124,6 +127,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+/project/portfolio/migrations
 
 # Sphinx documentation
 docs/_build/
