@@ -48,7 +48,21 @@ class RiskFactor(models.Model):
 
 
 class RiskConditionals(models.Model):
-   pass
+    GREATER = '>'
+    LESSER = '<'
+    GREATER_EQ = '>='
+    LESSER_EQ = '<='
+    EQUAL = '=='
+    RISK_CONDITIONAL_CHOICES = (
+        (GREATER, 'Greater Than - >'),
+        (LESSER, 'Lesser Than - <'),
+        (GREATER_EQ, 'Greater Than of Equal To - >='),
+        (LESSER_EQ, 'Lesser Than or Equal To - <='),
+        (EQUAL, 'Equal To - =='),
+    )
+    risk_factor = models.ForeignKey(RiskFactor)
+    conditional = models.CharField(max_length=64, choices=RISK_CONDITIONAL_CHOICES)
+    value = models.CharField(max_length=64)
 
 
 class AssumptionProfile(models.Model):
@@ -69,4 +83,3 @@ class ScoreCardAdjustments(models.Model):
 
 class Scenario(models.Model):
     pass
-
