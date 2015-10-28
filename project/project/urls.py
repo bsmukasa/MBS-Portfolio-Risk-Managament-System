@@ -21,4 +21,9 @@ urlpatterns = [
         regex=r'^admin/',
         view=include(admin.site.urls)
     ),
+
+    url(
+        regex=r'^portfolio/',
+        view=include('portfolio.urls', namespace='portfolios')
+    ),
 ]
