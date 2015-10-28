@@ -37,8 +37,7 @@ class Loan(models.Model):
     negam_initial_minimum_payment_period = models.IntegerField()
     negam_payment_reset_frequency = models.IntegerField()
 
-
-class LoanSnapShot(models.Model):
+    # Snapshot fields
     loan = models.ForeignKey(Loan)
     remaining_term = models.IntegerField()
     amortized_term = models.IntegerField()
@@ -63,7 +62,7 @@ class LoanSnapShot(models.Model):
 
 
 class LoanAdjustedAssumptions(models.Model):
-    loan_snap_shot = models.ForeignKey(LoanSnapShot)
+    loan = models.ForeignKey(Loan)  # TODO Change to loan snapshot when functionality is added.
     adjusted_cdr = models.DecimalField()
     adjusted_cpr = models.DecimalField()
     adjusted_recovery = models.DecimalField()
