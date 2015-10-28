@@ -149,6 +149,21 @@
 <row name="date_created" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="total_loan_balance" null="1" autoincrement="0">
+<datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<row name="total_loan_count" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="average_loan_balance" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="weighted_average_coupon" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="weighted_average_life_to_maturity" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -335,7 +350,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="665" y="368" name="calculation_snap_shot">
+<table x="672" y="323" name="calculation_snap_shot">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -343,18 +358,18 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="scenario" row="id" />
 </row>
+<row name="loand_adjusted_assumptions_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="loan_adjusted_assumptions" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="309" y="38" name="calcluation_snapshot_loans">
+<table x="310" y="30" name="loan_adjusted_assumptions">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="calculation_snapshot_id" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default><relation table="calculation_snap_shot" row="id" />
-</row>
 <row name="loan_snapshot_id" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="loan_snapshot" row="id" />
