@@ -4,115 +4,78 @@ from django.db import models
 
 # Create your models here.
 class Loan(models.Model):
-    SF = 'SF'
-    TwoF = '2F'
-    ThreeF = '3F'
-    FourF = '4F'
-    CO = 'CO'
-    MH = 'MH'
-    PU = 'PU'
-    TH = 'TH'
-    CP = 'CP'
-    FF = 'FF'
-    FB = 'FB'
-    FR = 'FR'
-    MA = 'MA'
-    MF = 'MF'
-    MX = 'MX'
-    OT = 'OT'
-    PD = 'PD'
-    UN = 'UN'
-    US = 'US'
-    VA = 'VA'
-    CMA = 'CMA'
-    CMC = 'CMC'
-    CMF = 'CMF'
-    CMH = 'CMH'
-    CMI = 'CMI'
-    CMM = 'CMM'
-    CMN = 'CMN'
-    CMO = 'CMO'
-    CMR = 'CMR'
-    CMS = 'CMS'
-    CMW = 'CMW'
-    CMX = 'CMX'
-    PROPERTY_TYPE_CODE_CHOICES = (
-        (SF, '1 Family'),
-        (TwoF, '2 Family'),
-        (ThreeF, '3 Family'),
-        (FourF, '4 Family'),
-        (CO, 'Condominium'),
-        (MH, 'Manufactured Housing'),
-        (PU, 'Planned Unit Development'),
-        (TH, 'Townhouse'),
-        (CP, 'Cooperative'),
-        (FF, '1 - 4 Family with Farm'),
-        (FB, '1 - 4 Family with Business'),
-        (FR, 'FR'),
-        (MA, 'MA'),
-        (MF, 'Multifamily including Co-op Building'),
-        (MX, 'Multifamily Mixed Use'),
-        (CMA, 'CMA'),
-        (CMC, 'CMC'),
-        (CMF, 'CMF'),
-        (CMH, 'CMH'),
-        (CMI, 'CMI'),
-        (CMM, 'CMM'),
-        (CMN, 'CMN'),
-        (CMO, 'CMO'),
-        (CMR, 'CMR'),
-        (CMS, 'CMS'),
-        (CMW, 'CMW'),
-        (CMX, 'CMX')
-    )
-
-    P = 'P'
-    S = 'S'
-    I = 'I'
-    O = 'O'
-    OWNER_OCCUPANCY_CODE_CHOICES = (
-        (P, 'Owner Occupied - Primary Residence'),
-        (S, 'Owner Occupied - Second Home'),
-        (I, 'Not Owner Occupied - Investment Property'),
-        (O, 'Owner Occupied - Commercial')
-    )
-
     portfolio = models.ForeignKey(Portfolio)
     as_of_date = models.DateField()
-    property_type_code = models.CharField(max_length=3, choices=PROPERTY_TYPE_CODE_CHOICES)
-    occupancy_code = models.CharField(max_length=1, choices=OWNER_OCCUPANCY_CODE_CHOICES)
+    property_type_code = models.CharField(max_length=3)
+    occupancy_code = models.CharField(max_length=1)
     product_type = models.CharField()
-    purpose = models.CharField()
-    mortgage_type = models.CharField()
-    lien_position = models.CharField()
-    original_rate = models.CharField()
+    purpose = models.CharField(max_length=1)
+    mortgage_type = models.CharField(max_length=5)
+    lien_position = models.IntegerField(max_length=1)
+    original_rate = models.DecimalField(max_digits=4)
+    original_appraisal_amount = models.IntegerField()
+    original_date = models.DateField()
     first_payment_date = models.DateField()
-    original_amount = models.DecimalField()
+    original_amount = models.IntegerField()
     original_term = models.IntegerField()
-    pmi = models.DecimalField()
+    pmi_insurance = models.CharField(max_length=128)
     city = models.CharField(max_length=256)
     state = models.CharField(max_length=2)
     zipcode = models.CharField(max_length=5)
-    fico = models.IntegerField()
-    gross_margin = models.DecimalField()
-    lcap = models.DecimalField()
-    lfloor = models.DecimalField()
+    fico = models.IntegerField(max_length=3)
+    gross_margin = models.DecimalField(max_digits=5)
+    lcap = models.DecimalField(max_digits=5)
+    lfloor = models.DecimalField(max_digits=5)
     icap = models.DecimalField()
-    pcap = models.DecimalField()
-    interest_reset_interval = models.DecimalField()
-    reset_index = models.DecimalField()
+    pcap = models.DecimalField(max_digits=3)
+    interest_reset_interval = models.IntegerField()
+    reset_index = models.CharField(max_length=6)
     first_index_rate_adjustment_date = models.DateField()
-    first_recast_or_next_recast = models.CharField()
-    recast_frequency = models.CharField()
+    first_recast_or_next_recast = models.DecimalField(max_digits=3)
+    recast_frequency = models.IntegerField()
+    recast_cap = models.IntegerField()
     negam_initial_minimum_payment_period = models.IntegerField()
-    negam_payment_reset_frequency = models.DecimalField()
+    negam_payment_reset_frequency = models.IntegerField()
 
 
 class LoanSnapShot(models.Model):
-    pass
+    loan = models.ForeignKey(Loan)
+    remaining_term = models.IntegerField()
+    amortized_term = models.IntegerField()
+    IO_term = models.IntegerField()
+    status = models.CharField(max_length=7)
+    deferred_balance = models.DecimalField()
+    modification_date = models.DateField()
+    foreclosure_referral_date = models.DateField()
+    current_property_value = models.IntegerField()
+    current_value_date = models.DateField()
+    current_principal_balance = models.DecimalField()
+    current_interest_rate = models.DecimalField(max_digits=5)
+    last_payment_received = models.DateField()
+    current_FICO_score = models.IntegerField(max_length=3)
+    BK_flag = models.CharField(max_length=1)
+    MSR = models.CharField(max_length=1)
+    senior_lien_balance = models.DecimalField()
+    senior_lien_balance_date = models.DateField()
+    second_lien_piggyback_flag = models.CharField(max_length=1)
+    junior_lien_balance = models.IntegerField()
+    SF = models.IntegerField()
+
+
+class LoanAdjustedAssumptions(models.Model):
+    loan_snap_shot = models.ForeignKey(LoanSnapShot)
+    adjusted_cdr = models.DecimalField()
+    adjusted_cpr = models.DecimalField()
+    adjusted_recovery = models.DecimalField()
+    adjusted_lag = models.DecimalField()
 
 
 class Portfolio(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_created=True)
+    total_loan_balance = models.IntegerField()
+    total_loan_count = models.IntegerField()
+    average_loan_balance = models.DecimalField()
+    weighted_average_coupon = models.DecimalField()
+    weighted_average_life_to_maturity = models.DecimalField()
