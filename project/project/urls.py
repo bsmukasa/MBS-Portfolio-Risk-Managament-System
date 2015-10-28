@@ -21,4 +21,24 @@ urlpatterns = [
         regex=r'^admin/',
         view=include(admin.site.urls)
     ),
+
+    url(
+        regex=r'^portfolio/',
+        view=include('portfolio.urls', namespace='portfolios')
+    ),
+
+    url(
+        regex=r'^accounts/',
+        view=include('accounts.urls', namespace='accounts')
+    ),
+
+    url(
+        regex=r'^analytics/',
+        view=include('analytics.urls', namespace='analytics')
+    ),
+
+    url(
+        regex=r'^risk-management/',
+        view=include('risk_management.urls', namespace='risk_management')
+    ),
 ]
