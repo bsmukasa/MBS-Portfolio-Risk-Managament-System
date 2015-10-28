@@ -67,7 +67,16 @@ class RiskConditionals(models.Model):
 
 
 class AssumptionProfile(models.Model):
-    pass
+    name = models.CharField(max_length=128)
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    gdp = models.IntegerField()
+    unemployment_rate = models.DecimalField(decimal_places=4, max_digits=10)
+    national_home_price_index = models.DecimalField(decimal_places=4, max_digits=10)
+    constant_default_rate = models.DecimalField(decimal_places=4, max_digits=10)
+    constant_prepayment_rate = models.DecimalField(decimal_places=4, max_digits=10)
+    recovery = models.DecimalField(decimal_places=4, max_digits=10)
+    lag = models.DecimalField(decimal_places=4, max_digits=10)
 
 
 class ScoreCard(models.Model):
