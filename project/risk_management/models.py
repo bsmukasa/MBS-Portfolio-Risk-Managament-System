@@ -3,7 +3,8 @@ from django.db import models
 
 # Create your models here.
 class RiskProfile(models.Model):
-    pass
+    name = models.CharField(max_length=128)
+    date_created = models.DateField(auto_now_add=True)
 
 
 class RiskFactor(models.Model):
