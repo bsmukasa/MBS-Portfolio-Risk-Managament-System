@@ -11,7 +11,7 @@ urlpatterns = patterns(
     ),
 
     url(
-        regex=r'^get_portfolios/$',
+        regex=r'^get_portfolios$',
         view=views.PortfolioAPI.as_view(),
         name='get_portfolios_api'
     ),
