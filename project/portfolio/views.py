@@ -35,7 +35,7 @@ class PortfolioAPI(View):
         filter_dict = request.GET.dict()
         # filter_dict['user'] = user
         user_portfolios = self.model.objects.filter(**filter_dict).values()
-        return JsonResponse(dict(profiles=list(user_portfolios)))
+        return JsonResponse(dict(portfolios=list(user_portfolios)))
         # End Tab
 
     def post(self, request):
