@@ -22,7 +22,7 @@ body {
 
 /*Brand font*/
 .navbar-default .navbar-brand {
-	font-family: 'Shadows Into Light Two', 'Source Sans Pro', sans-serif;
+  font-family: 'Shadows Into Light Two', 'Source Sans Pro', sans-serif;
   font-size: 35px;
   color: #0c2d4e;
 }
@@ -43,6 +43,6 @@ body {
 }
 
 .container .standard_footer {
-	margin: 20px 0px;
-	text-align: center;
+  margin: 20px 0px;
+  text-align: center;
 }

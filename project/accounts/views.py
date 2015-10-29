@@ -44,9 +44,5 @@ class Signup(View):
 		return redirect("accounts:dashboard")
 
 
-class Dashboard(View):
-	pass
-
-
 class Contact(View):
 	pass
