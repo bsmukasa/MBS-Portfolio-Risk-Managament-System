@@ -80,21 +80,6 @@ class AssumptionProfile(models.Model):
 
 
 class ScoreCard(models.Model):
-    CDR = 'adjusted_cdr'
-    CPR = 'adjusted_cpr'
-    RECOV = 'adjusted_recovery'
-    LAG = 'adjusted_lag'
-    ADJUSTED_ASSUMPTION_CHOICES = (
-        (CDR, 'Adjusted Default Rate'),
-        (CPR, 'Adjusted Prepayment Rate'),
-        (RECOV, 'Adjusted Recovery'),
-        (LAG, 'Adjusted Lag')
-    )
-
-    name = models.CharField(max_length=128)
-    date_created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    adjusted_assumption = models.CharField(max_length=32, choices=ADJUSTED_ASSUMPTION_CHOICES)
     total_score = models.DecimalField(decimal_places=4, max_digits=10)
     updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
 
