@@ -31,14 +31,30 @@ class RiskProfileAPI(View):
 
 
 class RiskFactorAPI(View):
-    moodel = RiskFactor
+    model = RiskFactor
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(RiskFactorAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        pass
+        filter_dict = request.GET.dict()
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        if 'risk_profile_id' in body.keys():
+            risk_profile_id = body['risk_profile_id']
+            risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
+
+            if risk_profile.exists():
+                filter_dict['risk_profile'] = risk_profile
+
+                risk_profile_risk_factors = self.model.objects.filter(**filter_dict).values()
+                return JsonResponse(dict(risk_factors=list(risk_profile_risk_factors)))
+            else:
+                return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
+        else:
+            return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
 
     def post(self, request):
         pass
