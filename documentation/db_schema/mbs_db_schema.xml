@@ -142,7 +142,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="609" y="292" name="portfolios">
+<table x="612" y="341" name="portfolios">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -150,7 +150,10 @@
 <datatype>VARCHAR(256)</datatype>
 <default>'NULL'</default></row>
 <row name="date_created" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
+<row name="last_updated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
 <default>NULL</default></row>
 <row name="total_loan_balance" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
@@ -246,7 +249,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="1439" y="500" name="risk_profile">
+<table x="1718" y="474" name="risk_profile">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -254,13 +257,16 @@
 <datatype>VARCHAR(128)</datatype>
 <default>'NULL'</default></row>
 <row name="date_created" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
+<row name="last_updated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="1168" y="699" name="risk_factor">
+<table x="1686" y="634" name="risk_factor">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -271,20 +277,17 @@
 <row name="attribute" null="1" autoincrement="0">
 <datatype>VARCHAR</datatype>
 <default>NULL</default></row>
-<row name="value" null="1" autoincrement="0">
-<datatype>VARCHAR</datatype>
-<default>NULL</default></row>
-<row name="assumption" null="1" autoincrement="0">
+<row name="changing_assumption" null="1" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 <default>NULL</default></row>
-<row name="change_percentage" null="1" autoincrement="0">
+<row name="percentage_change" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="899" y="195" name="scenario">
+<table x="958" y="173" name="scenario">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -292,21 +295,24 @@
 <datatype>VARCHAR(128)</datatype>
 <default>NULL</default></row>
 <row name="date_created" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
+<row name="last_updated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
 <default>NULL</default></row>
 <row name="assumption_profile_id" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="assumption_profile" row="id" />
 </row>
-<row name="score_card_id" null="1" autoincrement="0">
+<row name="score_card_profile_id" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="score_card" row="id" />
+<default>NULL</default><relation table="score_card_profile" row="id" />
 </row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="1410" y="222" name="scenario_risk_profile_join">
+<table x="1506" y="194" name="scenario_risk_profile_join">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -322,7 +328,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="1126" y="319" name="assumption_profile">
+<table x="1236" y="279" name="assumption_profile">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -330,7 +336,10 @@
 <datatype>VARCHAR(128)</datatype>
 <default>'NULL'</default></row>
 <row name="date_created" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
+<row name="last_updated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
 <default>NULL</default></row>
 <row name="gdp" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
@@ -376,7 +385,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="596" y="34" name="loan_adjusted_assumptions">
+<table x="597" y="34" name="loan_adjusted_assumptions">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -384,6 +393,9 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="loan_snapshot" row="id" />
 </row>
+<row name="last_updated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <row name="adjusted_cdr" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
 <default>NULL</default></row>
@@ -400,7 +412,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="1353" y="26" name="calculation_results">
+<table x="1369" y="11" name="calculation_results">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -417,11 +429,14 @@
 <row name="result3" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="date_time_calculated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="876" y="662" name="score_card_attribute">
+<table x="658" y="651" name="score_card_attribute">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -435,23 +450,30 @@
 <row name="weight" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
 <default>NULL</default></row>
-<row name="index" null="1" autoincrement="0">
+<row name="original_index" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="total_score" null="1" autoincrement="0">
+<row name="original_score" null="1" autoincrement="0">
 <datatype>DECIMAL</datatype>
+<default>NULL</default></row>
+<row name="index_change" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="updated_score" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="904" y="409" name="score_card">
+<table x="1072" y="701" name="score_card">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="name" null="1" autoincrement="0">
-<datatype>VARCHAR</datatype>
-<default>NULL</default></row>
+<row name="score_card_profile" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="score_card_profile" row="id" />
+</row>
 <row name="adjusted_assumption" null="1" autoincrement="0">
 <datatype>VARCHAR</datatype>
 <default>NULL</default></row>
@@ -465,20 +487,56 @@
 <part>id</part>
 </key>
 </table>
-<table x="591" y="589" name="score_card_adjustments">
+<table x="1490" y="427" name="risk_conditionals">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="score_card_attribute_id" null="1" autoincrement="0">
+<row name="risk_factor" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="score_card_attribute" row="id" />
+<default>NULL</default><relation table="risk_factor" row="id" />
 </row>
-<row name="index_change" null="1" autoincrement="0">
+<row name="conditional" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="value" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="945" y="415" name="score_card_profile">
+<row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="updated_score" null="1" autoincrement="0">
+<row name="name" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="date_created" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
+<row name="last_updated" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
+<row name="new field" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
+<row name="cdr_card_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="score_card" row="id" />
+</row>
+<row name="cpr_card_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="score_card" row="id" />
+</row>
+<row name="recovery_card_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="score_card" row="id" />
+</row>
+<row name="lag_card_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="score_card" row="id" />
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
