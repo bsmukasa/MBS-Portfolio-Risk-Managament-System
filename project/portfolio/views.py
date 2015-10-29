@@ -1,12 +1,19 @@
+import json
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.views.generic import View
 from portfolio.models import Portfolio, Loan
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 # Create your views here.
 class PortfolioAPI(View):
     model = Portfolio
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PortfolioAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         """ Gets all a users loan portfolios meeting given filter values in the request.GET.
@@ -20,37 +27,55 @@ class PortfolioAPI(View):
         :param request: Request; must include name
         :return: Json object with portfolios.
         """
-        user = get_user_model().objects.filter(pk=request.session['user_key'])
-        if user.exists():
-            filter_dict = request.GET.dict()
-            filter_dict['user'] = user
-            user_portfolios = self.model.objects.filter(**filter_dict).values()
-            return JsonResponse(dict(profiles=list(user_portfolios)))
+        # TODO Uncomment next two lines and filter_dict['user'] when user app is installed and working.
+        # user = get_user_model().objects.filter(pk=request.session['user_key'])
+        # if user.exists():
+
+        # Start Tab
+        filter_dict = request.GET.dict()
+        # filter_dict['user'] = user
+        user_portfolios = self.model.objects.filter(**filter_dict).values()
+        return JsonResponse(dict(portfolios=list(user_portfolios)))
+        # End Tab
 
     def post(self, request):
         """ Creates and saves a portfolio given a portfolio name.
 
         :param request: Request; must include portfolio name.
         """
-        user = get_user_model().objects.filter(pk=request.session['user_key'])
-        if user.exists():
-            name = request.POST.get('name', '')
-            new_portfolio = self.model(name=name)
-            new_portfolio.user = user
+        # TODO Uncomment next two lines and new_portfolio.user when user app is installed and working.
+        # user = get_user_model().objects.filter(pk=request.session['user_key'])
+        # if user.exists():
 
-            # TODO Add loans to portfolio from csv file.
-            loan_file = request.POST.get('loan_file', '')
+        # Start Tab
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        name = body['name']
 
-            # TODO Calculate portfolio numbers from loaded loans.
-            new_portfolio.total_loan_balance = 0
-            new_portfolio.total_loan_count = 0
-            new_portfolio.average_loan_balance = 0
-            new_portfolio.weighted_average_coupon = 0
-            new_portfolio.weighted_average_life_to_maturity = 0
+        new_portfolio = self.model(name=name)
+        # new_portfolio.user = user
+
+        # TODO Add loans to portfolio from csv file.
+        new_portfolio.loan_file = request.FILES['loan_file']
+
+        # TODO Calculate portfolio numbers from loaded loans.
+        new_portfolio.total_loan_balance = 0
+        new_portfolio.total_loan_count = 0
+        new_portfolio.average_loan_balance = 0
+        new_portfolio.weighted_average_coupon = 0
+        new_portfolio.weighted_average_life_to_maturity = 0
+        new_portfolio.save()
+        # End Tab
+
+        return JsonResponse({'status': 'OK', 'message': 'Creation Completed!!'})
 
 
 class LoanAPI(View):
     model = Loan
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(LoanAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         """ Gets all the loans from a selected portfolio in the session using
