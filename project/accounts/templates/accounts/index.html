@@ -1,0 +1,55 @@
+{% extends "accounts/base_cover.html" %}
+{% load staticfiles %}
+
+
+{% block head_title %} 
+	<title>
+		MBS Portfolio Risk Management System
+	</title>
+{% endblock head_title %}
+
+
+{% block head_css_files %} 
+	<link rel="stylesheet" href="{% static 'accounts/cover.css' %}">
+{% endblock head_css_files %}
+
+
+
+{% block cover %} 
+	<div class="site-wrapper">
+		<div class="site-wrapper-inner">
+			<div class="cover-container">
+				<div class="masthead clearfix">
+					<div class="inner">
+						<h3 class="masthead-brand">$CROOGIE$</h3>
+						<ul class="nav masthead-nav">
+							<li class="active">
+								<a href="{% url 'accounts:login' %}">Login</a>
+            				</li>
+							<li>
+								<a href="{% url 'accounts:signup' %}">Sign Up</a>
+            				</li>
+				            <li>
+				            	<a href="{% url 'accounts:contact' %}">Contact</a>
+				            </li>
+          				</ul>
+        			</div>
+      			</div>
+
+	      		<div class="inner cover">
+	        		<h1 class="cover-heading">Credit Portfolio Risk Management System</h1>
+	       			<p class="lead">Let's manage risk and make money!</p>
+	      		</div>
+
+	      		<div class="mastfoot">
+	        		<div class="inner">          
+						<p>© 2015 Capitalists</p>
+	        		</div>
+      			</div>
+    		</div>
+		</div>
+	</div>
+{% endblock cover %}
+
+
+
