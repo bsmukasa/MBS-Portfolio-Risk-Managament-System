@@ -1,13 +1,48 @@
 import json
+from django.shortcuts import render, render_to_response
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.views.generic import View
-from portfolio.models import Portfolio, Loan
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from portfolio.models import Portfolio, Loan
+from portfolio.forms import FileForm
 
 
 # Create your views here.
+class Dashboard(View):
+    template = "portfolio/dashboard.html"
+
+    def get(self, request):
+        """ Gets all user's portfolios to show in dashboard.
+
+        User must be logged.
+
+        :param request: Request; must include name
+        :return: Render dashboard, dictionary with portfolios
+        """
+        
+        portfolios = [
+             {"name": "Wonder Years", 
+                "total_loan_balance": 1000000, 
+                "total_loan_count":200, 
+                "avg_loan_balance": 30000, 
+                "weighted_avg_coupon": 0.089, 
+                "weighted_avg_life_to_maturity": 255},
+            {"name": "The OC", 
+                "total_loan_balance": 50000000, 
+                "total_loan_count":1000, 
+                "avg_loan_balance": 22000, 
+                "weighted_avg_coupon": 0.076, 
+                "weighted_avg_life_to_maturity": 321},              
+            ]
+
+        return render(request, self.template, {'form': FileForm, 'portfolios': portfolios})
+
+
+
+
+
 class PortfolioAPI(View):
     model = Portfolio
 
@@ -16,7 +51,7 @@ class PortfolioAPI(View):
         return super(PortfolioAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        """ Gets all a users loan portfolios meeting given filter values in the request.GET.
+        """ Gets all user's loan portfolios meeting given filter values in the request.GET.
 
         The active user is retrieved using the user_id stored in the session. If the user exists,
         use filter factors such as count for pagination or filter values to get relevant
