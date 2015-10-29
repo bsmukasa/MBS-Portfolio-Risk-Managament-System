@@ -84,6 +84,16 @@ class ScoreCard(models.Model):
     updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
 
 
+class ScoreCardProfile(models.Model):
+    name = models.CharField(max_length=128)
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    cdr_score_card = models.ForeignKey(ScoreCard)
+    cdp_score_card = models.ForeignKey(ScoreCard)
+    recovery_score_card = models.ForeignKey(ScoreCard)
+    lag_score_card = models.ForeignKey(ScoreCard)
+
+
 class ScoreCardAttribute(models.Model):
     score_card = models.ForeignKey(ScoreCard)
     attribute = models.CharField(max_length=32)
