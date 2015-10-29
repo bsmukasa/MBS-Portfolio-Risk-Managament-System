@@ -21,6 +21,10 @@ urlpatterns = [
         regex=r'^admin/',
         view=include(admin.site.urls)
     ),
+    url(
+        regex=r'^',
+        view=include('accounts.urls', namespace='accounts')
+    ),
 
     url(
         regex=r'^portfolio/',

@@ -1,0 +1,45 @@
+{% load staticfiles %}
+
+<html>
+	<head>
+		<!-- Bootstrap meta tags -->
+	    <meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    	{% block head_title %} {% endblock head_title %}
+
+    	<!-- JQuery  -->
+    	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    	<!-- Bootstrap CDN -->
+    	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		
+		<!-- JS and CSS files  -->
+		{% block head_js_files %} {% endblock head_js_files %}
+		<link rel="stylesheet" href="{% static 'accounts/main.css' %}">
+		{% block head_css_files %} {% endblock head_css_files %}
+
+		<!-- Fonts  -->
+		<link href='https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	</head>
+
+
+	<body>	
+		<!-- Navbar -->
+		{% block navbar %} {% endblock navbar %}
+
+		<!-- Main content -->
+		{% block main_content %} {% endblock main_content %}
+
+
+		<footer class="footer">
+			<div class="container">
+				<p class="standard_footer">© 2015 Capitalists</p>
+			</div>
+		</footer>
+
+	</body>
+</html>

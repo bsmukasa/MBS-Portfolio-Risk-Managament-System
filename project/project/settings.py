@@ -41,6 +41,8 @@ INSTALLED_APPS = (
     'accounts',
     'analytics',
     'risk_management',
+    'bootstrapform',
+    'django.contrib.humanize',
 )
 
 MIDDLEWARE_CLASSES = (
