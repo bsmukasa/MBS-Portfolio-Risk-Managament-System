@@ -88,10 +88,10 @@ class ScoreCardProfile(models.Model):
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    cdr_score_card = models.ForeignKey(ScoreCard)
-    cdp_score_card = models.ForeignKey(ScoreCard)
-    recovery_score_card = models.ForeignKey(ScoreCard)
-    lag_score_card = models.ForeignKey(ScoreCard)
+    cdr_score_card = models.ForeignKey(ScoreCard, related_name='+')
+    cdp_score_card = models.ForeignKey(ScoreCard, related_name='+')
+    recovery_score_card = models.ForeignKey(ScoreCard, related_name='+')
+    lag_score_card = models.ForeignKey(ScoreCard, related_name='+')
 
 
 class ScoreCardAttribute(models.Model):
