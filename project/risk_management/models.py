@@ -59,7 +59,7 @@ class RiskConditionals(models.Model):
         (LESSER, 'Lesser Than - <'),
         (GREATER_EQ, 'Greater Than of Equal To - >='),
         (LESSER_EQ, 'Lesser Than or Equal To - <='),
-        (EQUAL, 'Equal To - =='),
+        (EQUAL, 'Equal To - ==')
     )
     risk_factor = models.ForeignKey(RiskFactor)
     conditional = models.CharField(max_length=64, choices=RISK_CONDITIONAL_CHOICES)
@@ -88,7 +88,7 @@ class ScoreCard(models.Model):
         (CDR, 'Adjusted Default Rate'),
         (CPR, 'Adjusted Prepayment Rate'),
         (RECOV, 'Adjusted Recovery'),
-        (LAG, 'Adjusetd Lag')
+        (LAG, 'Adjusted Lag')
     )
 
     name = models.CharField(max_length=128)
