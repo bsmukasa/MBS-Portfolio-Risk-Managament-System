@@ -12,6 +12,7 @@ from portfolio.forms import FileForm
 # Create your views here.
 class Dashboard(View):
     template = "portfolio/dashboard.html"
+    form = FileForm
 
     def get(self, request):
         """ Gets all user's portfolios to show in dashboard.
@@ -19,28 +20,10 @@ class Dashboard(View):
         User must be logged.
 
         :param request: Request; must include name
-        :return: Render dashboard, dictionary with portfolios
+        :return: Render dashboard
         """
-        
-        portfolios = [
-             {"name": "Wonder Years", 
-                "total_loan_balance": 1000000, 
-                "total_loan_count":200, 
-                "avg_loan_balance": 30000, 
-                "weighted_avg_coupon": 0.089, 
-                "weighted_avg_life_to_maturity": 255},
-            {"name": "The OC", 
-                "total_loan_balance": 50000000, 
-                "total_loan_count":1000, 
-                "avg_loan_balance": 22000, 
-                "weighted_avg_coupon": 0.076, 
-                "weighted_avg_life_to_maturity": 321},              
-            ]
 
-        return render(request, self.template, {'form': FileForm, 'portfolios': portfolios})
-
-
-
+        return render(request, self.template, {'form': self.form})
 
 
 class PortfolioAPI(View):
@@ -70,7 +53,29 @@ class PortfolioAPI(View):
         filter_dict = request.GET.dict()
         # filter_dict['user'] = user
         user_portfolios = self.model.objects.filter(**filter_dict).values()
-        return JsonResponse(dict(portfolios=list(user_portfolios)))
+
+
+        #Test Values and Return
+        portfolios = [
+             {"name": "Wonder Years", 
+                "total_loan_balance": 1000000, 
+                "total_loan_count":200, 
+                "avg_loan_balance": 30000, 
+                "weighted_avg_coupon": 0.089, 
+                "weighted_avg_life_to_maturity": 255},
+            {"name": "The OC", 
+                "total_loan_balance": 50000000, 
+                "total_loan_count":1000, 
+                "avg_loan_balance": 22000, 
+                "weighted_avg_coupon": 0.076, 
+                "weighted_avg_life_to_maturity": 321},              
+            ]
+
+
+        return JsonResponse({'portfolios': portfolios})
+
+
+        #return JsonResponse(dict(portfolios=list(user_portfolios)))
         # End Tab
 
     def post(self, request):

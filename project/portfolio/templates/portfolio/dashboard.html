@@ -1,117 +1,122 @@
 {% extends "portfolio/base_logged_user.html" %}
 {% load staticfiles %}
 {% load bootstrap %}
-{% load humanize %}
+
 
 
 {% block head_title %} 
 	<title>Dashboard</title>
 {% endblock head_title %}
 
+
 {% block head_js_files %}
-	<link rel="stylesheet" href="{% static 'portfolio/dashboard.js' %}"> 
+	<script src="{% static 'portfolio/dashboard.js' %}"></script> 
 {% endblock head_js_files %}
+
 
 {% block head_css_files %}
 	<link rel="stylesheet" href="{% static 'portfolio/dashboard.css' %}"> 
 {% endblock head_css_files %}
 
 
+{% block scripts %}
+	<script id="portfolio-load-script" type="x-tmpl-mustache">
+		{% verbatim %}
+			<div class="panel panel-default" id="portfolio.id">
+				<div class="panel-heading">
+    				<h3 class="panel-title" id={{ id }}><a href="#">{{ name }}</a></h3>
+  				</div>
+  				<table class="table">
+  					<thead>
+  						<th class="col-head-table-panel">Total Loan Count</th>
+  						<th class="col-head-table-panel">Total Loan Balance</th>
+  						<th class="col-head-table-panel">Average Loan Balance</th>
+  						<th class="col-head-table-panel">WAC</th>
+  						<th class="col-head-table-panel">WAL</th>
+  					</thead>
+  					<tbody>
+  						<tr>
+  							<td class="col-table-panel">$ {{ total_loan_count }}</td>
+  							<td class="col-table-panel">$ {{ total_loan_balance }}</td>
+  							<td class="col-table-panel">$ {{ average_loan_balance }}</td>
+  							<td class="col-table-panel">{{ weighted_average_coupon }}</td>
+  							<td class="col-table-panel">{{ weighted_average_life_to_maturity }}</td>
+  						</tr>
+  						
+  					</tbody>
+  				</table>
+			</div>
+			<p class="panel_footer">Created at: {{ date_created }}
+			<br>Last update: {{ date_last_update }}</p>
+		{% endverbatim %}
+	</script>
+
+
+{% endblock scripts %}
+
+
 
 {% block first_content %}
 	<div class="container">
 		<ul class="nav nav-tabs">
-			<li class="active"><a href="#">PORTFOLIOS</a></li>
+			<li class="active"><a href="{% url 'portfolio:dashboard' %}">PORTFOLIOS</a></li>
 			<li><a href="#">RISK PROFILES</a></li>
 			<li><a href="#">ECONOMIC ASSUMPTIONS</a></li>
 			<li><a href="#">GLOBAL SCENARIOS</a></li>
+			<li><a href="#">SCORECARDS</a></li>
 		</ul>		
 	</div>
 {% endblock first_content %}
 
 
 
-{% block second_content %}
-	<div class="container">
-
-		<div class="row">
-	        <div class="col-xs-6 col-md-4">
-				<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+{% block main_content %}
+	<div class="container" id="main-content">
+		<div class="row add_search">
+	        <div class="col-md-3" id="row-sub-header">
+				<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
 					Add new portfolio
 				</button>
+			</div> 
 
-				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		  			<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-								<h4 class="modal-title" id="myModalLabel">Add new portfolio</h4>
-							</div>
-							<div class="modal-body">
-								<form action="{% url 'portfolio:dashboard' %}" method="POST" enctype="multipart/form-data" role="form" class="upload_form">
-									{% csrf_token %}
-									{{ form.non_field_errors }}
-									{{ form.docfile.errors }}
-									{{ form.portfolio_name|bootstrap }}
-									{{ form.docfile|bootstrap }}
-								</form>
-		 					</div>
-		  					<div class="modal-footer">
-		        				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        				<button type="submit" class="btn btn-primary">Save</button>
-		      				</div>
-		    			</div>
-		  			</div>
-		  		</div>   	
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Add new portfolio</h4>
+						</div>
+						<div class="modal-body">
+							<form action="{% url 'portfolio:dashboard' %}" method="POST" enctype="multipart/form-data" role="form" class="upload_form">
+								{% csrf_token %}
+								{{ form.non_field_errors }}
+								{{ form.docfile.errors }}
+								{{ form.portfolio_name|bootstrap }}
+								{{ form.docfile|bootstrap }}
+							</form>
+	 					</div>
+	  					<div class="modal-footer">
+	        				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        				<button type="submit" class="btn btn-primary">Save</button>
+	      				</div>
+	    			</div>
+	  			</div>	  	
 	        </div>
-	        <div class="col-xs-6 col-md-4">
+	        
+	        <div class="col-md-3">
 	        	<div class="input-group">
-	        		<input type="text" class="form-control" placeholder="Search for...">
+	        		<input type="text" class="form-control" placeholder="Search portfolio...">
 	        		<div class="input-group-btn">
-	        			<button type="button" class="btn btn-info btn-lg">
-	        				<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-	        			</button>
+	        			<button class="btn btn-link" type="submit"><i class="glyphicon glyphicon-search"></i></button>
 	        		</div>
 	        	</div>
 	        </div>
-	        <div class="col-xs-6 col-md-4"></div>
+	        <div class="col-md-6"></div>
 		</div>
+
+
+		<div class="portfolio_panels" id="portfolio-load"></div>
 	</div>
-{% endblock second_content %}
+{% endblock main_content %}
 
-
-{% block third_content %}
-	<div class="portfolio_panels">
-		{% if portfolios %}
-			{% for portfolio in portfolios %}
-				<div class="panel panel-default" id="portfolio.id">
-					<div class="panel-heading">
-        				<h3 class="panel-title">{{portfolio.name}}</h3>
-      				</div>
-      				<table class="table">
-      					<thead>
-      						<th>Total Loan Count</th>
-      						<th>Total Loan Balance</th>
-      						<th>Average Loan Balance</th>
-      						<th>WAC</th>
-      						<th>WAL</th>
-      					</thead>
-      					<tbody>
-      						<tr>
-      							<td>$ {{portfolio.total_loan_count|floatformat:2|intcomma}}</td>
-      							<td>$ {{portfolio.total_loan_balance|floatformat:2|intcomma}}</td>
-      							<td>$ {{portfolio.avg_loan_balance|floatformat:2|intcomma}}</td>
-      							<td>{{portfolio.weighted_avg_coupon}}</td>
-      							<td>{{portfolio.weighted_avg_life_to_maturity}}</td>
-      						</tr>
-      						
-      					</tbody>
-      				</table>
-				</div>
-				<p class="panel_footer">Created at: {{portfolio.date_created}}</p>
-			{% endfor %}
-		{%endif%}
-	</div>
-
-{% endblock third_content %}
 
