@@ -1,9 +1,10 @@
 {% extends "accounts/base_auth.html" %}
 {% load staticfiles %}
+{% load bootstrap %}
 
 
 {% block head_title %} 
-	<title>Scroogies SIGNUP</title>
+	<title>Scroogies Sign Up</title>
 {% endblock head_title %}
 
 {% block head_js_files %}
@@ -13,7 +14,6 @@
 {% block head_css_files %}
 	<link rel="stylesheet" href="{% static 'accounts/auth.css' %}"> 
 {% endblock head_css_files %}
-
 
 
 
@@ -32,29 +32,25 @@
     			</div>
     			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     				<ul class="nav navbar-nav navbar-right">
-    					<li><a href="#">Login</a></li>
+    					<li><a href="{% url 'accounts:login' %}">Login</a></li>
     					<li><a href="#">Create an account</a></li>
     				</ul>
     			</div>
     		</div>
     	</nav>
 	</div>
-
 {% endblock navbar %}
 
 
 {% block main_content %}
     <div class="container">
-		<form class="form-signin">
+    	<form class="form-signin" action="{% url 'accounts:signup' %}" method="POST" enctype="multipart/form-data" role="form">
 			<h2 class="form-signin-heading">Create an account</h2>
-			<label for="inputEmail" class="sr-only">Email address</label>
-			<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-			<label for="inputPassword" class="sr-only">Password</label>
-			<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-			<label for="inputPassword" class="sr-only">Confirm Password</label>
-			<input type="password" id="inputPassword" class="form-control" placeholder="Confirm Password" required>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">Create my account</button>
+			{% csrf_token %}
+			{{ form|bootstrap }}
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
 		</form>
     </div> 
-
 {% endblock main_content %}

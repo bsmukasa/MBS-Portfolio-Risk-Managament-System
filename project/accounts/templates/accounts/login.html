@@ -1,9 +1,10 @@
 {% extends "accounts/base_auth.html" %}
 {% load staticfiles %}
+{% load bootstrap %}
 
 
 {% block head_title %} 
-	<title>Scroogies LOGIN</title>
+	<title>Scroogies Login</title>
 {% endblock head_title %}
 
 {% block head_js_files %}
@@ -33,7 +34,7 @@
     			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     				<ul class="nav navbar-nav navbar-right">
     					<li><a href="#">Login</a></li>
-    					<li><a href="#">Create an account</a></li>
+    					<li><a href="{% url 'accounts:signup' %}">Create an account</a></li>
     				</ul>
     			</div>
     		</div>
@@ -43,22 +44,23 @@
 {% endblock navbar %}
 
 
+
 {% block main_content %}
     <div class="container">
-		<form class="form-signin">
+		<form class="form-signin" action="{% url 'accounts:login' %}" method="POST" enctype="multipart/form-data" role="form">
 			<h2 class="form-signin-heading">Please sign in</h2>
-			<label for="inputEmail" class="sr-only">Email address</label>
-			<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-			<label for="inputPassword" class="sr-only">Password</label>
-			<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+			{% csrf_token %}
+			{{ form|bootstrap }}
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
 		</form>
 		<div class="other-links">
 			<p><a href="#" class="forgot-pass-link">Forgot your password?</a></p>
 			<br>
 			<br>
 			<p class="simple-text">Don't have an account?</p>
-			<p><a href="#" class="signup-link">Sign Up</a></p>		
+			<p><a href="{% url 'accounts:signup' %}" class="signup-link">Sign Up</a></p>		
 		</div>
     </div> 
 

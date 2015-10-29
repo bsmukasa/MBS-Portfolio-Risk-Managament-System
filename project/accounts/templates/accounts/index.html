@@ -2,7 +2,6 @@
 {% load staticfiles %}
 
 
-<!-- HEAD -->
 {% block head_title %} 
 	<title>
 		MBS Portfolio Risk Management System
@@ -15,7 +14,7 @@
 {% endblock head_css_files %}
 
 
-<!-- BODY -->
+
 {% block cover %} 
 	<div class="site-wrapper">
 		<div class="site-wrapper-inner">
@@ -25,19 +24,13 @@
 						<h3 class="masthead-brand">$CROOGIE$</h3>
 						<ul class="nav masthead-nav">
 							<li class="active">
-
-
-<!-- TO DO LINK -->							<a href="#">Login</a>
+								<a href="{% url 'accounts:login' %}">Login</a>
             				</li>
 							<li>
-              					
-
-<!-- TO DO LINK -->             			<a href="#">Sign Up</a>
+								<a href="{% url 'accounts:signup' %}">Sign Up</a>
             				</li>
 				            <li>
-				              
-
-<!-- TO DO LINK -->				            <a href="#">Contact</a>
+				            	<a href="{% url 'accounts:contact' %}">Contact</a>
 				            </li>
           				</ul>
         			</div>
