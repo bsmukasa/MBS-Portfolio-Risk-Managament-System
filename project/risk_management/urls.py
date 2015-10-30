@@ -27,4 +27,16 @@ urlpatterns = patterns(
         view=views.RiskProfileAPI.as_view(),
         name='get_risk_profiles_api'
     ),
+
+    url(
+        regex=r'^add_risk_factor$',
+        view=views.RiskFactorAPI.as_view(),
+        name='add_risk_factor_api'
+    ),
+
+    url(
+        regex=r'^get_risk_factors$',
+        view=views.RiskFactorAPI.as_view(),
+        name='get_risk_factors_api'
+    ),
 )
