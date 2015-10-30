@@ -84,43 +84,29 @@ class RiskFactorAPI(View):
     def get(self, request):
         """ Get all risk factors related to a specific risk profile.
 
-        Request.GET may be used to add additional filter values.
-
-        Json in the Request must include:
+        Request.GET must include:
         -risk_profile_id
 
-        Example Request:
-            {
-                "risk_profile_search_terms": {"risk_profile_id": 5}
-            }
+        Request.GET may be used to add additional filter values.
 
         Example Result:
             {
-                "risk_factor_list": {
-                    "risk_factor": [
-                        {
-                            "risk_profile_id": 5,
-                            "risk_factor_id": 2,
-                            "attribute": "property_type",
-                            "changing_assumption": "cdr",
-                            "percentage_change": -5
-                        },
-                        {
-                            "risk_profile_id": 5,
-                            "risk_factor_id": 10,
-                            "attribute": "zipcode",
-                            "changing_assumption": "recovery",
-                            "percentage_change": -2
-                        },
-                        {
-                            "risk_profile_id": 5,
-                            "risk_factor_id": 12,
-                            "attribute": "FICO",
-                            "changing_assumption": "cpr",
-                            "percentage_change": 4
-                        }
-                    ]
-                }
+                "risk_factors": [
+                    {
+                        "id": 1,
+                        "risk_profile_id": 2,
+                        "attribute": "FICO",
+                        "changing_assumption": "CDR",
+                        "percentage_change": "-5.0000"
+                    },
+                    {
+                        "id": 2,
+                        "risk_profile_id": 2,
+                        "attribute": "state",
+                        "changing_assumption": "recovery",
+                        "percentage_change": "2.0000"
+                    }
+                ]
             }
 
         :param request: Request
