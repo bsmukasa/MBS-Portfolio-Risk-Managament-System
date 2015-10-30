@@ -326,6 +326,11 @@ class AssumptionProfileAPI(View):
         - gdp_growth
         - unemployment_rate
         - national_home_price_index
+        - high_yield_spread
+        - constant_default_rate
+        - constant_prepayment_rate
+        - recovery
+        - lag
 
         Example Request:
             {
@@ -333,18 +338,67 @@ class AssumptionProfileAPI(View):
                     "name": "U.S. Economy Growing 3%",
                     "gdp_growth": 3.2,
                     "unemployment_rate": 8.5,
-                    "national_home_price_index_growth": 3.7
+                    "national_home_price_index_growth": 3.7,
+                    "high_yield_spread": 5.2,
+                    "constant_default_rate": -100,
+                    "constant_prepayment_rate": -100,
+                    "recovery": -100,
+                    "lag": 128
                 }
             }
 
-        All Economic Assumptions are given equal weight in calculations.
+        Default Assumptions, except for lag, may be sent as -100 to be calculated by the system or manually entered.
+
+        All Economic Assumptions are given equal weight in calculation of Default Assumptions.
 
         Formulas:
             - CDR = (GDP * -1 + 6.5) + (Unemployment * 1.2 - 5.5)
-            - CPR = Yield Spread * -1.1111111111 + 27.2222222222222
+            - CPR = YieldSpread * -10/9 + 245/9
             - Recovery = HPI * 2.5 + 50
 
         :param request: Request.
         :return: JsonResponse with status and message.
         """
-        pass
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        name = body['name']
+        gdp_growth = body['gdp_growth']
+        unemployment_rate = body['unemployment_rate']
+        national_home_price_index = body['national_home_price_index']
+        high_yield_spread = body['high_yield_spread']
+
+        new_assumption_profile = self.model(
+            name=name,
+            gdp_growth=gdp_growth,
+            unemployment_rate=unemployment_rate,
+            national_home_price_index=national_home_price_index,
+            high_yield_spread=high_yield_spread
+        )
+
+        default_assumptions = {
+            "constant_default_rate": body['constant_default_rate'],
+            "constant_prepayment_rate": body['constant_prepayment_rate'],
+            "recovery": body['recovery'],
+            "lag": body['lag']
+        }
+
+        for key, value in default_assumptions.items():
+            if value != -100:
+                setattr(new_assumption_profile, key, value)
+            else:
+                if key == 'constant_default_rate':
+                    cdr = (gdp_growth * -1 + 6.5)
+                    cdr += (unemployment_rate * 1.2 - 5.5)
+                    new_assumption_profile.constant_default_rate = cdr
+                if key == 'constant_prepayment_rate':
+                    cpr = high_yield_spread * -10/9 + 245/9
+                    new_assumption_profile.constant_prepayment_rate = cpr
+                if key == 'recovery':
+                    recovery = national_home_price_index * 2.5 + 50
+                    new_assumption_profile.recovery = recovery
+                if key == 'lag':
+                    lag = value
+                    new_assumption_profile.lag = lag
+
+        new_assumption_profile.save()
+        return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})
