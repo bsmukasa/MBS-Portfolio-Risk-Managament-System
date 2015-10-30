@@ -240,7 +240,28 @@ class RiskConditionalAPI(View):
         :param request: Request
         return: JsonResponse list of assumption profiles on success, status and message if not.
         """
-        pass  # TODO Finish this get method
+        filter_dict = request.GET.dict()
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        if 'risk_profile_id' in body.keys() and 'risk_factor_id' in body.keys():
+            risk_profile_id = body['risk_profile_id']
+            risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
+
+            if risk_profile.exists():
+                filter_dict['risk_profile'] = risk_profile
+                risk_factor_id = body['risk_factor_id']
+                risk_factor = RiskFactor.objects.filter(pk=risk_factor_id)
+
+                if risk_factor.exists():
+                    risk_factor_conditionals = self.model.objects.filter(**filter_dict).values()
+                    return JsonResponse(dict(risk_conditionals=list(risk_factor_conditionals)))
+                else:
+                    return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
+            else:
+                return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
+        else:
+            return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
 
 
 class AssumptionProfileAPI(View):
