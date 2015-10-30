@@ -156,18 +156,14 @@ class RiskFactorAPI(View):
 
         Example Request:
             {
-                "risk_factor": {
-                    "risk_profile_id": 5,
-                    "risk_factor_attribute": "FICO",
-                    "changing_assumption": "CDR",
-                    "percentage_change": -5,
-                    "conditionals_list": {
-                        "conditional_item": [
-                            {"conditional": ">", "value": 450},
-                            {"conditional": "<", "value": 550}
-                        ]
-                    }
-                }
+                "risk_profile_id": 2,
+                "risk_factor_attribute": "FICO",
+                "changing_assumption": "CDR",
+                "percentage_change": -5,
+                "conditionals_list": [
+                    {"conditional": ">", "value": 450},
+                    {"conditional": "<", "value": 550}
+                ]
             }
 
         :param request: Request.
@@ -182,16 +178,20 @@ class RiskFactorAPI(View):
             risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
 
             if risk_profile.exists():
-                new_risk_factor = self.model(risk_profile=risk_profile)
+                new_risk_factor = self.model()
+                new_risk_factor.risk_profile = RiskProfile.objects.get(pk=risk_profile_id)
                 new_risk_factor.attribute = body['risk_factor_attribute']
                 new_risk_factor.changing_assumption = body['changing_assumption']
                 new_risk_factor.percentage_change = body['percentage_change']
+                new_risk_factor.save()
 
                 conditionals_list = body['conditionals_list']
+                print('Conditionals List:', conditionals_list)
                 for item in conditionals_list:
                     new_risk_condtional = RiskConditional(risk_factor=new_risk_factor)
                     new_risk_condtional.conditional = item['conditional']
-                    new_risk_factor.value = item['value']
+                    new_risk_condtional.value = item['value']
+                    new_risk_condtional.save()
 
                 return JsonResponse({'status': 'PASS', 'message': 'Risk Factor added.'})
             else:
