@@ -19,6 +19,32 @@ class RiskProfileAPI(View):
 
         Request.GET may be used to add additional filter values.
 
+        Example Results:
+            {
+                "risk_profile_list": {
+                    "risk_profile": [
+                        {
+                            "risk_profile_id": 3,
+                            "name": "NJ Zipcodes",
+                            "date_created": "2015-07-12",
+                            "last_updated": "2015-08-29"
+                        },
+                        {
+                            "risk_profile_id": 7,
+                            name": "Second Residence Homes",
+                            "date_created": "2015-09-23",
+                            "last_updated": "2015-09-23"
+                        },
+                        {
+                            "risk_profile_id": 22,
+                            "name": "East Coast States",
+                            "date_created": "2015-10-12",
+                            "last_updated": "2015-10-18"
+                        }
+                    ]
+                }
+            }
+
         :param request: Request
         :return: JsonResponse list of risk profiles on success, status and message if not.
         """
@@ -32,7 +58,7 @@ class RiskProfileAPI(View):
         Json in the Request must include:
         -name
 
-        Example:
+        Example Request:
             {
                 "risk_profile": {"name": Zipcode's in NJ}
             }
@@ -65,9 +91,38 @@ class RiskFactorAPI(View):
         Json in the Request must include:
         -risk_profile_id
 
-        Example:
+        Example Request:
             {
                 "risk_profile_search_terms": {"risk_profile_id": 5}
+            }
+
+        Example Result:
+            {
+                "risk_factor_list": {
+                    "risk_factor": [
+                        {
+                            "risk_profile_id": 5,
+                            "risk_factor_id": 2,
+                            "attribute": "property_type",
+                            "changing_assumption": "cdr",
+                            "percentage_change": -5
+                        },
+                        {
+                            "risk_profile_id": 5,
+                            "risk_factor_id": 10,
+                            "attribute": "zipcode",
+                            "changing_assumption": "recovery",
+                            "percentage_change": -2
+                        },
+                        {
+                            "risk_profile_id": 5,
+                            "risk_factor_id": 12,
+                            "attribute": "FICO",
+                            "changing_assumption": "cpr",
+                            "percentage_change": 4
+                        }
+                    ]
+                }
             }
 
         :param request: Request
@@ -101,7 +156,7 @@ class RiskFactorAPI(View):
         - percentage_change
         - conditionals_list
 
-        Example:
+        Example Request:
             {
                 "risk_factor": {
                     "risk_profile_id": 5,
@@ -145,3 +200,83 @@ class RiskFactorAPI(View):
                 return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
         else:
             return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
+
+
+class AssumptionProfileAPI(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(AssumptionProfileAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved assumption profiles.
+
+        Example Result:
+            {
+                "assumption_profile_list": {
+                    "assumption_profile": [
+                        {
+                            "assumption_profile_id": 2,
+                            "name": "US Economy Growing and 3%",
+                            "date_created": "2015-6-23",
+                            "last_updated": "2015-10-18",
+                            "gdp_growth": 3.2,
+                            "unemployment_rate": 7.2,
+                            "national_home_price_index": 8.7,
+                            "high_yield_spread": 6.7,
+                            "constant_default_rate": 5.3,
+                            "constant_prepayment_rate": 12.2,
+                            "recovery": 80,
+                            "lag": 24
+                        },
+                        {
+                            "assumption_profile_id": 8,
+                            "name": "Nevada Housing Collapse",
+                            "date_created": "2015-09-02",
+                            "last_updated": "2015-09-02",
+                            "gdp_growth": 1.3,
+                            "unemployment_rate": 8.6,
+                            "national_home_price_index": -2,
+                            "high_yield_spread": 3.8,
+                            "constant_default_rate": 10.8,
+                            "constant_prepayment_rate": 6.2,
+                            "recovery": 35,
+                            "lag": 72
+                        }
+                    ]
+                }
+            }
+
+        :param request: Request
+        return: JsonResponse list of assumption profiles on success, status and message if not.
+        """
+        pass
+
+    def post(self, request):
+        """ Creates a new assumption profile and saves it to the database.
+
+        Json in the Request must include:
+        - name
+        - gdp_growth
+        - unemployment_rate
+        - national_home_price_index
+
+        Example Request:
+            {
+                "economic_assumptions": {
+                    "name": "U.S. Economy Growing 3%",
+                    "gdp_growth": 3.2,
+                    "unemployment_rate": 8.5,
+                    "national_home_price_index_growth": 3.7
+                }
+            }
+
+        All Economic Assumptions are given equal weight in calculations.
+
+        Formulas:
+            - CDR = (GDP * -1 + 6.5) + (Unemployment * 1.2 - 5.5)
+            - CPR = Yield Spread * -1.1111111111 + 27.2222222222222
+            - Recovery = HPI * 2.5 + 50
+
+        :param request: Request.
+        :return: JsonResponse with status and message.
+        """
+        pass
