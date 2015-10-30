@@ -39,4 +39,10 @@ urlpatterns = patterns(
         view=views.RiskFactorAPI.as_view(),
         name='get_risk_factors_api'
     ),
+
+    url(
+        regex=r'^get_risk_factor_conditionals$',
+        view=views.RiskConditionalAPI.as_view(),
+        name='get_risk_conditionals_api'
+    ),
 )
