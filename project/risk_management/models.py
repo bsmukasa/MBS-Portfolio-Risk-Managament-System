@@ -59,7 +59,7 @@ class RiskFactor(models.Model):
     percentage_change = models.DecimalField(decimal_places=4, max_digits=20)
 
 
-class RiskConditionals(models.Model):
+class RiskConditional(models.Model):
     GREATER = '>'
     LESSER = '<'
     GREATER_EQ = '>='
