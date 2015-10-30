@@ -203,6 +203,8 @@ class RiskFactorAPI(View):
 
 
 class RiskConditionalAPI(View):
+    model = RiskConditional
+
     def dispatch(self, request, *args, **kwargs):
         return super(RiskConditionalAPI, self).dispatch(request, *args, **kwargs)
 
@@ -265,6 +267,8 @@ class RiskConditionalAPI(View):
 
 
 class AssumptionProfileAPI(View):
+    model = AssumptionProfile
+
     def dispatch(self, request, *args, **kwargs):
         return super(AssumptionProfileAPI, self).dispatch(request, *args, **kwargs)
 
