@@ -191,59 +191,43 @@ class RiskConditionalAPI(View):
     def get(self, request):
         """ Get all saved risk conditionals related to a given risk factor.
 
-        Json in the Request must include:
+        Request.GET must include:
         -risk_factor_id
-
-        Example Request:
-            {
-                "risk_conditional_search_terms": {"risk_factor_id": 3}
-            }
 
         Example Result:
             {
-                "risk_conditional_list": {
-                    "risk_conditional": [
-                        {
-                            "risk_factor_id": 10,
-                            "risk_conditional_id": 4,
-                            "conditional": ">",
-                            "value": 500
-                        },
-                        {
-                            "risk_factor_id": 10,
-                            "risk_conditional_id": 5,
-                            "conditional": "<",
-                            "value": 700
-                        }
-                    ]
-                }
+                "risk_conditionals": [
+                    {
+                        "id": 1,
+                        "risk_factor_id": 1,
+                        "conditional": ">",
+                        "value": "450"
+                    },
+                    {
+                        "id": 2,
+                        "risk_factor_id": 1,
+                        "conditional": "<",
+                        "value": 500
+                    }
+                ]
             }
 
         :param request: Request
         return: JsonResponse list of assumption profiles on success, status and message if not.
         """
         filter_dict = request.GET.dict()
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
 
-        if 'risk_profile_id' in body.keys() and 'risk_factor_id' in body.keys():
-            risk_profile_id = body['risk_profile_id']
-            risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
+        risk_factor_id = filter_dict['risk_factor_id']
+        risk_factor = RiskFactor.objects.filter(pk=risk_factor_id)
 
-            if risk_profile.exists():
-                filter_dict['risk_profile'] = risk_profile
-                risk_factor_id = body['risk_factor_id']
-                risk_factor = RiskFactor.objects.filter(pk=risk_factor_id)
+        if risk_factor.exists():
+            filter_dict['risk_factor'] = risk_factor
 
-                if risk_factor.exists():
-                    risk_factor_conditionals = self.model.objects.filter(**filter_dict).values()
-                    return JsonResponse(dict(risk_conditionals=list(risk_factor_conditionals)))
-                else:
-                    return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
-            else:
-                return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
+            risk_factor_conditionals = self.model.objects.filter(**filter_dict).values()
+
+            return JsonResponse(dict(risk_conditionals=list(risk_factor_conditionals)))
         else:
-            return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
+            return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
 
 
 class AssumptionProfileAPI(View):
