@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from risk_management.models import RiskProfile, RiskFactor, RiskConditional
+from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile
 
 
 # Create your views here.
@@ -310,7 +310,9 @@ class AssumptionProfileAPI(View):
         :param request: Request
         return: JsonResponse list of assumption profiles on success, status and message if not.
         """
-        pass
+        filter_dict = request.GET.dict()
+        assumption_profiles = self.model.objects.filter(**filter_dict).values()
+        return JsonResponse(dict(assumption_profiles=list(assumption_profiles)))
 
     def post(self, request):
         """ Creates a new assumption profile and saves it to the database.
