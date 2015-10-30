@@ -15,11 +15,31 @@ class RiskProfileAPI(View):
         return super(RiskProfileAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
+        """ Get all risk profiles.
+
+        Request.GET may be used to add additional filter values.
+
+        :param request: Request
+        :return: JsonResponse list of risk profiles on success, status and message if not.
+        """
         filter_dict = request.GET.dict()
         risk_profiles = self.model.objects.filter(**filter_dict).values()
         return JsonResponse(dict(risk_profiles=list(risk_profiles)))
 
     def post(self, request):
+        """ Creates a new risk profile and saves it to the database.
+
+        Json in the Request must include:
+        -name
+
+        Example:
+            {
+                "risk_profile": {"name": Zipcode's in NJ}
+            }
+
+        :param request: Request
+        :return: JsonResponse including a status and message.
+        """
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         name = body['name']
@@ -38,6 +58,21 @@ class RiskFactorAPI(View):
         return super(RiskFactorAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
+        """ Get all risk factors related to a specific risk profile.
+
+        Request.GET may be used to add additional filter values.
+
+        Json in the Request must include:
+        -risk_profile_id
+
+        Example:
+            {
+                "risk_profile_search_terms": {"risk_profile_id": 5}
+            }
+
+        :param request: Request
+        :return: JsonResponse list of risk factors on success, status and message if not.
+        """
         filter_dict = request.GET.dict()
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -57,7 +92,7 @@ class RiskFactorAPI(View):
             return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
 
     def post(self, request):
-        """ Creates a new risk factor and related conditionals.
+        """ Creates a new risk factor and related conditionals and saves it to the database.
 
         Json in the Request must include:
         - risk_profile_id
@@ -72,7 +107,7 @@ class RiskFactorAPI(View):
                     "risk_profile_id": 5,
                     "risk_factor_attribute": "FICO",
                     "changing_assumption": "CDR",
-                    "percentage_change": "-5",
+                    "percentage_change": -5,
                     "conditionals_list": {
                         "conditional_item": [
                             {"conditional": ">", "value": 450},
@@ -81,7 +116,6 @@ class RiskFactorAPI(View):
                     }
                 }
             }
-
 
         :param request: Request.
         :return: JsonResponse with status and message.
