@@ -21,28 +21,26 @@ class RiskProfileAPI(View):
 
         Example Results:
             {
-                "risk_profile_list": {
-                    "risk_profile": [
-                        {
-                            "risk_profile_id": 3,
-                            "name": "NJ Zipcodes",
-                            "date_created": "2015-07-12",
-                            "last_updated": "2015-08-29"
-                        },
-                        {
-                            "risk_profile_id": 7,
-                            name": "Second Residence Homes",
-                            "date_created": "2015-09-23",
-                            "last_updated": "2015-09-23"
-                        },
-                        {
-                            "risk_profile_id": 22,
-                            "name": "East Coast States",
-                            "date_created": "2015-10-12",
-                            "last_updated": "2015-10-18"
-                        }
-                    ]
-                }
+                "risk_profiles": [
+                    {
+                        "id": 1,
+                        "name": "Zipcode's in NJ",
+                        "date_created": "2015-10-30T21:28:19.047Z",
+                        "last_updated": "2015-10-30T21:28:19.047Z"
+                    },
+                    {
+                        "id": 2,
+                        name": "FICO Scores Above 500",
+                        "date_created": "2015-09-23T21:29:19.895Z",
+                        "last_updated": "2015-09-23T21:29:19.895Z"
+                    },
+                    {
+                        "id": 4,
+                        "name": "Current Interest Rate Above 6%",
+                        "date_created": "2015-10-18T11:24:04.035Z",
+                        "last_updated": "2015-10-30T21:38:41.035Z"
+                    }
+                ]
             }
 
         :param request: Request
@@ -60,7 +58,7 @@ class RiskProfileAPI(View):
 
         Example Request:
             {
-                "risk_profile": {"name": Zipcode's in NJ}
+                "name": Zipcode's in NJ
             }
 
         :param request: Request
