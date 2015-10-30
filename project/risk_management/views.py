@@ -202,6 +202,47 @@ class RiskFactorAPI(View):
             return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
 
 
+class RiskConditionalAPI(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super(RiskConditionalAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved risk conditionals related to a given risk factor.
+
+        Json in the Request must include:
+        -risk_factor_id
+
+        Example Request:
+            {
+                "risk_conditional_search_terms": {"risk_factor_id": 3}
+            }
+
+        Example Result:
+            {
+                "risk_conditional_list": {
+                    "risk_conditional": [
+                        {
+                            "risk_factor_id": 10,
+                            "risk_conditional_id": 4,
+                            "conditional": ">",
+                            "value": 500
+                        },
+                        {
+                            "risk_factor_id": 10,
+                            "risk_conditional_id": 5,
+                            "conditional": "<",
+                            "value": 700
+                        }
+                    ]
+                }
+            }
+
+        :param request: Request
+        return: JsonResponse list of assumption profiles on success, status and message if not.
+        """
+        pass  # TODO Finish this get method
+
+
 class AssumptionProfileAPI(View):
     def dispatch(self, request, *args, **kwargs):
         return super(AssumptionProfileAPI, self).dispatch(request, *args, **kwargs)
