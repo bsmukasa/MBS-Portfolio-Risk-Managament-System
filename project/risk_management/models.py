@@ -42,9 +42,20 @@ class RiskFactor(models.Model):
         (LTV, 'Current LTV')  # TODO Figure out acronym
     )
 
+    CDR = 'cdr'
+    CPR = 'cpr'
+    RECOV = 'recovery'
+    LAG = 'lag'
+    CHANGING_ASSUMPTION_CHOICES = (
+        ('CDR', 'Constant Default Rate'),
+        ('CPR', 'Constant Prepayment Rate'),
+        ('RECOV', 'Recovery'),
+        ('LAG', 'Lag')
+    )
+
     risk_profile = models.ForeignKey(RiskProfile)
     attribute = models.CharField(max_length=64, choices=RISK_FACTOR_ATTRIBUTE_CHOICES)
-    changing_assumption = models.CharField(max_length=64)
+    changing_assumption = models.CharField(max_length=64, choices=CHANGING_ASSUMPTION_CHOICES)
     percentage_change = models.DecimalField(decimal_places=4, max_digits=20)
 
 
