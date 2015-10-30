@@ -127,22 +127,17 @@ class RiskFactorAPI(View):
         :return: JsonResponse list of risk factors on success, status and message if not.
         """
         filter_dict = request.GET.dict()
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
 
-        if 'risk_profile_id' in body.keys():
-            risk_profile_id = body['risk_profile_id']
-            risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
+        risk_profile_id = filter_dict['risk_profile_id']
+        risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
 
-            if risk_profile.exists():
-                filter_dict['risk_profile'] = risk_profile
+        if risk_profile.exists():
+            filter_dict['risk_profile'] = risk_profile
 
-                risk_profile_risk_factors = self.model.objects.filter(**filter_dict).values()
-                return JsonResponse(dict(risk_factors=list(risk_profile_risk_factors)))
-            else:
-                return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
+            risk_profile_risk_factors = self.model.objects.filter(**filter_dict).values()
+            return JsonResponse(dict(risk_factors=list(risk_profile_risk_factors)))
         else:
-            return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile ID must be provided.'})
+            return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
 
     def post(self, request):
         """ Creates a new risk factor and related conditionals and saves it to the database.
