@@ -205,6 +205,7 @@ class RiskFactorAPI(View):
 class RiskConditionalAPI(View):
     model = RiskConditional
 
+    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(RiskConditionalAPI, self).dispatch(request, *args, **kwargs)
 
@@ -269,6 +270,7 @@ class RiskConditionalAPI(View):
 class AssumptionProfileAPI(View):
     model = AssumptionProfile
 
+    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(AssumptionProfileAPI, self).dispatch(request, *args, **kwargs)
 
@@ -277,38 +279,36 @@ class AssumptionProfileAPI(View):
 
         Example Result:
             {
-                "assumption_profile_list": {
-                    "assumption_profile": [
-                        {
-                            "assumption_profile_id": 2,
-                            "name": "US Economy Growing and 3%",
-                            "date_created": "2015-6-23",
-                            "last_updated": "2015-10-18",
-                            "gdp_growth": 3.2,
-                            "unemployment_rate": 7.2,
-                            "national_home_price_index": 8.7,
-                            "high_yield_spread": 6.7,
-                            "constant_default_rate": 5.3,
-                            "constant_prepayment_rate": 12.2,
-                            "recovery": 80,
-                            "lag": 24
-                        },
-                        {
-                            "assumption_profile_id": 8,
-                            "name": "Nevada Housing Collapse",
-                            "date_created": "2015-09-02",
-                            "last_updated": "2015-09-02",
-                            "gdp_growth": 1.3,
-                            "unemployment_rate": 8.6,
-                            "national_home_price_index": -2,
-                            "high_yield_spread": 3.8,
-                            "constant_default_rate": 10.8,
-                            "constant_prepayment_rate": 6.2,
-                            "recovery": 35,
-                            "lag": 72
-                        }
-                    ]
-                }
+                "assumption_profiles": [
+                    {
+                        "national_home_price_index_growth": "3.7000",
+                        "high_yield_spread": "5.2000",
+                        "gdp_growth": 3,
+                        "constant_default_rate": "8.0000",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "name": "3 Month Timber Shortage",
+                        "constant_prepayment_rate": "21.4444",
+                        "lag": "128.0000",
+                        "last_updated": "2015-10-30T21:06:42.631Z",
+                        "unemployment_rate": "8.5000",
+                        "recovery": "59.2500",
+                        "id": 1
+                    },
+                    {
+                        "national_home_price_index_growth": "4.8000",
+                        "high_yield_spread": "8.3000",
+                        "gdp_growth": 4,
+                        "constant_default_rate": "10.9800",
+                        "date_created": "2015-10-30T21:16:06.398Z",
+                        "name": "GDP Growing at 3%",
+                        "constant_prepayment_rate": "17.2500",
+                        "lag": "107.0000",
+                        "last_updated": "2015-10-30T21:16:06.398Z",
+                        "unemployment_rate": "8.5000",
+                        "recovery": "-89.2300",
+                        "id": 2
+                    }
+                ]
             }
 
         :param request: Request
@@ -334,17 +334,15 @@ class AssumptionProfileAPI(View):
 
         Example Request:
             {
-                "economic_assumptions": {
-                    "name": "U.S. Economy Growing 3%",
-                    "gdp_growth": 3.2,
-                    "unemployment_rate": 8.5,
-                    "national_home_price_index_growth": 3.7,
-                    "high_yield_spread": 5.2,
-                    "constant_default_rate": -100,
-                    "constant_prepayment_rate": -100,
-                    "recovery": -100,
-                    "lag": 128
-                }
+                "name": "U.S. Economy Growing 3%",
+                "gdp_growth": 3.2,
+                "unemployment_rate": 8.5,
+                "national_home_price_index_growth": 3.7,
+                "high_yield_spread": 5.2,
+                "constant_default_rate": -100,
+                "constant_prepayment_rate": -100,
+                "recovery": -100,
+                "lag": 128
             }
 
         Default Assumptions, except for lag, may be sent as -100 to be calculated by the system or manually entered.
@@ -371,7 +369,7 @@ class AssumptionProfileAPI(View):
             name=name,
             gdp_growth=gdp_growth,
             unemployment_rate=unemployment_rate,
-            national_home_price_index=national_home_price_index,
+            national_home_price_index_growth=national_home_price_index,
             high_yield_spread=high_yield_spread
         )
 
