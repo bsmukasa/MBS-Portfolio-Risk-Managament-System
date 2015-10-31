@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.views.generic import View
@@ -55,23 +55,21 @@ class PortfolioAPI(View):
         user_portfolios = self.model.objects.filter(**filter_dict).values()
 
 
-        #Test Values and Return
+        #TO DELETE >> Test Values and Return
         portfolios = [
              {"name": "Wonder Years", 
                 "total_loan_balance": 1000000, 
                 "total_loan_count":200, 
-                "avg_loan_balance": 30000, 
-                "weighted_avg_coupon": 0.089, 
-                "weighted_avg_life_to_maturity": 255},
+                "average_loan_balance": 30000, 
+                "weighted_average_coupon": 0.089, 
+                "weighted_average_life_to_maturity": 255},
             {"name": "The OC", 
                 "total_loan_balance": 50000000, 
                 "total_loan_count":1000, 
-                "avg_loan_balance": 22000, 
-                "weighted_avg_coupon": 0.076, 
-                "weighted_avg_life_to_maturity": 321},              
+                "average_loan_balance": 22000, 
+                "weighted_average_coupon": 0.076, 
+                "weighted_average_life_to_maturity": 321},              
             ]
-
-
         return JsonResponse({'portfolios': portfolios})
 
 
@@ -88,26 +86,29 @@ class PortfolioAPI(View):
         # if user.exists():
 
         # Start Tab
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        name = body['name']
+        if request.method == 'POST':
+            form = FileForm(request.POST, request.FILES)
+            if form.is_valid():
+                form_dict = request.POST.dict()
+                name = form_dict['name']
 
-        new_portfolio = self.model(name=name)
-        # new_portfolio.user = user
+                new_portfolio = self.model(name=name)
+                # new_portfolio.user = user
 
-        # TODO Add loans to portfolio from csv file.
-        new_portfolio.loan_file = request.FILES['loan_file']
+                # TODO Add loans to portfolio from csv file.
+                new_portfolio.loan_file = request.FILES['loan_file']
 
-        # TODO Calculate portfolio numbers from loaded loans.
-        new_portfolio.total_loan_balance = 0
-        new_portfolio.total_loan_count = 0
-        new_portfolio.average_loan_balance = 0
-        new_portfolio.weighted_average_coupon = 0
-        new_portfolio.weighted_average_life_to_maturity = 0
-        new_portfolio.save()
-        # End Tab
 
-        return JsonResponse({'status': 'OK', 'message': 'Creation Completed!!'})
+                # TODO Calculate portfolio numbers from loaded loans.
+                new_portfolio.total_loan_balance = 0
+                new_portfolio.total_loan_count = 0
+                new_portfolio.average_loan_balance = 0
+                new_portfolio.weighted_average_coupon = 0
+                new_portfolio.weighted_average_life_to_maturity = 0
+                new_portfolio.save()
+                # End Tab
+
+                return redirect("/portfolio/dashboard")
 
 
 class LoanAPI(View):
@@ -146,3 +147,6 @@ class LoanAPI(View):
 #             filter_dict = request.GET.dict()
 #             filter_dict['portfolio'] = portfolio
 #             affected_loans = self.model.objects.filter(**filter_dict).values()
+
+
+

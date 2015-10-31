@@ -42,13 +42,24 @@ class RiskFactor(models.Model):
         (LTV, 'Current LTV')  # TODO Figure out acronym
     )
 
+    CDR = 'cdr'
+    CPR = 'cpr'
+    RECOV = 'recovery'
+    LAG = 'lag'
+    CHANGING_ASSUMPTION_CHOICES = (
+        ('CDR', 'Constant Default Rate'),
+        ('CPR', 'Constant Prepayment Rate'),
+        ('RECOV', 'Recovery'),
+        ('LAG', 'Lag')
+    )
+
     risk_profile = models.ForeignKey(RiskProfile)
     attribute = models.CharField(max_length=64, choices=RISK_FACTOR_ATTRIBUTE_CHOICES)
-    changing_assumption = models.CharField(max_length=64)
+    changing_assumption = models.CharField(max_length=64, choices=CHANGING_ASSUMPTION_CHOICES)
     percentage_change = models.DecimalField(decimal_places=4, max_digits=20)
 
 
-class RiskConditionals(models.Model):
+class RiskConditional(models.Model):
     GREATER = '>'
     LESSER = '<'
     GREATER_EQ = '>='
@@ -67,12 +78,42 @@ class RiskConditionals(models.Model):
 
 
 class AssumptionProfile(models.Model):
+    """
+
+    Economic Assumptions and their typical ranges are:
+        - gdp_growth                => -6% to +6%
+        - unemployment_rate         =>  5% to 15%
+        - national_home_price_index => -20% to +20%
+        - high_yeild_spread         =>  2% to 20%
+
+    Default Assumptions and their typical ranges are:
+        - constant_default_rate     =>  0.5% to 25%
+        - constant_prepayment_rate  =>  5% to 25%
+        - recovery                  =>  0% to 100%
+        - lag                       =>
+
+    Economic Assumptions are used to calculate Default Assumptions. All Economic Assumptions
+    are given equal weight and impact the Default Assumptions in the following ways:
+            - Constant Default Rate (CDR):
+                - GDP% , -6% = 25%, +6% = 0.5% CDR
+                - Unemployment: 5% = 0.5% CDR, 15% = 25%
+            - Constant Prepayment Rate (CPR):
+                - High Yield Spread affects CPR: 2% spread = 25% prepayment , 20% = 0 prepayment.
+                (At 20% it means our interest rates are insanely high) or maybe instead of 0, set the lower bound to  5%
+            - Recoveries:
+                - HPI (home price index) affects the recoveries. -20% = 0 recovery, 20% = 100% recovery
+    """
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    gdp = models.IntegerField()
+
+    # Economic Assumptions
+    gdp_growth = models.IntegerField()
     unemployment_rate = models.DecimalField(decimal_places=4, max_digits=10)
-    national_home_price_index = models.DecimalField(decimal_places=4, max_digits=10)
+    national_home_price_index_growth = models.DecimalField(decimal_places=4, max_digits=10)
+    high_yield_spread = models.DecimalField(decimal_places=4, max_digits=10)
+
+    # Default Assumptions
     constant_default_rate = models.DecimalField(decimal_places=4, max_digits=10)
     constant_prepayment_rate = models.DecimalField(decimal_places=4, max_digits=10)
     recovery = models.DecimalField(decimal_places=4, max_digits=10)
