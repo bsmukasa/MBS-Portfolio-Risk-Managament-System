@@ -73,6 +73,8 @@ def create_risk_factors():
                 create_fico_risk_factor(profile)
             elif count < 18:
                 create_remaining_term_factor(profile, count)
+            else:
+                create_current_interest_rate_factor(profile, count)
         count += 1
 
 
@@ -139,6 +141,30 @@ def create_remaining_term_factor(risk_profile, count):
         risk_conditional.value = 15
     elif count == 17:
         risk_conditional.value = 20
+
+    risk_conditional.save()
+
+
+def create_current_interest_rate_factor(risk_profile, count):
+    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
+    risk_factor = RiskFactor(
+        risk_profile=risk_profile,
+        attribute='current_interest_rate',
+        changing_assumption=choice(assumptions_list),
+        percentage_change=round(uniform(-10, 10), 4)
+    )
+    risk_factor.save()
+
+    risk_conditional = RiskConditional()
+    risk_conditional.risk_factor = risk_factor
+    risk_conditional.conditional = '>'
+
+    if count == 18:
+        risk_conditional.value = 2
+    elif count == 19:
+        risk_conditional.value = 5
+    elif count == 20:
+        risk_conditional.value = 8
 
     risk_conditional.save()
 
