@@ -3,6 +3,7 @@ $(document).ready(function(){
 	//Standard on page load, tab active is portfolios
 	tabLoaderFunctions.portfolioTabLoader();
 
+
 	
 	//Click on Portfolio TAB
 	$('#dashboard-tabs a[href="#portfolios"]').click(function (event) {
@@ -36,6 +37,35 @@ $(document).ready(function(){
 		event.preventDefault()
 		$(this).tab('show')
 	})	
+
+
+	//RISK PROFILE TAB JS
+
+	//Risk Profiles table
+	//View risk factors by profiles selected
+	$('#main-content').on('click', '#view-risk', function() {
+		var selected_ids = helperFunctions.getTableSelections('#user-risk-profiles');
+		var table_data = [];
+
+		selected_ids.forEach(function (id, index) {
+			$.get( "/risk-management/risk_factors", {'risk_profile_id': id}, function(data) {
+				var risk_factor_list = data.risk_factors;
+				for (var idx in risk_factor_list) {
+					table_data.push(risk_factor_list[idx]);
+				}
+				$("#user-risk-details").bootstrapTable('refresh', {
+					data: [{"attribute": "1", "changing_assumption": "1", "percentage_change": "1"}]
+				})
+				helperFunctions.updateTableData("#user-risk-details", table_data);
+			})
+		})
+		
+	})
+
+		
+
+
+	
 
 
 	//Upload CSV POST >> send JSON with name
@@ -78,6 +108,22 @@ var helperFunctions = {
 		informationToLoad = Mustache.render(template, data);
 		$(loader_selector).html(informationToLoad);
 	}, 
+
+	getTableSelections: function(table_selector) {
+		var data = $(table_selector).bootstrapTable('getSelections');
+		var selected_ids = $.map(data, function(item) {
+			return item.id;
+		})
+		return selected_ids;
+	},
+
+	displayTableData: function(table_selector, table_data) {
+		$(table_selector).bootstrapTable({ data: table_data })
+	},
+
+	updateTableData: function(table_selector, table_data) {
+		$(table_selector).bootstrapTable( 'load', { data: table_data })
+	}
 }
 
 
@@ -110,18 +156,14 @@ var tabLoaderFunctions = {
 		$.get( "/risk-management/get_risk_profiles", function( return_data ) {
 			$(function () {
 				if (return_data.risk_profiles.length > 0) {
-		    		$('#user-risk-profiles').bootstrapTable({
-	    				data: return_data.risk_profiles
-					})
+					helperFunctions.displayTableData('#user-risk-profiles', return_data.risk_profiles)
 				}
 				else {
-					$('#user-risk-profiles').bootstrapTable({
-						data: [{"name": ""}]
-		    		})
+					helperFunctions.displayTableData('#user-risk-profiles', [{"name": ""}])
 		    	}
-	    		$('#user-risk-details').bootstrapTable({
-	    			data: [{"attribute": "", "changing_assumption": "", "percentage_change": ""}]
-	    		})
+
+		    	helperFunctions.displayTableData('#user-risk-details', 
+		    		[{"attribute": "", "changing_assumption": "", "percentage_change": ""}])
 	    	});
 		});
 	}
@@ -154,3 +196,8 @@ $.fn.serializeObject = function()
     });
     return o;
 };
+
+
+
+
+

@@ -1,5 +1,5 @@
 
-<script id="riskProfile-template" type="x-tmpl-mustache">	
+<script id="assumptions-template" type="x-tmpl-mustache">	
 	<div class="row add_search">
         <div class="col-md-3" id="row-sub-header">
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
@@ -12,17 +12,23 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="myModalLabel">Crete new risk profile</h4>
+						<h4 class="modal-title" id="myModalLabel">Crete new economic assumption</h4>
 					</div>
 					<div class="modal-body">
+						
+
+
 						<form role="form">
 							<div class="form-group">
 								<label for="name">Name:</label>
 								<input type="text" class="form-control" id="risk-profile-name" placeholder="Enter risk profile name">
     						</div>
     						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        				<button type="submit" class="btn btn-primary">Continue</button>
+	        				<button type="submit" class="btn btn-primary">Save</button>
     					</form>
+    				
+
+
     				</div>
     			</div>
   			</div>	  	
@@ -30,7 +36,7 @@
         
         <div class="col-md-3">
         	<div class="input-group">
-        		<input type="text" class="form-control" placeholder="Search risk profile...">
+        		<input type="text" class="form-control" placeholder="Search economic profile...">
         		<div class="input-group-btn">
         			<button class="btn btn-link" type="submit"><i class="glyphicon glyphicon-search"></i></button>
         		</div>
@@ -39,16 +45,22 @@
         <div class="col-md-6"></div>
 	</div>
 
-	<div id="risk-profiles-table-load"></div>
+	<div id="assumptions-table-load"></div>
 
 </script>
 
 
-<script id="risk-tables-template" type="x-tmpl-mustache">
+<script id="assumptions-table-template" type="x-tmpl-mustache">
+
+
+
+
+
+
 
 	<div class="row ">				
 		<div class="col-sm-4">
-			<h4 class="table-heading-risks">Saved Risk Profiles</h4>
+			<h4 class="table-heading-risks">Saved Economic Assumptions</h4>
 			<div id="toolbar">
 				<button id="view-risk" class="btn btn-danger" type="button">
 					<i class="glyphicon glyphicon-eye-open"></i> View
@@ -85,4 +97,3 @@
 	</div>
 
 </script>
-
