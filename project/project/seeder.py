@@ -12,6 +12,10 @@ fake = Factory.create()
 
 
 def create_assumption_profiles():
+    """ Create assumption profiles and save them to the database.
+
+
+    """
     assumption_profile_names = [
         'GDP Growing at 3%', 'GDP Shrinking at 5%', 'Alien Invasion',
         'Minimum Wage Rate Hike', 'Donald Trump Presidency',
@@ -43,6 +47,10 @@ def create_assumption_profiles():
 
 
 def create_risk_profiles():
+    """ Create risk profiles and save them to the database.
+
+
+    """
     risk_profile_names = [
         'East Coast States', 'Midwest States', 'West Coast States', 'Popular States', 'Unpopular States',
         'Declining States', 'Emerging States', 'Growth States', 'Rural States', 'Urban States',
@@ -59,6 +67,10 @@ def create_risk_profiles():
 
 
 def create_risk_factors():
+    """ Create random risk factors for all the risk profiles in the database.
+
+
+    """
     risk_profiles = RiskProfile.objects.all()
 
     count = 0
@@ -79,6 +91,11 @@ def create_risk_factors():
 
 
 def create_state_risk_factor(risk_profile):
+    """ Create a state risk factor with a conditional.
+
+    :param risk_profile: Risk profile risk factor is being added to.
+    :return:
+    """
     assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
     risk_factor = RiskFactor(
         risk_profile=risk_profile,
@@ -93,10 +110,12 @@ def create_state_risk_factor(risk_profile):
     risk_conditional.value = fake.state_abbr()
     risk_conditional.save()
 
-    return risk_factor
-
 
 def create_fico_risk_factor(risk_profile):
+    """ Create a FICO risk factor with two conditionals.
+
+    :param risk_profile: Risk profile risk factor is being added to.
+    """
     assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
     risk_factor = RiskFactor(
         risk_profile=risk_profile,
@@ -118,6 +137,13 @@ def create_fico_risk_factor(risk_profile):
 
 
 def create_remaining_term_factor(risk_profile, count):
+    """ Create a remaining risk factor with conditionals depending on the risk profile.
+
+    The count, risk profile identifier, is used to determine the conditional value.
+
+    :param risk_profile: Risk profile risk factor is being added to.
+    :param count: The count of risk profiles used to identify the risk profile.
+    """
     assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
     risk_factor = RiskFactor(
         risk_profile=risk_profile,
@@ -146,6 +172,13 @@ def create_remaining_term_factor(risk_profile, count):
 
 
 def create_current_interest_rate_factor(risk_profile, count):
+    """ Create a current interest rate risk factor with conditionals depending on the risk profile.
+
+    The count, risk profile identifier, is used to determine the conditional value.
+
+    :param risk_profile: Risk profile risk factor is being added to.
+    :param count: The count of risk profiles used to identify the risk profile.
+    """
     assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
     risk_factor = RiskFactor(
         risk_profile=risk_profile,
