@@ -108,7 +108,7 @@ class AssumptionProfile(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     # Economic Assumptions
-    gdp_growth = models.IntegerField()
+    gdp_growth = models.DecimalField(decimal_places=4, max_digits=10)
     unemployment_rate = models.DecimalField(decimal_places=4, max_digits=10)
     national_home_price_index_growth = models.DecimalField(decimal_places=4, max_digits=10)
     high_yield_spread = models.DecimalField(decimal_places=4, max_digits=10)
