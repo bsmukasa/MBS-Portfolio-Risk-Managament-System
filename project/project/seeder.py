@@ -67,7 +67,28 @@ def create_risk_factors():
         risk_factor_number = randrange(3, 10)
 
         for i in range(risk_factor_number):
-            pass
+            if count < 10:
+                create_state_risk_factor(profile)
+
+        count += 1
+
+
+def create_state_risk_factor(risk_profile):
+    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
+    risk_factor = RiskFactor(
+        risk_profile=risk_profile,
+        attribute='state',
+        changing_assumption=choice(assumptions_list),
+        percentage_change=round(uniform(-10, 10), 4)
+    )
+    risk_factor.save()
+    risk_conditional = RiskConditional()
+    risk_conditional.risk_factor = risk_factor
+    risk_conditional.conditional = '=='
+    risk_conditional.value = fake.state_abbr()
+    risk_conditional.save()
+
+    return risk_factor
 
 
 if __name__ == '__main__':
