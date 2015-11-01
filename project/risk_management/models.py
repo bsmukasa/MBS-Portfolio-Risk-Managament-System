@@ -121,6 +121,14 @@ class AssumptionProfile(models.Model):
 
 
 class ScoreCard(models.Model):
+    ASSUMPTION_CHOICES = (
+        ('CDR', 'Constant Default Rate'),
+        ('CPR', 'Constant Prepayment Rate'),
+        ('RECOV', 'Recovery'),
+        ('LAG', 'Lag')
+    )
+
+    assumption_type = models.CharField(max_length=64, choices=ASSUMPTION_CHOICES)
     total_score = models.DecimalField(decimal_places=4, max_digits=10)
     updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
 
@@ -129,10 +137,6 @@ class ScoreCardProfile(models.Model):
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    cdr_score_card = models.ForeignKey(ScoreCard, related_name='+')
-    cdp_score_card = models.ForeignKey(ScoreCard, related_name='+')
-    recovery_score_card = models.ForeignKey(ScoreCard, related_name='+')
-    lag_score_card = models.ForeignKey(ScoreCard, related_name='+')
 
 
 class ScoreCardAttribute(models.Model):
