@@ -146,6 +146,9 @@ def create_remaining_term_factor(risk_profile, count):
 if __name__ == '__main__':
     print("Starting seed script...")
     create_assumption_profiles()
+    print("Assumptions created...")
     create_risk_profiles()
+    print("Risk profiles created...")
     create_risk_factors()
+    print("Risk factors created...")
     print("Seeding complete...")
