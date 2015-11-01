@@ -47,8 +47,8 @@ def create_risk_profiles():
         'East Coast States', 'Midwest States', 'West Coast States', 'Popular States', 'Unpopular States',
         'Declining States', 'Emerging States', 'Growth States', 'Rural States', 'Urban States',
         'Pre-qualified FICO', 'Sub-prime FICO', 'Mid-range FICO', 'Less than 5 Years Remaining Term',
-        'Less than 8 Years Remaining Term', 'Less than 10 Years Remaining Term',
-        'Less than 15 Years Remaining Term', 'Less than 20 Years Remaining Term',
+        'Prime Remaining Term', 'Less than 10 Years Remaining Term',
+        'Less Optimal Remaining Term', 'Less than 20 Years Remaining Term',
         'Current Interest Rate Above 2%', 'Current Interest Rate Above 5%', 'Current Interest Rate Above 8%'
     ]
 
@@ -71,7 +71,8 @@ def create_risk_factors():
                 create_state_risk_factor(profile)
             elif count < 13:
                 create_fico_risk_factor(profile)
-
+            elif count < 18:
+                create_remaining_term_factor(profile, count)
         count += 1
 
 
@@ -112,6 +113,34 @@ def create_fico_risk_factor(risk_profile):
     risk_conditional2.conditional = '<'
     risk_conditional2.value = randrange(500, 850)
     risk_conditional2.save()
+
+
+def create_remaining_term_factor(risk_profile, count):
+    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
+    risk_factor = RiskFactor(
+        risk_profile=risk_profile,
+        attribute='remaining_term',
+        changing_assumption=choice(assumptions_list),
+        percentage_change=round(uniform(-10, 10), 4)
+    )
+    risk_factor.save()
+
+    risk_conditional = RiskConditional()
+    risk_conditional.risk_factor = risk_factor
+    risk_conditional.conditional = '<'
+
+    if count == 13:
+        risk_conditional.value = 5
+    elif count == 14:
+        risk_conditional.value = 8
+    elif count == 15:
+        risk_conditional.value = 10
+    elif count == 16:
+        risk_conditional.value = 15
+    elif count == 17:
+        risk_conditional.value = 20
+
+    risk_conditional.save()
 
 
 if __name__ == '__main__':
