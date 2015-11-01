@@ -1,12 +1,12 @@
 import os
 import django
-from random import uniform
+from random import uniform, choice, randrange
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
 from faker import Factory
-from risk_management.models import AssumptionProfile, RiskProfile
+from risk_management.models import AssumptionProfile, RiskProfile, RiskFactor, RiskConditional
 
 fake = Factory.create()
 
@@ -44,9 +44,9 @@ def create_assumption_profiles():
 
 def create_risk_profiles():
     risk_profile_names = [
-        'Zipcodes in NY', 'Zipcodes in NJ', 'Zipcodes in CT', 'Zipcodes in TX', 'Zipcodes in NV',
-        'Zipcodes in IL', 'Zipcodes in FL', 'Zipcodes in AB', 'Zipcodes in OK', 'Zipcodes in CA',
-        'Prequalified FICO', 'Subprime FICO', 'Midrange FICO', 'Less than 5 Years Remaining Term',
+        'East Coast States', 'Midwest States', 'West Coast States', 'Popular States', 'Unpopular States',
+        'Declining States', 'Emerging States', 'Growth States', 'Rural States', 'Urban States',
+        'Pre-qualified FICO', 'Sub-prime FICO', 'Mid-range FICO', 'Less than 5 Years Remaining Term',
         'Less than 8 Years Remaining Term', 'Less than 10 Years Remaining Term',
         'Less than 15 Years Remaining Term', 'Less than 20 Years Remaining Term',
         'Current Interest Rate Above 2%', 'Current Interest Rate Above 5%', 'Current Interest Rate Above 8%'
@@ -58,8 +58,21 @@ def create_risk_profiles():
         risk_profile.save()
 
 
+def create_risk_factors():
+    risk_profiles = RiskProfile.objects.all()
+
+    count = 0
+
+    for profile in risk_profiles:
+        risk_factor_number = randrange(3, 10)
+
+        for i in range(risk_factor_number):
+            pass
+
+
 if __name__ == '__main__':
     print("Starting seed script...")
-    # create_assumption_profiles()
-    # create_risk_profiles()
+    create_assumption_profiles()
+    create_risk_profiles()
+    create_risk_factors()
     print("Seeding complete...")
