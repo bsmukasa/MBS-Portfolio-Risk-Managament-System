@@ -1,0 +1,88 @@
+
+<script id="riskProfile-template" type="x-tmpl-mustache">	
+	<div class="row add_search">
+        <div class="col-md-3" id="row-sub-header">
+			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
+				Create New
+			</button>
+		</div> 
+
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Crete new risk profile</h4>
+					</div>
+					<div class="modal-body">
+						<form role="form">
+							<div class="form-group">
+								<label for="name">Name:</label>
+								<input type="text" class="form-control" id="risk-profile-name" placeholder="Enter risk profile name">
+    						</div>
+    						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        				<button type="submit" class="btn btn-primary">Continue</button>
+    					</form>
+    				</div>
+    			</div>
+  			</div>	  	
+        </div>
+        
+        <div class="col-md-3">
+        	<div class="input-group">
+        		<input type="text" class="form-control" placeholder="Search risk profile...">
+        		<div class="input-group-btn">
+        			<button class="btn btn-link" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+        		</div>
+        	</div>
+        </div>
+        <div class="col-md-6"></div>
+	</div>
+
+	<div id="risk-profiles-table-load"></div>
+
+</script>
+
+
+<script id="risk-tables-template" type="x-tmpl-mustache">
+
+	<div class="row ">				
+		<div class="col-sm-4">
+			<h4 class="table-heading-risks">Saved Risk Profiles</h4>
+			<div id="toolbar">
+				<button id="view-risk" class="btn btn-danger" type="button">
+					<i class="glyphicon glyphicon-eye-open"></i> View
+        		</button>
+				<button id="edit-risk" class="btn btn-danger">
+					<i class="glyphicon glyphicon-pencil"></i> Edit
+        		</button>
+        		<button id="remove-risk" class="btn btn-danger">
+					<i class="glyphicon glyphicon-trash"></i> Delete
+        		</button>
+    </div>
+			<table id="user-risk-profiles" data-click-to-select="true" data-unique-id="id">
+			    <thead>
+			    	<tr>
+			    		<th data-field="state" data-checkbox="true"></th>
+			    		<th data-field="name">Name</th>
+			    	</tr>
+			    </thead>
+			</table>
+		</div>
+		
+		<div class="col-sm-8">
+			<h3 class="table-heading-risks">Profile Details</h3>
+			<table id="user-risk-details" data-unique-id="id">
+			    <thead>
+			    	<tr>
+			    		<th data-field="attribute">Factor</th>
+			    		<th data-field="changing_assumption">Assumption</th>
+			    		<th data-field="percentage_change">Percentage Change</th>
+			    	</tr>
+			    </thead>
+			</table>
+		</div>
+	</div>
+
+</script>
+
