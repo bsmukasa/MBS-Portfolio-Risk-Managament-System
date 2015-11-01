@@ -7,7 +7,7 @@ class Portfolio(models.Model):
     # user = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
-    # loan_file = models.FileField(upload_to='documents')
+    date_last_update = models.DateField(auto_now=True)
     total_loan_balance = models.IntegerField()
     total_loan_count = models.IntegerField()
     average_loan_balance = models.DecimalField(decimal_places=2, max_digits=20)

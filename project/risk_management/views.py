@@ -48,7 +48,65 @@ class RiskProfileAPI(View):
         """
         filter_dict = request.GET.dict()
         risk_profiles = self.model.objects.filter(**filter_dict).values()
+        
+        #Commented out for tests
         return JsonResponse(dict(risk_profiles=list(risk_profiles)))
+
+        #FOR TESTS >> DELETE later!
+		teste = [
+			{ 
+				"id": 0,
+				"name": "Zipcode in NY"
+			},
+			{ 
+				"id": 1,
+				"name": "FICO score above 700 in FL"
+			},
+						{ 
+				"id": 2,
+				"name": "Lien position 1"
+			},
+						{ 
+				"id": 3,
+				"name": "Zipcode in OH"
+			},
+						{ 
+				"id": 4,
+				"name": "Mortgage type FICO less 500"
+			},
+						{ 
+				"id": 5,
+				"name": "Zipcode in CA"
+			},
+						{ 
+				"id": 6,
+				"name": "Lien position 1"
+			},
+						{ 
+				"id": 7,
+				"name": "Zipcode in WA"
+			},
+						{ 
+				"id": 8,
+				"name": "Zipcode in NJ"
+			},
+						{ 
+				"id": 9,
+				"name": "FICO score above 500 in AZ"
+			},
+						{ 
+				"id": 10,
+				"name": "Zipcode in OR"
+			},
+						{ 
+				"id": 11,
+				"name": "FICO score above 600 in OR"
+			},
+		]
+
+		return JsonResponse({'risk_profiles': teste})
+		#END TEST
+
 
     def post(self, request):
         """ Creates a new risk profile and saves it to the database.
@@ -117,13 +175,45 @@ class RiskFactorAPI(View):
         risk_profile_id = filter_dict['risk_profile_id']
         risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
 
-        if risk_profile.exists():
-            filter_dict['risk_profile'] = risk_profile
 
-            risk_profile_risk_factors = self.model.objects.filter(**filter_dict).values()
-            return JsonResponse(dict(risk_factors=list(risk_profile_risk_factors)))
-        else:
-            return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
+        #Commented out for tests
+        # if risk_profile.exists():
+        #     filter_dict['risk_profile'] = risk_profile
+
+        #     risk_profile_risk_factors = self.model.objects.filter(**filter_dict).values()
+        #     return JsonResponse(dict(risk_factors=list(risk_profile_risk_factors)))
+        # else:
+        #     return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
+
+
+
+        #TEST >> DELETE later
+		teste = [
+			{
+					"risk_profile_id": 5,
+					"risk_factor_id": 2,
+					"attribute": "property_type",
+					"changing_assumption": "cdr",
+					"percentage_change": -5
+				},
+				{
+					"risk_profile_id": 5,
+					"risk_factor_id": 10,
+					"attribute": "zipcode",
+					"changing_assumption": "recovery",
+					"percentage_change": -2
+				},
+				{
+					"risk_profile_id": 5,
+					"risk_factor_id": 12,
+					"attribute": "FICO",
+					"changing_assumption": "cpr",
+					"percentage_change": 4
+				}
+		]
+		return JsonResponse({"risk_factors": teste})
+
+
 
     def post(self, request):
         """ Creates a new risk factor and related conditionals and saves it to the database.
@@ -363,3 +453,4 @@ class AssumptionProfileAPI(View):
 
         new_assumption_profile.save()
         return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})
+

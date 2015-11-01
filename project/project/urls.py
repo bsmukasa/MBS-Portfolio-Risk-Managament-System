@@ -21,18 +21,14 @@ urlpatterns = [
         regex=r'^admin/',
         view=include(admin.site.urls)
     ),
-    url(
-        regex=r'^',
-        view=include('accounts.urls', namespace='accounts')
-    ),
 
     url(
         regex=r'^portfolio/',
-        view=include('portfolio.urls', namespace='portfolios')
+        view=include('portfolio.urls', namespace='portfolio')
     ),
 
     url(
-        regex=r'^accounts/',
+        regex=r'^',
         view=include('accounts.urls', namespace='accounts')
     ),
 

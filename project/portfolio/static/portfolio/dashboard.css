@@ -1,0 +1,86 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+	margin-left: 1%;
+	margin-right: 1%;
+	/* Margin bottom by footer height */
+	margin-bottom: 60px;
+}
+
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+  padding: 10px 10px 0;
+  max-width: auto;
+}
+
+body > .container > .upload_form {
+  width: 300px;
+}
+
+.nav-tabs {
+	font-weight: 600;
+}
+
+body > .container > .row {
+	margin-top: 0.5%;
+	margin-bottom: 2%;
+}
+
+.form-control {
+	border-radius: 1px;
+
+}
+
+#row-sub-header {
+	text-align: center;
+}
+
+.btn-default {
+	background-color: #3b5998;
+	border-color: #3b5998;
+	color: #fff;
+	font-weight: 300;
+}
+
+.panel {
+	margin-bottom: 0;
+}
+
+.panel-default > .panel-heading {
+	background-color: #8399ae;
+
+}
+
+.panel-title {
+	font-weight: 300;
+	color: #fff;
+}
+.panel_footer {
+	margin-top: 0.5%;
+	margin-bottom: 2%;
+	font-weight: 300;
+	font-size: 12px;
+}
+
+.col-head-table-panel {
+	width: 20%;
+	text-align: center;
+	background-color: #e6eaee;
+}
+
+.col-table-panel {
+	width: 20%;
+	text-align: center;
+	background-color: #e6eaee;
+	font-weight: 300;
+	border-bottom-color: rgba(0,0,0,0);
+}
+
+

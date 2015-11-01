@@ -1,0 +1,80 @@
+{% load bootstrap %}
+
+<script id="portfolio-template" type="x-tmpl-mustache">
+	<div class="row add_search">
+        <div class="col-md-3" id="row-sub-header">
+			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
+				Add new portfolio
+			</button>
+		</div> 
+
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Add new portfolio</h4>
+					</div>
+					<div class="modal-body">
+						<form action="{% url 'portfolio:get_portfolios_api' %}" method="POST" enctype="multipart/form-data" role="form" class="upload_form" id="save-upload-csv">
+							{% csrf_token %}
+							{{ form.non_field_errors }}
+							{{ form.loan_file.errors }}
+							{{ form.name|bootstrap }}
+							{{ form.loan_file|bootstrap }}
+	        				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        				<button type="submit" class="btn btn-primary">Save</button>
+	        				
+						</form>
+ 					</div>
+  					<div class="modal-footer">
+      				</div>
+    			</div>
+  			</div>	  	
+        </div>
+        
+        <div class="col-md-3">
+        	<div class="input-group">
+        		<input type="text" class="form-control" placeholder="Search portfolio...">
+        		<div class="input-group-btn">
+        			<button class="btn btn-link" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+        		</div>
+        	</div>
+        </div>
+        <div class="col-md-6"></div>
+	</div>
+
+	<div class="portfolio_panels" id="portfolio-load"></div>
+</script>
+
+
+<script id="portfolio-load-script" type="x-tmpl-mustache">
+	{% verbatim %}
+		<div class="panel panel-default" id="portfolio.id">
+			<div class="panel-heading">
+				<h3 class="panel-title" id={{ id }}><a href="#">{{ name }}</a></h3>
+				</div>
+				<table class="table">
+					<thead>
+						<th class="col-head-table-panel">Total Loan Count</th>
+						<th class="col-head-table-panel">Total Loan Balance</th>
+						<th class="col-head-table-panel">Average Loan Balance</th>
+						<th class="col-head-table-panel">WAC</th>
+						<th class="col-head-table-panel">WAL</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="col-table-panel"> {{ total_loan_count }}</td>
+							<td class="col-table-panel">$ {{ total_loan_balance }}</td>
+							<td class="col-table-panel">$ {{ average_loan_balance }}</td>
+							<td class="col-table-panel">{{ weighted_average_coupon }} %</td>
+							<td class="col-table-panel">{{ weighted_average_life_to_maturity }}</td>
+						</tr>
+						
+					</tbody>
+				</table>
+		</div>
+		<p class="panel_footer">Created at: {{ date_created }}
+		<br>Last update: {{ date_last_update }}</p>
+	{% endverbatim %}
+</script>

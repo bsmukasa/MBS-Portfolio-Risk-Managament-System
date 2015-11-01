@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic import View
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
@@ -20,15 +20,15 @@ class Login(View):
     def get(self, request):
         return render(request, self.template, {'form': self.form})
 
-    def post(self, request):
-        login_form = self.form(data=request.POST)
-        if login_form.is_valid():
-            login_form.clean()
-            login(request, login_form.user_cache)
-            return redirect("accounts:dashboard")
-
-        else:
-            return JsonResponse({"message": "FAIL"})
+	def post(self, request):
+		login_form = self.form(data=request.POST)			
+		if login_form.is_valid():
+			login_form.clean()
+			login(request, login_form.user_cache)
+			return redirect("portfolio:dashboard")
+		
+		else:
+			return JsonResponse({"message": "FAIL"})
 
 
 class Signup(View):
@@ -38,15 +38,20 @@ class Signup(View):
     def get(self, request):
         return render(request, self.template, {'form': self.form})
 
-    def post(self, request):
-        signup_form = self.form(data=request.POST)
-        signup_form.save()
-        return redirect("accounts:dashboard")
-
-
-class Dashboard(View):
-    pass
+	def post(self, request):
+		signup_form = self.form(data=request.POST)
+		signup_form.save()
+		return redirect("portfolio:dashboard")
 
 
 class Contact(View):
-    pass
+	pass
+
+
+class Logout(View):
+
+	def get(self, request):
+		logout(request)
+		return redirect("accounts:home")
+
+
