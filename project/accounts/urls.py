@@ -2,7 +2,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from accounts.views import Index, Login, Signup, Contact, Logout
 
-
 urlpatterns = patterns(
 	"",
 	url(r'^$', Index.as_view(), name="home"),
@@ -11,3 +10,4 @@ urlpatterns = patterns(
 	url(r'^contact/$', Contact.as_view(), name="contact"),
 	url(r'^logout/$', Logout.as_view(), name="logout"),
 	)
+

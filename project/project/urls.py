@@ -38,7 +38,7 @@ urlpatterns = [
     ),
 
     url(
-        regex=r'^risk-management/',
+        regex=r'^risk_management/',
         view=include('risk_management.urls', namespace='risk_management')
     ),
 ]

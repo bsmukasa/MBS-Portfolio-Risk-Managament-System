@@ -17,14 +17,34 @@ urlpatterns = patterns(
     ),
 
     url(
-        regex=r'^get_risk_profiles$',
+
+        regex=r'^create_risk_profile$',
         view=views.RiskProfileAPI.as_view(),
-        name='get_risk_profile_api'
+        name='create_risk_profile_api'
     ),
 
     url(
-        regex=r'^risk_factors$',
+        regex=r'^get_risk_profiles$',
+        view=views.RiskProfileAPI.as_view(),
+        name='get_risk_profiles_api'
+    ),
+
+    url(
+        regex=r'^add_risk_factor$',
         view=views.RiskFactorAPI.as_view(),
-        name='risk_factors_api'
+        name='add_risk_factor_api'
+    ),
+
+    url(
+        regex=r'^get_risk_factors$',
+        view=views.RiskFactorAPI.as_view(),
+        name='get_risk_factors_api'
+    ),
+
+    url(
+        regex=r'^get_risk_factor_conditionals$',
+        view=views.RiskConditionalAPI.as_view(),
+        name='get_risk_conditionals_api'
     ),
 )
+

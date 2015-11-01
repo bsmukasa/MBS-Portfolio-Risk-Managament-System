@@ -7,18 +7,18 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 class Index(View):
-	template = "accounts/index.html"
+    template = "accounts/index.html"
 
-	def get(self, request):
-		return render(request, self.template)
+    def get(self, request):
+        return render(request, self.template)
 
 
 class Login(View):
-	template = "accounts/login.html"
-	form = AuthenticationForm
+    template = "accounts/login.html"
+    form = AuthenticationForm
 
-	def get(self, request):
-		return render(request, self.template, {'form': self.form})
+    def get(self, request):
+        return render(request, self.template, {'form': self.form})
 
 	def post(self, request):
 		login_form = self.form(data=request.POST)			
@@ -32,11 +32,11 @@ class Login(View):
 
 
 class Signup(View):
-	template = "accounts/signup.html"
-	form = UserCreationForm
+    template = "accounts/signup.html"
+    form = UserCreationForm
 
-	def get(self, request):
-		return render(request, self.template, {'form': self.form})
+    def get(self, request):
+        return render(request, self.template, {'form': self.form})
 
 	def post(self, request):
 		signup_form = self.form(data=request.POST)
@@ -53,7 +53,5 @@ class Logout(View):
 	def get(self, request):
 		logout(request)
 		return redirect("accounts:home")
-
-
 
 
