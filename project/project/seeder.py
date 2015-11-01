@@ -69,6 +69,8 @@ def create_risk_factors():
         for i in range(risk_factor_number):
             if count < 10:
                 create_state_risk_factor(profile)
+            elif count < 13:
+                create_fico_risk_factor(profile)
 
         count += 1
 
@@ -89,6 +91,27 @@ def create_state_risk_factor(risk_profile):
     risk_conditional.save()
 
     return risk_factor
+
+
+def create_fico_risk_factor(risk_profile):
+    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
+    risk_factor = RiskFactor(
+        risk_profile=risk_profile,
+        attribute='FICO',
+        changing_assumption=choice(assumptions_list),
+        percentage_change=round(uniform(-10, 10), 4)
+    )
+    risk_factor.save()
+    risk_conditional1 = RiskConditional()
+    risk_conditional1.risk_factor = risk_factor
+    risk_conditional1.conditional = '>'
+    risk_conditional1.value = randrange(300, 450)
+    risk_conditional1.save()
+    risk_conditional2 = RiskConditional()
+    risk_conditional2.risk_factor = risk_factor
+    risk_conditional2.conditional = '<'
+    risk_conditional2.value = randrange(500, 850)
+    risk_conditional2.save()
 
 
 if __name__ == '__main__':
