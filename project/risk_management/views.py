@@ -615,3 +615,25 @@ class ScoreCardAPI(View):
             return JsonResponse(dict(score_cards=list(score_cards)))
         else:
             return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
+
+
+class ScoreCardAttributeAPI(View):
+    model = ScoreCardAttribute
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScoreCardAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        filter_dict = request.GET.dict()
+        score_card_id = filter_dict['score_card_id']
+        score_card = RiskFactor.objects.filter(pk=score_card_id)
+
+        if score_card.exists():
+            filter_dict['score_card'] = score_card
+
+            attributes = self.model.objects.filter(**filter_dict).values()
+
+            return JsonResponse(dict(attributes=list(attributes)))
+        else:
+            return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
