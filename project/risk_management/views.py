@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile
+from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, ScoreCardProfile
 
 
 # Create your views here.
@@ -473,3 +473,42 @@ class AssumptionProfileAPI(View):
 
         new_assumption_profile.save()
         return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})
+
+
+class ScoreCardProfileAPI(View):
+    model = ScoreCardProfile
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScoreCardProfile, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved score card profiles.
+
+        Example Result:
+            {
+                "score_card_profiles": [
+                    {
+                        "name": "Defaults",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "last_updated": "2015-10-30T21:06:42.631Z"
+                    },
+                    {
+                        "name": "Nintendo",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "last_updated": "2015-10-30T21:06:42.631Z"
+                    },
+                    {
+                        "name": "Sony",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "last_updated": "2015-10-30T21:06:42.631Z"
+                    }
+                ]
+            }
+
+        :param request: Request
+        return: JsonResponse list of assumption profiles on success, status and message if not.
+        """
+        filter_dict = request.GET.dict()
+        score_card_profiles = self.model.objects.filter(**filter_dict).values()
+        return JsonResponse(dict(score_card_profiles=list(score_card_profiles)))
