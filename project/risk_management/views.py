@@ -566,3 +566,52 @@ class ScoreCardProfileAPI(View):
 
         ScoreCardAttribute.objects.bulk_create(attributes)
         return JsonResponse({'status': 'OK', 'message': 'Score Card Profile Created!!'})
+
+
+class ScoreCardAPI(View):
+    model = ScoreCard
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScoreCardAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved score cards associated with a score card profile.
+
+        Example Result:
+            {
+                "score_cards": [
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "CDR"
+                    },
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "CPR"
+                    },
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "RECOV"
+                    },
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "LAG"
+                    }
+                ]
+            }
+
+        :param request: Request
+        return: JsonResponse list of score cards on success, status and message if not.
+        """
+        filter_dict = request.GET.dict()
+        score_card_profile_id = filter_dict['score_card_profile_id']
+        score_card_profile = RiskFactor.objects.filter(pk=score_card_profile_id)
+
+        if score_card_profile.exists():
+            filter_dict['score_card_profile'] = score_card_profile
+
+            score_cards = self.model.objects.filter(**filter_dict).values()
+
+            return JsonResponse(dict(score_cards=list(score_cards)))
+        else:
+            return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
