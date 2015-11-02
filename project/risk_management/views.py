@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, ScoreCardProfile
+from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, ScoreCardProfile, \
+    ScoreCard, ScoreCardAttribute
 
 
 # Create your views here.
@@ -480,7 +481,7 @@ class ScoreCardProfileAPI(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(ScoreCardProfile, self).dispatch(request, *args, **kwargs)
+        return super(ScoreCardProfileAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         """ Get all saved score card profiles.
@@ -512,3 +513,56 @@ class ScoreCardProfileAPI(View):
         filter_dict = request.GET.dict()
         score_card_profiles = self.model.objects.filter(**filter_dict).values()
         return JsonResponse(dict(score_card_profiles=list(score_card_profiles)))
+
+    def post(self, request):
+        """ Creates a new score card profile with default assumption score cards and saves it to the database.
+
+        Creates default score cards for CDR, CPR, Recovery and Lag as well as score card attributes.
+
+        Json in the Request must include:
+        - name
+
+        Example Request:
+            {
+                "name": "U.S. Economy Growing 3%"
+            }
+
+        :param request: Request.
+        :return: JsonResponse with status and message.
+        """
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        name = body['name']
+
+        score_card_profile = self.model(
+            name=name
+        )
+        score_card_profile.save()
+
+        card_list = []
+        for choice in ScoreCard.ASSUMPTION_CHOICES:
+            card = ScoreCard(
+                score_card_profile=score_card_profile,
+                assumption_type=choice[0]
+            )
+            card_list.append(card)
+
+        ScoreCard.objects.bulk_create(card_list)
+
+        card_list = ScoreCard.objects.filter(score_card_profile=score_card_profile)
+        attributes = []
+        for card in card_list:
+            for choice in RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES:
+                weight = 100 / len(card_list)
+                original_score = weight
+
+                attributes.append(ScoreCardAttribute(
+                    score_card=card,
+                    attribute=choice,
+                    weight=weight,
+                    original_index=1,
+                    original_score=original_score
+                ))
+
+        ScoreCardAttribute.objects.bulk_create(attributes)
+        return JsonResponse({'status': 'OK', 'message': 'Score Card Profile Created!!'})
