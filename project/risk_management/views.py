@@ -147,8 +147,7 @@ class RiskProfileAPI(View):
         :param request: Request
         :return: JsonResponse including a status and message.
         """
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = request.POST.dict()
         name = body['name']
 
         new_risk_profile = self.model(name=name)
@@ -262,8 +261,7 @@ class RiskFactorAPI(View):
         :return: JsonResponse with status and message.
         """
         # filter_dict = request.GET.dict()
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = request.POST.dict()
 
         if 'risk_profile_id' in body.keys():
             risk_profile_id = body['risk_profile_id']
@@ -431,8 +429,7 @@ class AssumptionProfileAPI(View):
         :param request: Request.
         :return: JsonResponse with status and message.
         """
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = request.POST.dict()
         name = body['name']
         gdp_growth = body['gdp_growth']
         unemployment_rate = body['unemployment_rate']
@@ -530,8 +527,7 @@ class ScoreCardProfileAPI(View):
         :param request: Request.
         :return: JsonResponse with status and message.
         """
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = request.POST.dict()
         name = body['name']
 
         score_card_profile = self.model(
@@ -622,7 +618,7 @@ class ScoreCardAttributeAPI(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(ScoreCardAPI, self).dispatch(request, *args, **kwargs)
+        return super(ScoreCardAttributeAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         filter_dict = request.GET.dict()
