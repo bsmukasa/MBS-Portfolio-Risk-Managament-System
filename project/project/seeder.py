@@ -161,19 +161,19 @@ def add_assumption_score_cards():
     for profile in score_card_profiles:
         score_cards.append(ScoreCard(
             score_card_profile=profile,
-            assumption_type='CDR',
+            assumption_type='CDR'
         ))
         score_cards.append(ScoreCard(
             score_card_profile=profile,
-            assumption_type='CPR',
+            assumption_type='CPR'
         ))
         score_cards.append(ScoreCard(
             score_card_profile=profile,
-            assumption_type='RECOV',
+            assumption_type='RECOV'
         ))
         score_cards.append(ScoreCard(
             score_card_profile=profile,
-            assumption_type='LAG',
+            assumption_type='LAG'
         ))
 
     ScoreCard.objects.bulk_create(score_cards)
