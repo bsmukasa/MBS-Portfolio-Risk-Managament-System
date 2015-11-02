@@ -6,7 +6,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
 from faker import Factory
-from risk_management.models import AssumptionProfile, RiskProfile, RiskFactor, RiskConditional
+from risk_management.models import AssumptionProfile, RiskProfile, RiskFactor, RiskConditional, ScoreCardProfile, \
+    ScoreCard, ScoreCardAttribute
 
 fake = Factory.create()
 
@@ -60,147 +61,128 @@ def create_risk_profiles():
         'Current Interest Rate Above 2%', 'Current Interest Rate Above 5%', 'Current Interest Rate Above 8%'
     ]
 
+    risk_profiles = []
     for name in risk_profile_names:
-        risk_profile = RiskProfile()
-        risk_profile.name = name
-        risk_profile.save()
+        risk_profiles.append(RiskProfile(name=name))
 
+    RiskProfile.objects.bulk_create(risk_profiles)
 
-def create_risk_factors():
-    """ Create random risk factors for all the risk profiles in the database.
+    risk_factors = []
+    for count, profile in enumerate(risk_profiles):
+        if count < 10:
+            attribute = 'state'
+        elif count < 13:
+            attribute = 'FICO'
+        elif count < 18:
+            attribute = 'remaining_term'
+        else:
+            attribute = 'current_interest_rate'
 
+        assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
 
-    """
-    risk_profiles = RiskProfile.objects.all()
-
-    count = 0
-
-    for profile in risk_profiles:
         risk_factor_number = randrange(3, 10)
-
         for i in range(risk_factor_number):
-            if count < 10:
-                create_state_risk_factor(profile)
-            elif count < 13:
-                create_fico_risk_factor(profile)
-            elif count < 18:
-                create_remaining_term_factor(profile, count)
-            else:
-                create_current_interest_rate_factor(profile, count)
-        count += 1
+            risk_factor = RiskFactor(
+                risk_profile=profile,
+                attribute=attribute,
+                changing_assumption=choice(assumptions_list),
+                percentage_change=round(uniform(-10, 10), 4)
+            )
+
+            risk_factors.append(risk_factor)
+
+    RiskFactor.objects.bulk_create(risk_factors)
+
+    risk_conditionals = []
+    for factor in risk_factors:
+        conditional = None
+        if factor.attribute == 'state':
+            state = fake.state_abbr()
+            conditional = RiskConditional(
+                risk_factor=factor,
+                conditional='==',
+                value=state
+            )
+        elif factor.attribute == 'FICO':
+            conditional = RiskConditional(
+                risk_factor=factor,
+                conditional='>',
+                value=randrange(300, 450)
+            )
+            risk_conditionals.append(conditional)
+
+            conditional = RiskConditional(
+                risk_factor=factor,
+                conditional='<',
+                value=randrange(500, 850)
+            )
+        elif factor.attribute == 'remaining_term':
+            term_list = [5, 8, 10, 15, 20, 25, 30]
+            conditional = RiskConditional(
+                risk_factor=factor,
+                conditional='<',
+                value=choice(term_list)
+            )
+        elif factor.attribute == 'current_interest_rate':
+            interest_list = [2, 5, 7, 8, 9, 11]
+            conditional = RiskConditional(
+                risk_factor=factor,
+                conditional='>',
+                value=choice(interest_list)
+            )
+
+        risk_conditionals.append(conditional)
+
+    RiskConditional.objects.bulk_create(risk_conditionals)
 
 
-def create_state_risk_factor(risk_profile):
-    """ Create a state risk factor with a conditional.
+def create_score_card_profiles():
+    card_profile_name_list = ['Default', 'Nintendo', 'Sony', 'Microsoft']
+    score_card_profiles = []
+    for name in card_profile_name_list:
+        score_card_profiles.append(ScoreCardProfile(name=name))
+    ScoreCardProfile.objects.bulk_create()
 
-    :param risk_profile: Risk profile risk factor is being added to.
-    :return:
-    """
-    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
-    risk_factor = RiskFactor(
-        risk_profile=risk_profile,
-        attribute='state',
-        changing_assumption=choice(assumptions_list),
-        percentage_change=round(uniform(-10, 10), 4)
-    )
-    risk_factor.save()
-    risk_conditional = RiskConditional()
-    risk_conditional.risk_factor = risk_factor
-    risk_conditional.conditional = '=='
-    risk_conditional.value = fake.state_abbr()
-    risk_conditional.save()
+    for profile in score_card_profiles:
+        add_assumption_score_cards(profile)
 
 
-def create_fico_risk_factor(risk_profile):
-    """ Create a FICO risk factor with two conditionals.
+def add_assumption_score_cards(profile):
+    score_cards = [
+        ScoreCard(score_card_profile=profile, assumption_type='CDR'),
+        ScoreCard(score_card_profile=profile, assumption_type='CPR'),
+        ScoreCard(score_card_profile=profile, assumption_type='RECOV'),
+        ScoreCard(score_card_profile=profile, assumption_type='LAG')
+    ]
 
-    :param risk_profile: Risk profile risk factor is being added to.
-    """
-    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
-    risk_factor = RiskFactor(
-        risk_profile=risk_profile,
-        attribute='FICO',
-        changing_assumption=choice(assumptions_list),
-        percentage_change=round(uniform(-10, 10), 4)
-    )
-    risk_factor.save()
-    risk_conditional1 = RiskConditional()
-    risk_conditional1.risk_factor = risk_factor
-    risk_conditional1.conditional = '>'
-    risk_conditional1.value = randrange(300, 450)
-    risk_conditional1.save()
-    risk_conditional2 = RiskConditional()
-    risk_conditional2.risk_factor = risk_factor
-    risk_conditional2.conditional = '<'
-    risk_conditional2.value = randrange(500, 850)
-    risk_conditional2.save()
+    ScoreCard.objects.bulk_create(score_cards)
+
+    for card in score_cards:
+        add_score_card_attributes(card)
 
 
-def create_remaining_term_factor(risk_profile, count):
-    """ Create a remaining risk factor with conditionals depending on the risk profile.
+def add_score_card_attributes(score_card):
+    attribute_list = [
+        'property_type', 'purpose', 'mortgage_type', 'lien_position',
+        'current_interest_rate', 'remaining_term', 'state', 'PMI',
+        'zipcode', 'FICO', 'gross_margin', 'ICAP', 'LCAP',
+        'first_interest_adjustment_date', 'current_LTV'
+    ]
 
-    The count, risk profile identifier, is used to determine the conditional value.
+    score_card_attributes = []
+    for attribute in attribute_list:
+        weight = 100 / len(attribute_list)
+        original_score = weight
 
-    :param risk_profile: Risk profile risk factor is being added to.
-    :param count: The count of risk profiles used to identify the risk profile.
-    """
-    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
-    risk_factor = RiskFactor(
-        risk_profile=risk_profile,
-        attribute='remaining_term',
-        changing_assumption=choice(assumptions_list),
-        percentage_change=round(uniform(-10, 10), 4)
-    )
-    risk_factor.save()
+        score_card_attributes.append(ScoreCardAttribute(
+            score_card=score_card,
+            attribute=attribute,
+            weight=weight,
+            original_index=1,
+            original_score=original_score
+        ))
 
-    risk_conditional = RiskConditional()
-    risk_conditional.risk_factor = risk_factor
-    risk_conditional.conditional = '<'
-
-    if count == 13:
-        risk_conditional.value = 5
-    elif count == 14:
-        risk_conditional.value = 8
-    elif count == 15:
-        risk_conditional.value = 10
-    elif count == 16:
-        risk_conditional.value = 15
-    elif count == 17:
-        risk_conditional.value = 20
-
-    risk_conditional.save()
-
-
-def create_current_interest_rate_factor(risk_profile, count):
-    """ Create a current interest rate risk factor with conditionals depending on the risk profile.
-
-    The count, risk profile identifier, is used to determine the conditional value.
-
-    :param risk_profile: Risk profile risk factor is being added to.
-    :param count: The count of risk profiles used to identify the risk profile.
-    """
-    assumptions_list = ['CDR', 'CPR', 'RECOV', 'LAG']
-    risk_factor = RiskFactor(
-        risk_profile=risk_profile,
-        attribute='current_interest_rate',
-        changing_assumption=choice(assumptions_list),
-        percentage_change=round(uniform(-10, 10), 4)
-    )
-    risk_factor.save()
-
-    risk_conditional = RiskConditional()
-    risk_conditional.risk_factor = risk_factor
-    risk_conditional.conditional = '>'
-
-    if count == 18:
-        risk_conditional.value = 2
-    elif count == 19:
-        risk_conditional.value = 5
-    elif count == 20:
-        risk_conditional.value = 8
-
-    risk_conditional.save()
-
+    ScoreCardAttribute.objects.bulk_create(score_card_attributes)
 
 if __name__ == '__main__':
     print("Starting seed script...")
@@ -208,6 +190,6 @@ if __name__ == '__main__':
     print("Assumptions created...")
     create_risk_profiles()
     print("Risk profiles created...")
-    create_risk_factors()
-    print("Risk factors created...")
+    create_score_card_profiles()
+    print("Score card profiles created")
     print("Seeding complete...")
