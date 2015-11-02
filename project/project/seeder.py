@@ -67,6 +67,10 @@ def create_risk_profiles():
 
     RiskProfile.objects.bulk_create(risk_profiles)
 
+
+def create_risk_factors():
+    risk_profiles = RiskProfile.objects.all()
+
     risk_factors = []
     for count, profile in enumerate(risk_profiles):
         if count < 10:
@@ -92,6 +96,10 @@ def create_risk_profiles():
             risk_factors.append(risk_factor)
 
     RiskFactor.objects.bulk_create(risk_factors)
+
+
+def create_risk_conditionals():
+    risk_factors = RiskFactor.objects.all()
 
     risk_conditionals = []
     for factor in risk_factors:
@@ -140,47 +148,60 @@ def create_score_card_profiles():
     card_profile_name_list = ['Default', 'Nintendo', 'Sony', 'Microsoft']
     score_card_profiles = []
     for name in card_profile_name_list:
-        score_card_profiles.append(ScoreCardProfile(name=name))
-    ScoreCardProfile.objects.bulk_create()
+        profile = ScoreCardProfile(name=name)
+        score_card_profiles.append(profile)
 
+    ScoreCardProfile.objects.bulk_create(score_card_profiles)
+
+
+def add_assumption_score_cards():
+    score_card_profiles = ScoreCardProfile.objects.all()
+
+    score_cards = []
     for profile in score_card_profiles:
-        add_assumption_score_cards(profile)
-
-
-def add_assumption_score_cards(profile):
-    score_cards = [
-        ScoreCard(score_card_profile=profile, assumption_type='CDR'),
-        ScoreCard(score_card_profile=profile, assumption_type='CPR'),
-        ScoreCard(score_card_profile=profile, assumption_type='RECOV'),
-        ScoreCard(score_card_profile=profile, assumption_type='LAG')
-    ]
+        score_cards.append(ScoreCard(
+            score_card_profile=profile,
+            assumption_type='CDR',
+        ))
+        score_cards.append(ScoreCard(
+            score_card_profile=profile,
+            assumption_type='CPR',
+        ))
+        score_cards.append(ScoreCard(
+            score_card_profile=profile,
+            assumption_type='RECOV',
+        ))
+        score_cards.append(ScoreCard(
+            score_card_profile=profile,
+            assumption_type='LAG',
+        ))
 
     ScoreCard.objects.bulk_create(score_cards)
 
-    for card in score_cards:
-        add_score_card_attributes(card)
 
-
-def add_score_card_attributes(score_card):
+def add_score_card_attributes():
     attribute_list = [
         'property_type', 'purpose', 'mortgage_type', 'lien_position',
         'current_interest_rate', 'remaining_term', 'state', 'PMI',
         'zipcode', 'FICO', 'gross_margin', 'ICAP', 'LCAP',
         'first_interest_adjustment_date', 'current_LTV'
     ]
+    score_cards = ScoreCard.objects.all()
 
     score_card_attributes = []
-    for attribute in attribute_list:
-        weight = 100 / len(attribute_list)
-        original_score = weight
 
-        score_card_attributes.append(ScoreCardAttribute(
-            score_card=score_card,
-            attribute=attribute,
-            weight=weight,
-            original_index=1,
-            original_score=original_score
-        ))
+    for card in score_cards:
+        for attribute in attribute_list:
+            weight = 100 / len(attribute_list)
+            original_score = weight
+
+            score_card_attributes.append(ScoreCardAttribute(
+                score_card=card,
+                attribute=attribute,
+                weight=weight,
+                original_index=1,
+                original_score=original_score
+            ))
 
     ScoreCardAttribute.objects.bulk_create(score_card_attributes)
 
@@ -190,6 +211,14 @@ if __name__ == '__main__':
     print("Assumptions created...")
     create_risk_profiles()
     print("Risk profiles created...")
+    create_risk_factors()
+    print("Risk factors created...")
+    create_risk_conditionals()
+    print("Risk conditionals created...")
     create_score_card_profiles()
-    print("Score card profiles created")
+    print("Score card profiles created...")
+    add_assumption_score_cards()
+    print("Assumption score cards added...")
+    add_score_card_attributes()
+    print("Score attributes added...")
     print("Seeding complete...")
