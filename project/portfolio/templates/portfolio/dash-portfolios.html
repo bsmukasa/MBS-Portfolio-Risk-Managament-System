@@ -18,10 +18,10 @@
 					<div class="modal-body">
 						<form action="{% url 'portfolio:get_portfolios_api' %}" method="POST" enctype="multipart/form-data" role="form" class="upload_form" id="save-upload-csv">
 							{% csrf_token %}
-							{{ form.non_field_errors }}
-							{{ form.loan_file.errors }}
-							{{ form.name|bootstrap }}
-							{{ form.loan_file|bootstrap }}
+							{{ form_upload.non_field_errors }}
+							{{ form_upload.loan_file.errors }}
+							{{ form_upload.name|bootstrap }}
+							{{ form_upload.loan_file|bootstrap }}
 	        				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        				<button type="submit" class="btn btn-primary">Save</button>
 	        				

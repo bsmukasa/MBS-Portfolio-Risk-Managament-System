@@ -15,10 +15,10 @@
 						<h4 class="modal-title" id="myModalLabel">Crete new risk profile</h4>
 					</div>
 					<div class="modal-body">
-						<form role="form">
+						<form role="form" id="new-risk-profile-name">
 							<div class="form-group">
 								<label for="name">Name:</label>
-								<input type="text" class="form-control" id="risk-profile-name" placeholder="Enter risk profile name">
+								<input type="text" class="form-control" name='name' placeholder="Enter risk profile name">
     						</div>
     						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        				<button type="submit" class="btn btn-primary">Continue</button>
@@ -60,7 +60,7 @@
 					<i class="glyphicon glyphicon-trash"></i> Delete
         		</button>
     </div>
-			<table id="user-risk-profiles" data-click-to-select="true" data-unique-id="id">
+			<table id="user-risk-profiles" data-click-to-select="true" data-unique-id="id" data-toggle="table">
 			    <thead>
 			    	<tr>
 			    		<th data-field="state" data-checkbox="true"></th>
@@ -72,7 +72,7 @@
 		
 		<div class="col-sm-8">
 			<h3 class="table-heading-risks">Profile Details</h3>
-			<table id="user-risk-details" data-unique-id="id">
+			<table id="user-risk-details" data-unique-id="id" data-toggle="table">
 			    <thead>
 			    	<tr>
 			    		<th data-field="attribute">Factor</th>

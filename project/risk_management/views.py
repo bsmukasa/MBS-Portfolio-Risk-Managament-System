@@ -46,67 +46,92 @@ class RiskProfileAPI(View):
         :param request: Request
         :return: JsonResponse list of risk profiles on success, status and message if not.
         """
-        filter_dict = request.GET.dict()
-        risk_profiles = self.model.objects.filter(**filter_dict).values()
-        
-        #Commented out for tests
-        return JsonResponse(dict(risk_profiles=list(risk_profiles)))
+        # Commented out for tests
+        # filter_dict = request.GET.dict()
+        # risk_profiles = self.model.objects.filter(**filter_dict).values()
+        #
+        #
+        # return JsonResponse(dict(risk_profiles=list(risk_profiles)))
 
         #FOR TESTS >> DELETE later!
-		teste = [
-			{ 
-				"id": 0,
-				"name": "Zipcode in NY"
-			},
-			{ 
-				"id": 1,
-				"name": "FICO score above 700 in FL"
-			},
-						{ 
-				"id": 2,
-				"name": "Lien position 1"
-			},
-						{ 
-				"id": 3,
-				"name": "Zipcode in OH"
-			},
-						{ 
-				"id": 4,
-				"name": "Mortgage type FICO less 500"
-			},
-						{ 
-				"id": 5,
-				"name": "Zipcode in CA"
-			},
-						{ 
-				"id": 6,
-				"name": "Lien position 1"
-			},
-						{ 
-				"id": 7,
-				"name": "Zipcode in WA"
-			},
-						{ 
-				"id": 8,
-				"name": "Zipcode in NJ"
-			},
-						{ 
-				"id": 9,
-				"name": "FICO score above 500 in AZ"
-			},
-						{ 
-				"id": 10,
-				"name": "Zipcode in OR"
-			},
-						{ 
-				"id": 11,
-				"name": "FICO score above 600 in OR"
-			},
+        teste = [
+            {
+                "id": 0,
+                "name": "Zipcode in NY",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 1,
+                "name": "FICO score above 700 in FL",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 2,
+                "name": "Lien position 1",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 3,
+                "name": "Zipcode in OH",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 4,
+                "name": "Mortgage type FICO less 500",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 5,
+                "name": "Zipcode in CA",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 6,
+                "name": "Lien position 1",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 7,
+                "name": "Zipcode in WA",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 8,
+                "name": "Zipcode in NJ",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 9,
+                "name": "FICO score above 500 in AZ",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 10,
+                "name": "Zipcode in OR",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
+            {
+                "id": 11,
+                "name": "FICO score above 600 in OR",
+                "date_created": "2015-10-30T21:28:19.047Z",
+                "last_updated": "2015-10-30T21:28:19.047Z"
+            },
 		]
 
-		return JsonResponse({'risk_profiles': teste})
-		#END TEST
 
+        return JsonResponse({'risk_profiles': teste})
+		#END TEST
 
     def post(self, request):
         """ Creates a new risk profile and saves it to the database.
@@ -121,10 +146,9 @@ class RiskProfileAPI(View):
 
         :param request: Request
         :return: JsonResponse including a status and message.
-        """
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        name = body['name']
+        """    
+        request_result = request.POST.dict()
+        name = request_result['name']
 
         new_risk_profile = self.model(name=name)
 
@@ -170,13 +194,13 @@ class RiskFactorAPI(View):
         :param request: Request
         :return: JsonResponse list of risk factors on success, status and message if not.
         """
-        filter_dict = request.GET.dict()
 
-        risk_profile_id = filter_dict['risk_profile_id']
-        risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
+        # Commented out for tests
+        # filter_dict = request.GET.dict()
 
+        # risk_profile_id = filter_dict['risk_profile_id']
+        # risk_profile = RiskProfile.objects.filter(pk=risk_profile_id)
 
-        #Commented out for tests
         # if risk_profile.exists():
         #     filter_dict['risk_profile'] = risk_profile
 
@@ -188,30 +212,30 @@ class RiskFactorAPI(View):
 
 
         #TEST >> DELETE later
-		teste = [
+        teste = [
 			{
 					"risk_profile_id": 5,
-					"risk_factor_id": 2,
+					"id": 2,
 					"attribute": "property_type",
 					"changing_assumption": "cdr",
 					"percentage_change": -5
 				},
 				{
 					"risk_profile_id": 5,
-					"risk_factor_id": 10,
+					"id": 10,
 					"attribute": "zipcode",
 					"changing_assumption": "recovery",
 					"percentage_change": -2
 				},
 				{
 					"risk_profile_id": 5,
-					"risk_factor_id": 12,
+					"id": 12,
 					"attribute": "FICO",
 					"changing_assumption": "cpr",
 					"percentage_change": 4
 				}
 		]
-		return JsonResponse({"risk_factors": teste})
+        return JsonResponse({"risk_factors": teste})
 
 
 
@@ -257,7 +281,7 @@ class RiskFactorAPI(View):
                 new_risk_factor.save()
 
                 conditionals_list = body['conditionals_list']
-                print('Conditionals List:', conditionals_list)
+                
                 for item in conditionals_list:
                     new_risk_condtional = RiskConditional(risk_factor=new_risk_factor)
                     new_risk_condtional.conditional = item['conditional']
@@ -315,9 +339,28 @@ class RiskConditionalAPI(View):
 
             risk_factor_conditionals = self.model.objects.filter(**filter_dict).values()
 
-            return JsonResponse(dict(risk_conditionals=list(risk_factor_conditionals)))
-        else:
-            return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
+
+        #Commented out for tests
+        #     return JsonResponse(dict(risk_conditionals=list(risk_factor_conditionals)))
+        # else:
+        #     return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
+
+        teste = [
+            {
+                "id": 1,
+                "risk_factor_id": 1,
+                "conditional": ">",
+                "value": "450"
+            },
+            {
+                "id": 2,
+                "risk_factor_id": 1,
+                "conditional": "<",
+                "value": 500
+            }
+        ]
+        return JsonResponse({'risk_conditionals': teste})
+
 
 
 class AssumptionProfileAPI(View):
@@ -369,7 +412,46 @@ class AssumptionProfileAPI(View):
         """
         filter_dict = request.GET.dict()
         assumption_profiles = self.model.objects.filter(**filter_dict).values()
-        return JsonResponse(dict(assumption_profiles=list(assumption_profiles)))
+        
+        #Commented out for tests
+        # return JsonResponse(dict(assumption_profiles=list(assumption_profiles)))
+
+        teste = [
+                    {
+                        "national_home_price_index_growth": "3.7000",
+                        "high_yield_spread": "5.2000",
+                        "gdp_growth": 3,
+                        "constant_default_rate": "8.0000",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "name": "3 Month Timber Shortage",
+                        "constant_prepayment_rate": "21.4444",
+                        "lag": "128.0000",
+                        "last_updated": "2015-10-30T21:06:42.631Z",
+                        "unemployment_rate": "8.5000",
+                        "recovery": "59.2500",
+                        "id": 1
+                    },
+                    {
+                        "national_home_price_index_growth": "4.8000",
+                        "high_yield_spread": "8.3000",
+                        "gdp_growth": 4,
+                        "constant_default_rate": "10.9800",
+                        "date_created": "2015-10-30T21:16:06.398Z",
+                        "name": "GDP Growing at 3%",
+                        "constant_prepayment_rate": "17.2500",
+                        "lag": "107.0000",
+                        "last_updated": "2015-10-30T21:16:06.398Z",
+                        "unemployment_rate": "8.5000",
+                        "recovery": "-89.2300",
+                        "id": 2
+                    }
+                ]
+
+        return JsonResponse({'assumption_profiles': teste})
+
+
+
+
 
     def post(self, request):
         """ Creates a new assumption profile and saves it to the database.
