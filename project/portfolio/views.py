@@ -6,13 +6,23 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from portfolio.models import Portfolio, Loan
+from risk_management.forms import AssumptionForm
+from portfolio.helper import calculate_aggregate_portfolio_data
+import csv
+import codecs
+import datetime
+
+
+
+#Check if its needed and saves correctly
 from portfolio.forms import FileForm
 
 
 # Create your views here.
 class Dashboard(View):
     template = "portfolio/dashboard.html"
-    form = FileForm
+    form_portfolio_tab = FileForm
+    form_assumptions_tab = AssumptionForm
 
     def get(self, request):
         """ Gets all user's portfolios to show in dashboard.
@@ -23,7 +33,8 @@ class Dashboard(View):
         :return: Render dashboard
         """
 
-        return render(request, self.template, {'form': self.form})
+        return render(request, self.template, {'form_upload': self.form_portfolio_tab, 
+            'form_assumptions': self.form_assumptions_tab})
 
 
 class PortfolioAPI(View):
@@ -50,30 +61,14 @@ class PortfolioAPI(View):
         # if user.exists():
 
         # Start Tab
-        filter_dict = request.GET.dict()
+        # filter_dict = request.GET.dict()
         # filter_dict['user'] = user
-        user_portfolios = self.model.objects.filter(**filter_dict).values()
+        # user_portfolios = self.model.objects.filter(**filter_dict).values()
 
+        # Once with users delete this part and uncomment lines above
+        user_portfolios = self.model.objects.all().values()
 
-        #TO DELETE >> Test Values and Return
-        portfolios = [
-             {"name": "Wonder Years", 
-                "total_loan_balance": 1000000, 
-                "total_loan_count":200, 
-                "average_loan_balance": 30000, 
-                "weighted_average_coupon": 0.089, 
-                "weighted_average_life_to_maturity": 255},
-            {"name": "The OC", 
-                "total_loan_balance": 50000000, 
-                "total_loan_count":1000, 
-                "average_loan_balance": 22000, 
-                "weighted_average_coupon": 0.076, 
-                "weighted_average_life_to_maturity": 321},              
-            ]
-        return JsonResponse({'portfolios': portfolios})
-
-
-        #return JsonResponse(dict(portfolios=list(user_portfolios)))
+        return JsonResponse(dict(portfolios=list(user_portfolios)))
         # End Tab
 
     def post(self, request):
@@ -86,29 +81,102 @@ class PortfolioAPI(View):
         # if user.exists():
 
         # Start Tab
-        if request.method == 'POST':
-            form = FileForm(request.POST, request.FILES)
-            if form.is_valid():
-                form_dict = request.POST.dict()
-                name = form_dict['name']
+        form = FileForm(data=request.POST, files=request.FILES)
 
-                new_portfolio = self.model(name=name)
-                # new_portfolio.user = user
+        if form.is_valid():
 
-                # TODO Add loans to portfolio from csv file.
-                new_portfolio.loan_file = request.FILES['loan_file']
+            form_dict = request.POST.dict()
+            name = form_dict['name']
 
+            new_portfolio = self.model(name=name)
 
-                # TODO Calculate portfolio numbers from loaded loans.
-                new_portfolio.total_loan_balance = 0
-                new_portfolio.total_loan_count = 0
-                new_portfolio.average_loan_balance = 0
-                new_portfolio.weighted_average_coupon = 0
-                new_portfolio.weighted_average_life_to_maturity = 0
-                new_portfolio.save()
-                # End Tab
+            new_portfolio.total_loan_balance = 0
+            new_portfolio.total_loan_count = 0
+            new_portfolio.average_loan_balance = 0
+            new_portfolio.weighted_average_coupon = 0
+            new_portfolio.weighted_average_life_to_maturity = 0
+            new_portfolio.save()
+                
+            # new_portfolio.user = user
 
-                return redirect("/portfolio/dashboard")
+            upload_file = request.FILES['loan_file']
+            loan_list = []
+
+            data = csv.DictReader(codecs.iterdecode(request.FILES['loan_file'], 'utf-8'))
+            for row in data:
+                loan = Loan(
+                    portfolio=new_portfolio,
+                    deferred_balance=isSet(row['DEFERRED_BAL']),
+                    pmi_insurance=isSet(row['PMI']),
+                    first_payment_date=convert_date_string(row['First_Payment_Date']),
+                    junior_lien_balance=isSet(row['Junior Lien Bal']),
+                    senior_lien_balance=isSet(row['Senior Lien Bal']),
+                    mortgage_type=isSet(row['Mortgagetype']),
+                    gross_margin=isSet(row['Gross_Margin']),
+                    original_amount=isSet(row['Original_Amount']),
+                    current_value_date=convert_date_string(row['Current_Value_Date']),
+                    state=isSet(row['STATE']),
+                    BK_flag=isSet(row['BK_FLAG']),
+                    negam_initial_minimum_payment_period=isSet(row['Negam_Initial_Minimum_Payment_Period']),
+                    product_type=isSet(row['Product_Type']),
+                    remaining_term=isSet(row['Remaining_Term']),
+                    first_recast_or_next_recast=isSet(row['First_Recast/Next_Recast']),
+                    amortized_term=isSet(row['Amor_Term']),
+                    recast_cap=isSet(row['Recast_Cap']),
+                    occupancy_code=isSet(row['Occupancy']),
+                    modification_date=convert_date_string(row['Modification_Date']),
+                    negam_payment_reset_frequency=isSet(row['Negam_Payment_Reset_Frequency']),
+                    IO_term=isSet(row['IO_Term']),
+                    senior_lien_balance_date=convert_date_string(row['Senior Lien Bal Date']),
+                    icap=isSet(row['ICAP']),
+                    current_interest_rate=isSet(row['Current_Interest_Rate']),
+                    SF=isSet(row['SF']),
+                    fico=isSet(row['FICO']),
+                    pcap=isSet(row['PCAP']),
+                    interest_reset_interval=isSet(row['Interest_Reset_Interval']),
+                    recast_frequency=isSet(row['Recast_Frequency']),
+                    original_term=isSet(row['Original_Term']),
+                    as_of_date=convert_date_string(row['AS_OF_DATE']),
+                    lcap=isSet(row['LCAP']),
+                    status=isSet(row['STATUS']),
+                    MSR=isSet(row['MSR']),
+                    original_appraisal_amount=isSet(row['Original_Appraisal_Amount']),
+                    lfloor=isSet(row['LFLOOR']),
+                    purpose=isSet(row['Purpose']),
+                    reset_index=isSet(row['Reset_Index']),
+                    zipcode=isSet(row['ZIP']),
+                    property_type_code=isSet(row['Property']),
+                    lien_position=isSet(row['Lien_Position']),
+                    current_FICO_score=isSet(row['Current_FICO_Score']),
+                    current_property_value=isSet(row['Current_Property_Value']),
+                    foreclosure_referral_date=convert_date_string(row['Foreclosure_Referral_Date']),
+                    current_principal_balance=isSet(row['Current_Principal_Balance']),
+                    last_payment_received=convert_date_string(row['LAST_PMT_RECD']),
+                    original_rate=isSet(row['ORATE']),
+                    original_date=convert_date_string(row['Origination_Date']),
+                    city=isSet(row['CITY']),
+                    bank_loan_id=isSet(row['LoanID']),
+                    second_lien_piggyback_flag=isSet(row['2nd Lien Piggyback Flag']),
+                    junior_lien_balance_date=convert_date_string(row['Junior Lien Bal Date']),
+                    first_index_rate_adjustment_date=convert_date_string(row['First_Interest_Rate_Adjustment_Date']),
+                )
+                loan_list.append(loan)
+
+            Loan.objects.bulk_create(loan_list)
+
+            saved_loans = Loan.objects.filter(portfolio=new_portfolio).values()
+            portfolio_loans_calculations = calculate_aggregate_portfolio_data(saved_loans)
+
+            new_portfolio.total_loan_balance = portfolio_loans_calculations['total_loan_balance']
+            new_portfolio.total_loan_count = portfolio_loans_calculations['total_loan_count']
+            new_portfolio.average_loan_balance = portfolio_loans_calculations['avg_loan_balance']
+            new_portfolio.weighted_average_coupon = portfolio_loans_calculations['weighted_avg_coupon']
+            new_portfolio.weighted_average_life_to_maturity = portfolio_loans_calculations['weighted_avg_life_to_maturity']
+            new_portfolio.save()
+            # End Tab
+
+            return JsonResponse({'status': 'OK', 'message': 'Risk Profile Created!!'})
+
 
 
 class LoanAPI(View):
@@ -149,4 +217,17 @@ class LoanAPI(View):
 #             affected_loans = self.model.objects.filter(**filter_dict).values()
 
 
+
+def convert_date_string(date_string):
+    if date_string == '':
+        return None
+    else:
+        parse_date = datetime.datetime.strptime(date_string, '%m/%d/%y').date()
+        return parse_date
+
+
+def isSet(field):
+    if not field:
+        return None
+    return field
 
