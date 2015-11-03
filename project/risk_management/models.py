@@ -108,7 +108,7 @@ class AssumptionProfile(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     # Economic Assumptions
-    gdp_growth = models.IntegerField()
+    gdp_growth = models.DecimalField(decimal_places=4, max_digits=10)
     unemployment_rate = models.DecimalField(decimal_places=4, max_digits=10)
     national_home_price_index_growth = models.DecimalField(decimal_places=4, max_digits=10)
     high_yield_spread = models.DecimalField(decimal_places=4, max_digits=10)
@@ -120,19 +120,24 @@ class AssumptionProfile(models.Model):
     lag = models.DecimalField(decimal_places=4, max_digits=10)
 
 
-class ScoreCard(models.Model):
-    total_score = models.DecimalField(decimal_places=4, max_digits=10)
-    updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
-
-
 class ScoreCardProfile(models.Model):
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    cdr_score_card = models.ForeignKey(ScoreCard, related_name='+')
-    cdp_score_card = models.ForeignKey(ScoreCard, related_name='+')
-    recovery_score_card = models.ForeignKey(ScoreCard, related_name='+')
-    lag_score_card = models.ForeignKey(ScoreCard, related_name='+')
+
+
+class ScoreCard(models.Model):
+    ASSUMPTION_CHOICES = (
+        ('CDR', 'Constant Default Rate'),
+        ('CPR', 'Constant Prepayment Rate'),
+        ('RECOV', 'Recovery'),
+        ('LAG', 'Lag')
+    )
+
+    score_card_profile = models.ForeignKey(ScoreCardProfile)
+    assumption_type = models.CharField(max_length=64, choices=ASSUMPTION_CHOICES)
+    # total_score = models.DecimalField(decimal_places=4, max_digits=10)
+    # updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
 
 
 class ScoreCardAttribute(models.Model):
@@ -141,14 +146,14 @@ class ScoreCardAttribute(models.Model):
     weight = models.DecimalField(decimal_places=4, max_digits=10)
     original_index = models.DecimalField(decimal_places=2, max_digits=5)
     original_score = models.DecimalField(decimal_places=4, max_digits=10)
-    index_change = models.DecimalField(decimal_places=2, max_digits=5)
-    updated_score = models.DecimalField(decimal_places=4, max_digits=10)
+    # index_change = models.DecimalField(decimal_places=2, max_digits=5)
+    # updated_score = models.DecimalField(decimal_places=4, max_digits=10)
 
 
-class Scenario(models.Model):
-    name = models.CharField(max_length=128)
-    date_created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-    assumption_profile = models.ForeignKey(AssumptionProfile)
-    score_card_profile = models.ForeignKey(ScoreCardProfile)
-    risk_profiles = models.ManyToManyField(RiskProfile)
+# class Scenario(models.Model):
+#     name = models.CharField(max_length=128)
+#     date_created = models.DateTimeField(auto_now_add=True)
+#     last_updated = models.DateTimeField(auto_now=True)
+#     assumption_profile = models.ForeignKey(AssumptionProfile)
+#     score_card_profile = models.ForeignKey(ScoreCardProfile)
+#     risk_profiles = models.ManyToManyField(RiskProfile)

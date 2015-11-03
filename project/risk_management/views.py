@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile
+from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, ScoreCardProfile, \
+    ScoreCard, ScoreCardAttribute
 
 
 # Create your views here.
@@ -53,7 +54,7 @@ class RiskProfileAPI(View):
         #
         # return JsonResponse(dict(risk_profiles=list(risk_profiles)))
 
-        #FOR TESTS >> DELETE later!
+        # FOR TESTS >> DELETE later!
         teste = [
             {
                 "id": 0,
@@ -127,11 +128,10 @@ class RiskProfileAPI(View):
                 "date_created": "2015-10-30T21:28:19.047Z",
                 "last_updated": "2015-10-30T21:28:19.047Z"
             },
-		]
-
 
         return JsonResponse({'risk_profiles': teste})
-		#END TEST
+        # END TEST
+
 
     def post(self, request):
         """ Creates a new risk profile and saves it to the database.
@@ -210,33 +210,31 @@ class RiskFactorAPI(View):
         #     return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
 
 
-
-        #TEST >> DELETE later
+        # TEST >> DELETE later
         teste = [
-			{
-					"risk_profile_id": 5,
-					"id": 2,
-					"attribute": "property_type",
-					"changing_assumption": "cdr",
-					"percentage_change": -5
-				},
-				{
-					"risk_profile_id": 5,
-					"id": 10,
-					"attribute": "zipcode",
-					"changing_assumption": "recovery",
-					"percentage_change": -2
-				},
-				{
-					"risk_profile_id": 5,
-					"id": 12,
-					"attribute": "FICO",
-					"changing_assumption": "cpr",
-					"percentage_change": 4
-				}
-		]
+            {
+                "risk_profile_id": 5,
+                "risk_factor_id": 2,
+                "attribute": "property_type",
+                "changing_assumption": "cdr",
+                "percentage_change": -5
+            },
+            {
+                "risk_profile_id": 5,
+                "risk_factor_id": 10,
+                "attribute": "zipcode",
+                "changing_assumption": "recovery",
+                "percentage_change": -2
+            },
+            {
+                "risk_profile_id": 5,
+                "risk_factor_id": 12,
+                "attribute": "FICO",
+                "changing_assumption": "cpr",
+                "percentage_change": 4
+            }
+        ]
         return JsonResponse({"risk_factors": teste})
-
 
 
     def post(self, request):
@@ -524,7 +522,7 @@ class AssumptionProfileAPI(View):
                     cdr += (unemployment_rate * 1.2 - 5.5)
                     new_assumption_profile.constant_default_rate = cdr
                 if key == 'constant_prepayment_rate':
-                    cpr = high_yield_spread * -10/9 + 245/9
+                    cpr = high_yield_spread * -10 / 9 + 245 / 9
                     new_assumption_profile.constant_prepayment_rate = cpr
                 if key == 'recovery':
                     recovery = national_home_price_index * 2.5 + 50
@@ -536,3 +534,165 @@ class AssumptionProfileAPI(View):
         new_assumption_profile.save()
         return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})
 
+
+class ScoreCardProfileAPI(View):
+    model = ScoreCardProfile
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScoreCardProfileAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved score card profiles.
+
+        Example Result:
+            {
+                "score_card_profiles": [
+                    {
+                        "name": "Defaults",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "last_updated": "2015-10-30T21:06:42.631Z"
+                    },
+                    {
+                        "name": "Nintendo",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "last_updated": "2015-10-30T21:06:42.631Z"
+                    },
+                    {
+                        "name": "Sony",
+                        "date_created": "2015-10-30T21:06:42.621Z",
+                        "last_updated": "2015-10-30T21:06:42.631Z"
+                    }
+                ]
+            }
+
+        :param request: Request
+        return: JsonResponse list of assumption profiles on success, status and message if not.
+        """
+        filter_dict = request.GET.dict()
+        score_card_profiles = self.model.objects.filter(**filter_dict).values()
+        return JsonResponse(dict(score_card_profiles=list(score_card_profiles)))
+
+    def post(self, request):
+        """ Creates a new score card profile with default assumption score cards and saves it to the database.
+
+        Creates default score cards for CDR, CPR, Recovery and Lag as well as score card attributes.
+
+        Json in the Request must include:
+        - name
+
+        Example Request:
+            {
+                "name": "U.S. Economy Growing 3%"
+            }
+
+        :param request: Request.
+        :return: JsonResponse with status and message.
+        """
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        name = body['name']
+
+        score_card_profile = self.model(
+            name=name
+        )
+        score_card_profile.save()
+
+        card_list = []
+        for choice in ScoreCard.ASSUMPTION_CHOICES:
+            card = ScoreCard(
+                score_card_profile=score_card_profile,
+                assumption_type=choice[0]
+            )
+            card_list.append(card)
+
+        ScoreCard.objects.bulk_create(card_list)
+
+        card_list = ScoreCard.objects.filter(score_card_profile=score_card_profile)
+        attributes = []
+        for card in card_list:
+            for choice in RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES:
+                weight = 100 / len(card_list)
+                original_score = weight
+
+                attributes.append(ScoreCardAttribute(
+                    score_card=card,
+                    attribute=choice,
+                    weight=weight,
+                    original_index=1,
+                    original_score=original_score
+                ))
+
+        ScoreCardAttribute.objects.bulk_create(attributes)
+        return JsonResponse({'status': 'OK', 'message': 'Score Card Profile Created!!'})
+
+
+class ScoreCardAPI(View):
+    model = ScoreCard
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScoreCardAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved score cards associated with a score card profile.
+
+        Example Result:
+            {
+                "score_cards": [
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "CDR"
+                    },
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "CPR"
+                    },
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "RECOV"
+                    },
+                    {
+                        "score_card_profile_id": 2,
+                        "assumption_type": "LAG"
+                    }
+                ]
+            }
+
+        :param request: Request
+        return: JsonResponse list of score cards on success, status and message if not.
+        """
+        filter_dict = request.GET.dict()
+        score_card_profile_id = filter_dict['score_card_profile_id']
+        score_card_profile = RiskFactor.objects.filter(pk=score_card_profile_id)
+
+        if score_card_profile.exists():
+            filter_dict['score_card_profile'] = score_card_profile
+
+            score_cards = self.model.objects.filter(**filter_dict).values()
+
+            return JsonResponse(dict(score_cards=list(score_cards)))
+        else:
+            return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
+
+
+class ScoreCardAttributeAPI(View):
+    model = ScoreCardAttribute
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScoreCardAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        filter_dict = request.GET.dict()
+        score_card_id = filter_dict['score_card_id']
+        score_card = RiskFactor.objects.filter(pk=score_card_id)
+
+        if score_card.exists():
+            filter_dict['score_card'] = score_card
+
+            attributes = self.model.objects.filter(**filter_dict).values()
+
+            return JsonResponse(dict(attributes=list(attributes)))
+        else:
+            return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
