@@ -6,6 +6,7 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from portfolio.models import Portfolio, Loan
+from risk_management.models import RiskFactor
 from risk_management.forms import AssumptionForm
 from portfolio.helper import calculate_aggregate_portfolio_data
 import csv
@@ -16,6 +17,7 @@ import datetime
 
 #Check if its needed and saves correctly
 from portfolio.forms import FileForm
+
 
 
 # Create your views here.
@@ -34,7 +36,7 @@ class Dashboard(View):
         """
 
         return render(request, self.template, {'form_upload': self.form_portfolio_tab, 
-            'form_assumptions': self.form_assumptions_tab})
+            'form_assumptions': self.form_assumptions_tab, 'choices': RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES})
 
 
 class PortfolioAPI(View):

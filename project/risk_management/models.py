@@ -25,6 +25,7 @@ class RiskFactor(models.Model):
     INTEREST_ADJ_DATE = 'first_interest_adjustment_date'
     LTV = 'current_LTV'
     RISK_FACTOR_ATTRIBUTE_CHOICES = (
+        (FICO, 'FICO'),  # TODO Figure out acronym
         (TYPE, 'Property Type'),
         (PURPOSE, 'Purpose'),
         (MORTGAGE_TYPE, 'Mortgage Type'),
@@ -34,7 +35,6 @@ class RiskFactor(models.Model):
         (STATE, 'State'),
         (PMI, 'PMI'),  # TODO Figure out acronym
         (ZIP, 'Zipcode'),
-        (FICO, 'FICO'),  # TODO Figure out acronym
         (MARGIN, 'Gross Margin'),
         (ICAP, 'Interest Cap'),
         (LCAP, 'LCAP'),  # TODO Figure out acronym
@@ -68,13 +68,13 @@ class RiskConditional(models.Model):
     RISK_CONDITIONAL_CHOICES = (
         (GREATER, 'Greater Than - >'),
         (LESSER, 'Lesser Than - <'),
-        (GREATER_EQ, 'Greater Than of Equal To - >='),
+        (GREATER_EQ, 'Greater Than or Equal To - >='),
         (LESSER_EQ, 'Lesser Than or Equal To - <='),
         (EQUAL, 'Equal To - ==')
     )
     risk_factor = models.ForeignKey(RiskFactor)
     conditional = models.CharField(max_length=64, choices=RISK_CONDITIONAL_CHOICES)
-    value = models.CharField(max_length=64)
+    value = models.CharField(max_length=256)
 
 
 class AssumptionProfile(models.Model):
