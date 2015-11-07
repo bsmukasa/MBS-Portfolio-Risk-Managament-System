@@ -16,6 +16,142 @@ class Portfolio(models.Model):
 
 
 class Loan(models.Model):
+    MORTGAGE_TYPE_CHOICES = (
+        ('CONV', 'CONV'),
+        ('FHAT1', 'FHAT1'),
+        ('PMI', 'PMI'),
+        ('FHA', 'FHA'),
+        ('VA', 'VA'),
+        ('FHAUN', 'FHAUN'),
+        ('HUDA', 'HUDA'),
+        ('HELOC', 'HELOC'),
+        ('SFM', 'SFM'),
+        ('VAUN', 'VAUN'),
+
+    )
+
+    #Also has empty fields
+    PROPERTY_TYPE_CODE_CHOICES = (
+        ('CO', 'CO'),
+        ('SF', 'SF'),
+        ('2F', '2F'),
+        ('PD', 'PD'),
+        ('4F', '4F'),
+        ('MA', 'MA'),
+        ('3F', '3F'),
+        ('24', '24'),
+        ('OT', 'OT'),
+        ('MH', 'MH'),
+        ('TH', 'TH'),
+        ('CMX', 'CMX'),
+        ('CMO', 'CMO'),
+        ('CMF', 'CMF'),
+        ('MF', 'MF'),
+        ('CMR', 'CMR'),
+        ('US', 'US'),
+        ('CMA', 'CMA'),
+        ('CMW', 'CMW'),
+        ('CMI', 'CMI'),
+        ('CP', 'CP'),
+        ('CMM', 'CMM'),
+        ('VA', 'VA'),
+        ('UN', 'UN'),
+        ('CH', 'CH'),
+        ('CMH', 'CMH'),
+        ('CMC', 'CMC'),
+        ('CMN', 'CMN'),
+        ('FR', 'FR'),
+        ('CMS', 'CMS'),
+    )
+
+    #Also has empty fields
+    PURPOSE_CHOICES = (
+        ('C', 'C'),
+        ('P', 'P'),
+        ('R', 'R'),
+        ('CN', 'CN'),
+    )
+    
+    LIEN_POSITION_CHOICES = (
+        ('0', '0'),
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+    )
+
+    #Also has empty fields
+    PMI_CHOICES = (
+        ('No PMI Insurance', 'No PMI Insurance'),
+        ('FHA', 'FHA'),
+        ('Mortgage Guaranty Co', 'Mortgage Guaranty Co'),
+        ('Mgic-Premiums Paid By Trustee', 'Mgic-Premiums Paid By Trustee'),
+        ('VA', 'VA'),
+        ('United Guaranty Ins', 'United Guaranty Ins'),
+        ('Radian-Premiums Pd By Trustee', 'Radian-Premiums Pd By Trustee'),
+        ('Radian Guaranty Inc', 'Radian Guaranty Inc'),
+        ('General Electric Ins', 'General Electric Ins'),
+        ('RMIC Ins Company', 'RMIC Ins Company'),
+        ('PMI Mortgage Ins Co', 'PMI Mortgage Ins Co'),
+        ('Triad Guaranty Ins', 'Triad Guaranty Ins'),
+        ('Pmi Mortgage Ins Comp-Premiums Paid by Trustee', 'Pmi Mortgage Ins Comp-Premiums Paid by Trustee'),
+        ('United Guaranty-Premiums Paid by Trustee', 'United Guaranty-Premiums Paid by Trustee'),
+        ('CMG Mortgage ins Co', 'CMG Mortgage ins Co'),
+    )
+
+    STATE_CHOICES = (
+        ('MD', 'MD'),
+        ('NV', 'NV'),
+        ('TX', 'TX'),
+        ('CA', 'CA'),
+        ('MA', 'MA'),
+        ('MI', 'MI'),
+        ('NY', 'NY'),
+        ('IL', 'IL'),
+        ('FL', 'FL'),
+        ('WI', 'WI'),
+        ('GA', 'GA'),
+        ('KY', 'KY'),
+        ('NJ', 'NJ'),
+        ('CT', 'CT'),
+        ('HI', 'HI'),
+        ('PA', 'PA'),
+        ('SC', 'SC'),
+        ('OH', 'OH'),
+        ('VA', 'VA'),
+        ('CO', 'CO'),
+        ('MO', 'MO'),
+        ('AZ', 'AZ'),
+        ('KS', 'KS'),
+        ('UT', 'UT'),
+        ('MS', 'MS'),
+        ('AR', 'AR'),
+        ('OK', 'OK'),
+        ('AL', 'AL'),
+        ('TN', 'TN'),
+        ('DE', 'DE'),
+        ('IN', 'IN'),
+        ('NM', 'NM'),
+        ('NH', 'NH'),
+        ('MN', 'MN'),
+        ('LA', 'LA'),
+        ('WV', 'WV'),
+        ('WA', 'WA'),
+        ('VT', 'VT'),
+        ('NE', 'NE'),
+        ('ME', 'ME'),
+        ('ID', 'ID'),
+        ('SD', 'SD'),
+        ('IA', 'IA'),
+        ('DC', 'DC'),
+        ('WY', 'WY'),
+        ('AK', 'AK'),
+        ('RI', 'RI'),
+        ('MT', 'MT'),
+        ('ND', 'ND'),
+        ('PR', 'PR'),
+        ('VI', 'VI'),
+    )
+
     portfolio = models.ForeignKey(Portfolio)
     bank_loan_id = models.CharField(max_length=30, blank=True, null=True)
     property_type_code = models.CharField(max_length=3, blank=True, null=True)

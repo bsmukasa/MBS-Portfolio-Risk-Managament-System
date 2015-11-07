@@ -2,6 +2,10 @@ import os
 import django
 from random import uniform, choice, randrange
 
+# from django.conf import settings
+# import settings as project_settings
+# settings.configure(project_settings, DEBUG=True)
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 

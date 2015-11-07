@@ -4,7 +4,7 @@ $(document).ready(function(){
 	tabLoaderFunctions.portfolioTabLoader();
 
 //................................................................................................................................................	
-	//PORTFOLIO TABS
+	//GENERAL TABS 
 
 	//Click on Portfolio TAB
 	$('#dashboard-tabs a[href="#portfolios"]').click(function (event) {
@@ -59,14 +59,11 @@ $(document).ready(function(){
     				$(this).modal('hide');
     				$('body').removeClass('modal-open');
     				$('.modal-backdrop').remove();
-
     				tabLoaderFunctions.portfolioTabLoader();
-
     			}
     		}
 		});
 	})
-
 
 
 //................................................................................................................................................
@@ -91,6 +88,9 @@ $(document).ready(function(){
 		})	
 	})
 
+
+
+	//TO DO!!!!
 	//Popover with Risk Conditionals
 	$('#main-content').on('click-row.bs.table', '#user-risk-details', function(event, row, $element) {
 		$.get( "/risk_management/get_risk_factor_conditionals", {'risk_factor_id': row.id}, 
@@ -102,10 +102,9 @@ $(document).ready(function(){
 					content: 'TEST'
 				})
 				$($element).popover('show');
-
 		})
-
 	})
+
 
 	//Save new risk profile name
 	$('#main-content').on('submit',"#new-risk-profile-name", function(event) {
@@ -113,21 +112,121 @@ $(document).ready(function(){
 		var data = $("#new-risk-profile-name").serialize();
 		$.post("/risk_management/create_risk_profile", data, function(return_data) {
 			if (return_data.status == 'OK') {
-
+				$('.modal-backdrop').remove();
+				var new_risk_profile_data = return_data.new_risk_profile;
+				helperFunctions.mustacheLoad("#riskProfile-creation-template", "#main-content-load", new_risk_profile_data);
+				var empty_factor_data = [{"attribute": "", "changing_assumption": "", "percentage_change": ""}];
+				helperFunctions.displayTableData("#risk-factors-edit-table", empty_factor_data);
+				var empty_conditional_data = [{"conditional": "", "value":""}];
+				helperFunctions.displayTableData("#all-conditionals-table", empty_conditional_data);
 			}
 		})		
 	});
 		
 
+	//Complete new attribute form based on attribute selection
+	$('#main-content').on('change',"#select-risk-factor-attribute", function() {
+		var selected_attribute = $("#select-risk-factor-attribute").val();
+		$.get("/risk_management/factor_attribute", {"attribute": selected_attribute}, function(return_data) {
+			var return_choices = return_data.attribute_choices
+			var choices_array = [];
+			if (return_choices.length > 0) {
+				for (var k in return_choices) {
+					choices_array.push(return_choices[k][0]);	
+				}
+				helperFunctions.mustacheLoad("#empty-conditionals", "#range-conditionals-loader");
+				helperFunctions.mustacheLoad("#equal-choices-conditionals", "#equal-conditionals-loader", choices_array);
+			}
+			else {
+				helperFunctions.mustacheLoad("#empty-conditionals", "#equal-conditionals-loader");
+				helperFunctions.mustacheLoad("#range-conditionals", "#range-conditionals-loader");
+			}
+		})
+	});
 
 
+	//Save new attribute
+	$('#main-content').on('submit', "#new-risk-factor", function(event) {
+		event.preventDefault();
+
+		var risk_profile_id = $(".risk-profile-name-id").attr("id");
+		$('<input />').attr('type','hidden')
+			.attr('name', "risk_profile_id")
+			.attr('value', risk_profile_id)
+			.appendTo('#new-risk-factor');
+
+		var formData = $("#new-risk-factor").serialize();
+		$.post("/risk_management/add_risk_factor", formData, function(return_data) {
+			if (return_data.status == "OK") {
+				$.get("/risk_management/get_risk_factors", {"risk_profile_id": risk_profile_id}, function(return_data) {
+					helperFunctions.removeModal("#new-factor-modal");
+					var data = return_data.risk_factors;
+					helperFunctions.updateTableData("#risk-factors-edit-table", data);
+				})
+			}
+		})
+	})
+
+
+	//View risk attribute conditionals
+	$('#main-content').on('click', '#view-conditional', function() {
+		var selected_ids = helperFunctions.getTableSelections('#risk-factors-edit-table');
+		var table_data = [];
+
+		selected_ids.forEach(function (id, index) {
+			$.get( "/risk_management/risk_factor_conditionals", {"risk_factor_id": id}, function(data) {
+				var attribute_conditionals = data.risk_conditionals;
+				table_data.push(attribute_conditionals[0])
+				helperFunctions.updateTableData("#all-conditionals-table", table_data);
+			})
+		})	
+	})
 	
 
+
+//................................................................................................................................................
+	//ASSUMPTIONS TAB
+
+	//Create new assumption
+	$('#main-content').on('submit',"#form-new-assumption", function(event) {
+		event.preventDefault();
+		var form_data = $("#form-new-assumption")
+		$.ajax({
+    		url: '/risk_management/assumption_profile',
+    		type: 'POST',
+	    	data: form_data.serialize(),
+    		success: function(data) {
+    			if (data.status == "OK") {
+  		  			$(this).modal('hide');
+    				$('body').removeClass('modal-open');
+    				$('.modal-backdrop').remove();
+    				tabLoaderFunctions.assumptionsTabLoader();
+    			}
+    		}
+    	})
+	})
+
+
+	//View selected assumption
+	$('#main-content').on('click', '#view-assumption', function() {
+		var selected_assumption = helperFunctions.getTableSelections('#assumptions-table');
+		$.get("/risk_management/assumption_profile", {"id": selected_assumption[0]}, function(return_data) {
+			var assumption_details = return_data.assumption_profiles[0];
+			helperFunctions.mustacheLoad("#assumptions-details-script", "#assumption-details-loader", assumption_details);
+		})
+	})
+
+
+//................................................................................................................................................
+//$document closing
 });
 
 
-
+//===============================================================================================================================================
+//Global helper functions
 var helperFunctions = {
+
+	//Return mustache string to be applied in html (params: template selector and data to be inserted)
 	getMustacheHTMLString: function(template, data) {
 		var data, template, informationToLoad;
 		data = data || {};
@@ -135,6 +234,7 @@ var helperFunctions = {
 		return informationToLoad	
 	},
 	
+	//Loads mustache template (params: script selector, template selector and data to be inserted)
 	mustacheLoad: function(script_selector, loader_selector, data) {
 		var data, template, informationToLoad;
 		data = data || {};
@@ -143,6 +243,7 @@ var helperFunctions = {
 		$(loader_selector).html(informationToLoad);
 	}, 
 
+	//Get items selected in a table (params: table selector)
 	getTableSelections: function(table_selector) {
 		var data = $(table_selector).bootstrapTable('getSelections');
 		var selected_ids = $.map(data, function(item) {
@@ -151,18 +252,29 @@ var helperFunctions = {
 		return selected_ids;
 	},
 
+	//Activate bootstrap table (params: table selector, table data(eg: [{number: 1}])
 	displayTableData: function(table_selector, table_data) {
 		$(table_selector).bootstrapTable({ data: table_data })
 	},
 
+	//Update values on bootstrap table (params: table selector, table data(eg: [{number: 1}])
 	updateTableData: function(table_selector, table_data) {
 		$(table_selector).bootstrapTable( 'load', { data: table_data })
+	},
+
+	//Removes modal background (params: modal selector)
+	removeModal: function(modal_selector) {
+  		$(modal_selector).modal('hide');
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();		
 	}
 }
 
 
-
+//Function to load each tab on dashboard page
 var tabLoaderFunctions = {
+
+	//Portfolio tab
 	portfolioTabLoader: function() {
 		helperFunctions.mustacheLoad("#portfolio-template", "#main-content-load");
 		$.get( "/portfolio/get_portfolios", function( data ) {	
@@ -183,6 +295,7 @@ var tabLoaderFunctions = {
 		});
 	},
 
+	//Risk Profile tab
 	riskProfileTabLoader: function() {		
 		helperFunctions.mustacheLoad("#riskProfile-template", "#main-content-load");
 		helperFunctions.mustacheLoad("#risk-tables-template", "#risk-profiles-table-load");
@@ -202,21 +315,19 @@ var tabLoaderFunctions = {
 		});
 	},
 
+	//Assumptions tab
 	assumptionsTabLoader: function() {
 		helperFunctions.mustacheLoad("#assumptions-template", "#main-content-load");
-		helperFunctions.mustacheLoad("#assumptions-table-template", "#assumptions-table-load");
 
-		$.get( "/risk_management/get_assumption_profiles", function( return_data ) {
+		$.get( "/risk_management/assumption_profile", function( return_data ) {
 			$(function () {
 				if (return_data.assumption_profiles.length > 0) {
-					helperFunctions.displayTableData('#user-assumptions-table', return_data.assumption_profiles)
+					helperFunctions.displayTableData('#assumptions-table', return_data.assumption_profiles);
 				}
 				else {
-					helperFunctions.displayTableData('#user-assumptions-table', [{"name": ""}])
+					helperFunctions.displayTableData('#assumptions-table', [{"name": ""}]);
 		    	}
-
-		    	helperFunctions.displayTableData('#user-risk-details', 
-		    		[{"attribute": "", "changing_assumption": "", "percentage_change": ""}])
+		    	helperFunctions.mustacheLoad("#assumptions-details-script", "#assumption-details-loader");
 	    	});
 		});
 
@@ -225,32 +336,12 @@ var tabLoaderFunctions = {
 }
 
 
+//Formating numbers: 100,000,000.55
 Number.prototype.formatNumberSeparator = function(n, x) {
 	var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
 	return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
 }
 
-
-$.fn.serializeObject = function()
-{
-    var o = {};
-    var a = this.serializeArray();
-
-    console.log(this);
-    console.log(a);
-
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-};
 
 
 

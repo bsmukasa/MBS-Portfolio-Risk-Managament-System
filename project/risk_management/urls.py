@@ -5,15 +5,9 @@ urlpatterns = patterns(
     '',
 
     url(
-        regex=r'^create_assumption_profile$',
+        regex=r'^assumption_profile$',
         view=views.AssumptionProfileAPI.as_view(),
-        name='create_assumption_profile_api'
-    ),
-
-    url(
-        regex=r'^get_assumption_profiles$',
-        view=views.AssumptionProfileAPI.as_view(),
-        name='get_assumption_profiles_api'
+        name='assumption_profile_api'
     ),
 
     url(
@@ -42,9 +36,9 @@ urlpatterns = patterns(
     ),
 
     url(
-        regex=r'^get_risk_factor_conditionals$',
+        regex=r'^risk_factor_conditionals$',
         view=views.RiskConditionalAPI.as_view(),
-        name='get_risk_conditionals_api'
+        name='risk_conditionals_api'
     ),
 
     url(
@@ -69,6 +63,12 @@ urlpatterns = patterns(
         regex=r'^get_score_card_attributes$',
         view=views.ScoreCardAttributeAPI.as_view(),
         name='get_score_card_attributes_api'
+    ),
+
+    url(
+        regex=r'^factor_attribute$',
+        view=views.RiskFactorAttributeChoicesAPI.as_view(),
+        name='risk_factor_api'
     ),
 )
 
