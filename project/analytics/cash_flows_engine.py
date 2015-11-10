@@ -12,6 +12,10 @@ class LoanPortfolio:
         self.loan_df = pd.read_csv(csv_file)
 
         self.cash_flows_df = self.create_cash_flows_data_frame()
+        self.cash_flows_df['losses'] = self.calculate_cash_flow_losses()
+        self.cash_flows_df['total_interest'] = self.calculate_cash_flow_total_interests()
+        self.cash_flows_df['total_principal'] = self.calculate_cash_flow_total_principals()
+        self.cash_flows_df['total_payments'] = self.calculate_cash_flow_total_payments()
 
     def create_cash_flows_data_frame(self):
         """ Creates a pandas DataFrame containing all of cash flows for the loans in the LoanPortfolio.
@@ -43,6 +47,36 @@ class LoanPortfolio:
             recov=row['Recovery']
         )
         return cash_flows_list_of_dicts
+
+    def calculate_cash_flow_losses(self):
+        """ Calculates the losses for all periods in a cash flows pandas DataFrame.
+
+        :return: A pandas Series of period losses.
+        """
+        return self.cash_flows_df['defaults'] - self.cash_flows_df['recovery']
+
+    def calculate_cash_flow_total_interests(self):
+        """ Calculates the total interest for all periods in a cash flows pandas DataFrame.
+
+        :return: A pandas Series of period total interests.
+        """
+        return self.cash_flows_df['interest']
+
+    def calculate_cash_flow_total_principals(self):
+        """ Calculates the total principal for all periods in a cash flows pandas DataFrame.
+
+        :return: A pandas Series of period total principals.
+        """
+        total_principals = self.cash_flows_df['scheduled_principal'] + self.cash_flows_df['unscheduled_principal']
+        total_principals += self.cash_flows_df['recovery']
+        return total_principals
+
+    def calculate_cash_flow_total_payments(self):
+        """ Calculates the total payments for all periods in a cash flows pandas DataFrame.
+
+        :return: A pandas Series of period total payments.
+        """
+        return self.cash_flows_df['total_interest'] + self.cash_flows_df['total_principal']
 
 
 def create_payment_schedule(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recov):
