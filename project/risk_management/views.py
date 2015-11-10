@@ -5,7 +5,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, ScoreCardProfile, \
     ScoreCard, ScoreCardAttribute
-from django.core import serializers
 from portfolio.models import Loan
 
 
@@ -52,10 +51,8 @@ class RiskProfileAPI(View):
 
         filter_dict = request.GET.dict()
         risk_profiles = self.model.objects.filter(**filter_dict).values()
-        
-        
-        return JsonResponse(dict(risk_profiles=list(risk_profiles)))
 
+        return JsonResponse(dict(risk_profiles=list(risk_profiles)))
 
     def post(self, request):
         """ Creates a new risk profile and saves it to the database.
@@ -70,7 +67,7 @@ class RiskProfileAPI(View):
 
         :param request: Request
         :return: JsonResponse including a status and message.
-        """    
+        """
         request_result = request.POST.dict()
         name = request_result['name']
 
@@ -78,7 +75,8 @@ class RiskProfileAPI(View):
         new_risk_profile.save()
         saved_risk_profile = self.model.objects.filter(pk=new_risk_profile.pk).values()
 
-        return JsonResponse(dict(status="OK", message="Risk Profile created", new_risk_profile=list(saved_risk_profile)[0]))
+        return JsonResponse(
+            dict(status="OK", message="Risk Profile created", new_risk_profile=list(saved_risk_profile)[0]))
 
 
 class RiskFactorAPI(View):
@@ -133,7 +131,6 @@ class RiskFactorAPI(View):
         else:
             return JsonResponse({'status': 'FAIL', 'message': 'Risk Profile provided does not exist.'})
 
-
     def post(self, request):
         """ Creates a new risk factor and related conditionals and saves it to the database.
 
@@ -172,7 +169,7 @@ class RiskFactorAPI(View):
                 new_risk_factor.changing_assumption = form_dict['changing_assumption'].upper()
                 new_risk_factor.percentage_change = form_dict['percentage_change']
                 new_risk_factor.save()
-     
+
                 if 'value' in form_dict.keys():
                     if form_dict['value2'] == '':
                         conditionals_list = [
@@ -184,8 +181,8 @@ class RiskFactorAPI(View):
                             {'conditional': form_dict['conditional2'], 'value': form_dict['value2']}
                         ]
                 else:
-                    conditionals_list = [{ 'conditional': '==', 'value': form_dict['conditional'] }]
-                
+                    conditionals_list = [{'conditional': '==', 'value': form_dict['conditional']}]
+
                 for item in conditionals_list:
                     new_risk_condtional = RiskConditional(risk_factor=new_risk_factor)
                     new_risk_condtional.conditional = item['conditional']
@@ -241,7 +238,7 @@ class RiskConditionalAPI(View):
         if risk_factor.exists():
             filter_dict['risk_factor'] = risk_factor
             risk_factor_conditionals = self.model.objects.filter(**filter_dict).values()
-            
+
             return JsonResponse(dict(risk_conditionals=list(risk_factor_conditionals)))
         else:
             return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
@@ -296,9 +293,8 @@ class AssumptionProfileAPI(View):
         """
         filter_dict = request.GET.dict()
         assumption_profiles = self.model.objects.filter(**filter_dict).values()
-        
-        return JsonResponse(dict(assumption_profiles=list(assumption_profiles)))
 
+        return JsonResponse(dict(assumption_profiles=list(assumption_profiles)))
 
     def post(self, request):
         """ Creates a new assumption profile and saves it to the database.
@@ -530,7 +526,7 @@ class ScoreCardAttributeAPI(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(ScoreCardAPI, self).dispatch(request, *args, **kwargs)
+        return super(ScoreCardAttributeAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         filter_dict = request.GET.dict()
@@ -554,7 +550,7 @@ class RiskFactorAttributeChoicesAPI(View):
     def dispatch(self, request, *args, **kwargs):
         return super(RiskFactorAttributeChoicesAPI, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request):  
+    def get(self, request):
         """ Get all choices related to an attribute.
 
         Example Result:
@@ -575,7 +571,7 @@ class RiskFactorAttributeChoicesAPI(View):
             'PMI': 'PMI_CHOICES',
             'state': 'STATE_CHOICES'
         }
-        
+
         choices = []
         if selected_attribute in attribute_with_choices.keys():
             attr_value = attribute_with_choices[selected_attribute]
