@@ -78,6 +78,9 @@ class LoanPortfolio:
         """
         return self.cash_flows_df['total_interest'] + self.cash_flows_df['total_principal']
 
+    def cash_flows_to_json(self):
+        return self.cash_flows_df.to_json(orient="records")
+
 
 def create_payment_schedule(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recov):
     """ Creates a payment schedule or cash flows for a loan.
@@ -248,4 +251,4 @@ if __name__ == '__main__':
             loan_dict_list.append(loan)
         # print(loan_dict_list)
     portfolio = LoanPortfolio(loan_dict_list)
-    print(portfolio.cash_flows_df)
+    print(portfolio.cash_flows_to_json())
