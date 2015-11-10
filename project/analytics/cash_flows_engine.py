@@ -210,3 +210,7 @@ def calculate_monthly_payment(start_balance, monthly_interest_rate, term):
     denominator = ((1 + monthly_interest_rate) ** term - 1)
     payment = numerator / denominator * 1.0
     return payment
+
+if __name__ == '__main__':
+    portfolio = LoanPortfolio('1000_loans_sample.csv')
+    print(portfolio.cash_flows_df)
