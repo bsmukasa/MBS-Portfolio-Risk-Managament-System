@@ -3,13 +3,13 @@ import pandas as pd
 
 
 class LoanPortfolio:
-    def __init__(self, csv_file):
+    def __init__(self, portfolio_dict_list):
         """ Creates an instance of LoanPortfolio for use in cash flows generation.
 
-        :param csv_file: The csv file containing the loans.
+        :param portfolio_dict_list: The list of dictionaries representing the portfolios loans.
         """
-        self.csv_file = csv_file
-        self.loan_df = pd.read_csv(csv_file)
+        self.loan_df = pd.DataFrame(portfolio_dict_list)
+        # print(self.loan_df)
 
         self.cash_flows_df = self.create_cash_flows_data_frame()
         self.cash_flows_df['losses'] = self.calculate_cash_flow_losses()
@@ -211,6 +211,41 @@ def calculate_monthly_payment(start_balance, monthly_interest_rate, term):
     payment = numerator / denominator * 1.0
     return payment
 
+
+def isfloat(x):
+    try:
+        float(x)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
+def isint(x):
+    try:
+        a = float(x)
+        b = int(a)
+    except ValueError:
+        return False
+    else:
+        return a == b
+
 if __name__ == '__main__':
-    portfolio = LoanPortfolio('1000_loans_sample.csv')
+    with open("1000_loans_sample.csv") as csv_file:
+        import csv
+        reader = csv.DictReader(csv_file)
+        loan_dict_list = []
+
+        for each in reader:
+            loan = {}
+            for name in reader.fieldnames:
+                if isint(each[name]):
+                    loan[name] = int(each[name])
+                elif isfloat(each[name]):
+                    loan[name] = float(each[name])
+                else:
+                    loan[name] = each[name]
+            loan_dict_list.append(loan)
+        # print(loan_dict_list)
+    portfolio = LoanPortfolio(loan_dict_list)
     print(portfolio.cash_flows_df)
