@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from portfolio.models import Portfolio, Loan
 from risk_management.models import RiskFactor
 from risk_management.forms import AssumptionForm
-from portfolio.helper import calculate_aggregate_portfolio_data
+from portfolio.helper import calculate_aggregate_portfolio_data, loans_status_summary, fico_summary
 import csv
 import codecs
 import datetime
@@ -21,7 +21,7 @@ from portfolio.forms import FileForm
 
 
 # Create your views here.
-class Dashboard(View):
+class DashboardView(View):
     template = "portfolio/dashboard.html"
     form_portfolio_tab = FileForm
     form_assumptions_tab = AssumptionForm
@@ -117,7 +117,7 @@ class PortfolioAPI(View):
                     gross_margin=isSet(row['Gross_Margin']),
                     original_amount=isSet(row['Original_Amount']),
                     current_value_date=convert_date_string(row['Current_Value_Date']),
-                    state=isSet(row['STATE']),
+                    us_state=isSet(row['STATE']),
                     BK_flag=isSet(row['BK_FLAG']),
                     negam_initial_minimum_payment_period=isSet(row['Negam_Initial_Minimum_Payment_Period']),
                     product_type=isSet(row['Product_Type']),
@@ -181,12 +181,12 @@ class PortfolioAPI(View):
 
 
 
-class LoanAPI(View):
+class LoanPaginationAPI(View):
     model = Loan
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(LoanAPI, self).dispatch(request, *args, **kwargs)
+        return super(LoanPaginationAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         """ Gets all the loans from a selected portfolio in the session using
@@ -199,12 +199,92 @@ class LoanAPI(View):
         :param request: Request.
         :return: Json object with loans.
         """
-        portfolio = Portfolio.objects.filter(pk=request.session['portfolio_id'])
-        if portfolio.exists():
-            filter_dict = request.GET.dict()
-            filter_dict['portfolio'] = portfolio
-            profile_loans = self.model.objects.filter(**filter_dict).values()
-            return JsonResponse(dict(loans=list(profile_loans)))
+        pagination_data = request.GET.dict()
+        portfolio_id = pagination_data['portfolio_id']
+        limit = int(pagination_data['limit'])
+        offset = int(pagination_data['offset'])
+
+        portfolio = Portfolio.objects.filter(pk=portfolio_id)
+        loans = self.model.objects.filter(portfolio=portfolio)[offset:limit].values()
+        total_count = self.model.objects.filter(portfolio=portfolio).count()
+
+        return JsonResponse({"total": total_count, "rows": list(loans)})
+
+
+
+class PortfolioView(View):
+    template = "portfolio/portfolio.html"
+    model = Portfolio
+
+    def get(self, request, portfolio_id):
+        """ Gets portfolio's information to show on page.
+
+        User must be logged.
+
+        :param request: Request; must include name; portfolio_id: Id of portfolio clicked
+        :return: Render dashboard
+        """
+        portfolio = self.model.objects.filter(pk=portfolio_id).values()[0]
+        portfolio['weighted_average_coupon'] = portfolio['weighted_average_coupon'] * 100
+        return render(request, self.template, {"portfolio": portfolio})
+
+
+class PortfolioStatusAPI(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PortfolioStatusAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Gets all the loans from a selected portfolio in the session using
+        filter values in the request.GET.
+
+        Portfolio is retrieved using the portfolio_id stored in the session. If the portfolio exists,
+        call helper function to calculate Current Balance and Loan Count for each possible loan status
+        in the portfolio.
+        Status choices: CURRENT, 90 DPD, FC, 60 DPD, REO, REPERF, 30 DPD, REM, CLAIM
+
+        :param request: Request, portfolio_id
+        :return: Json object with status summary.
+        """
+        request_data = request.GET.dict()
+        portfolio_id = request_data['portfolio_id']
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        loans = Loan.objects.filter(portfolio=portfolio).values()
+
+        result = loans_status_summary(loans)
+
+        return JsonResponse({'data':result}, safe=False)
+
+
+class PortfolioFICOAPI(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PortfolioFICOAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Gets all the loans from a selected portfolio in the session using
+        filter values in the request.GET.
+
+        Portfolio is retrieved using the portfolio_id stored in the session. If the portfolio exists,
+        call helper function to calculate Current Balance and Loan Count for each possible loan status
+        in the portfolio.
+        Status choices: CURRENT, 90 DPD, FC, 60 DPD, REO, REPERF, 30 DPD, REM, CLAIM
+
+        :param request: Request, portfolio_id
+        :return: Json object with status summary.
+        """
+        request_data = request.GET.dict()
+        portfolio_id = request_data['portfolio_id']
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        loans = Loan.objects.filter(portfolio=portfolio).values()
+
+        result = fico_summary(loans)
+
+        return JsonResponse({'data':result}, safe=False)
 
 
 # class LoanAdjustedAssumptionsAPI(View):

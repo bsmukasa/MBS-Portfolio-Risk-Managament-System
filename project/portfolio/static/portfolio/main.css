@@ -30,10 +30,9 @@ body {
 
 /*======================================== FOOTER =====================================*/
 .footer {
-    position: absolute;
     bottom: 0px;
     width: 100%;
-    height: 60px;
+    height: 340px;
     background-color: #fff;
 }
 
@@ -45,4 +44,28 @@ body {
 .container .standard_footer {
 	margin: 20px 0px;
 	text-align: center;
+}
+
+
+/*======================================== LOADING ANIMATION =====================================*/
+.modal-loading-page {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('images/ajax-loader.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;   
+}
+
+body.loading .modal-loading-page {
+    display: block;
 }

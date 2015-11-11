@@ -50,36 +50,103 @@ def calculate_wal(active_loans):
 
 
 
-# float_interest_rates_40yr = [ 0.020000, 0.021440, 0.022984, 0.024639, 0.026412, 0.028314, 0.030353,
-# 	0.032538, 0.034881, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 
-# 	0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392,
-# 	0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 
-# 	0.037392, 0.037392, 0.037392, 0.037392, 0.037392, 0.037392 ]
+def loans_status_summary(loans_query_result):
+	loans_df = pd.DataFrame(list(loans_query_result))
+	active_loans = loans_df[loans_df['current_principal_balance'] > 0]
+
+	if any(active_loans.status == 'CURRENT'):
+		current_balance = active_loans.groupby('status')['current_principal_balance'].sum()['CURRENT']
+		current_count = active_loans.groupby('status')['current_principal_balance'].count()['CURRENT']
+	else: 
+		current_balance = 0
+		current_count = 0
+
+	if any(active_loans.status == '90 DPD'):
+		dpd90_balance = active_loans.groupby('status')['current_principal_balance'].sum()['90 DPD']
+		dpd90_count = active_loans.groupby('status')['current_principal_balance'].count()['90 DPD']
+	else:
+		dpd90_balance = 0
+		dpd90_count = 0
+ 	
+	if any(active_loans.status == 'FC'):
+		fc_balance = active_loans.groupby('status')['current_principal_balance'].sum()['FC']
+		fc_count = active_loans.groupby('status')['current_principal_balance'].count()['FC']
+	else:
+		fc_balance = 0
+		fc_count = 0
+
+	if any(active_loans.status == '60 DPD'):	
+		dpd60_balance = active_loans.groupby('status')['current_principal_balance'].sum()['60 DPD']
+		dpd60_count = active_loans.groupby('status')['current_principal_balance'].count()['60 DPD']	
+	else:
+		dpd60_balance = 0
+		dpd60_count = 0
+
+	if any(active_loans.status == 'REO'):
+		reo_balance = active_loans.groupby('status')['current_principal_balance'].sum()['REO']
+		reo_count = active_loans.groupby('status')['current_principal_balance'].count()['REO']
+	else:
+		reo_balance = 0
+		reo_count = 0
+
+	if any(active_loans.status == 'REPERF'):
+		reperf_balance = active_loans.groupby('status')['current_principal_balance'].sum()['REPERF']
+		reperf_count = active_loans.groupby('status')['current_principal_balance'].count()['REPERF']
+	else:
+		reperf_balance = 0
+		reperf_count = 0
+
+	if any(active_loans.status == '30 DPD'):
+		dpd30_balance = active_loans.groupby('status')['current_principal_balance'].sum()['30 DPD']
+		dpd30_count = active_loans.groupby('status')['current_principal_balance'].count()['30 DPD']
+	else:
+		dpd30_balance = 0
+		dpd30_count = 0
+
+	if any(active_loans.status == 'REM'):
+		rem_balance = active_loans.groupby('status')['current_principal_balance'].sum()['REM']
+		rem_count = active_loans.groupby('status')['current_principal_balance'].count()['REM']
+	else:
+		rem_balance = 0
+		rem_count = 0
+
+	if any(active_loans.status == 'CLAIM'):
+		claim_balance = active_loans.groupby('status')['current_principal_balance'].sum()['CLAIM']
+		claim_count = active_loans.groupby('status')['current_principal_balance'].count()['CLAIM']
+	else: 
+		claim_balance = 0
+		claim_count = 0
+
+	result = [
+		{"status": "CURRENT", "balance": str(current_balance), "count": str(current_count)},
+		{"status": "90 DPD", "balance": str(dpd90_balance), "count": str(dpd90_count)},
+		{"status": "FC", "balance": str(fc_balance), "count": str(fc_count)},
+		{"status": "60 DPD", "balance": str(dpd60_balance), "count": str(dpd60_count)},
+		{"status": "REO", "balance": str(reo_balance), "count": str(reo_count)},
+		{"status": "REPERF", "balance": str(reperf_balance), "count": str(reperf_count)},
+		{"status": "30 DPD", "balance": str(dpd30_balance), "count": str(dpd30_count)},
+		{"status": "REM", "balance": str(rem_balance), "count": str(rem_count)},
+		{"status": "CLAIM", "balance": str(claim_balance), "count": str(claim_count)}
+	]
+	return result
 
 
-# def cash_flow_calculation(csv_file):
-# 	portfolio = pd.read_csv(csv_file, sep=",")
+def fico_summary(loans_query_result):
+	loans_df = pd.DataFrame(list(loans_query_result))
 
-# 	#Valid loans (current balance is bigger than ZERO)
-# 	all_current_balance = portfolio["Current_Principal_Balance"]
-# 	active_loans = portfolio[current_balance > 0]
+	max_fico = loans_df['current_FICO_score'].max()
+	min_fico = loans_df['current_FICO_score'].min()
 
-# 	#Example of economic assumptions:
-# 	assumptions_cdr = 0.08
-# 	assumptions_cpr = 0.09
+	df = loans_df[np.isfinite(loans_df['current_FICO_score'])]
+	fico = df['current_FICO_score'].astype(np.dtype('float64'))
+	balance = df['current_principal_balance'].astype(np.dtype('float64'))
+	wa_fico = np.average(fico, weights=balance)
 
-# 	#Example of risks profiles:
-# 	florida_cdr = 0.05
-# 	fico_above_750_cdr = 0.02
-# 	fico_above_750_cpr = 0.15
+	result = [
+		{"max_fico": max_fico, "min_fico": min_fico, "wa_fico": round(wa_fico)}
+	]
 
-# 	#Getting the max the valid Remaining_Term
-# 	max_term = active_loans['Remaining_Term'].max()
-
-# 	#Group fixed and float rate loans
-# 	float_loans = active_loans[active_loans['Gross_Margin'] > 0]
-# 	fixed_loans = active_loans[active_loans['Gross_Margin'].isnull()]
-
+	return result
 
 
 

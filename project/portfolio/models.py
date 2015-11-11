@@ -160,7 +160,7 @@ class Loan(models.Model):
     purpose = models.CharField(max_length=1, blank=True, null=True)
     mortgage_type = models.CharField(max_length=5, blank=True, null=True)
     city = models.CharField(max_length=256)
-    state = models.CharField(max_length=2)
+    us_state = models.CharField(max_length=2)
     zipcode = models.CharField(max_length=5)
     reset_index = models.CharField(max_length=6, null=True, blank=True)
     pmi_insurance = models.CharField(max_length=128, blank=True, null=True)

@@ -31,6 +31,7 @@ $(document).ready(function(){
 	$('#dashboard-tabs a[href="#scenarios"]').click(function (event) {
 		event.preventDefault()
 		$(this).tab('show')
+		tabLoaderFunctions.scenariosTabLoader();
 	})	
 
 	//Click on Risk Scorecards TAB
@@ -176,7 +177,9 @@ $(document).ready(function(){
 		selected_ids.forEach(function (id, index) {
 			$.get( "/risk_management/risk_factor_conditionals", {"risk_factor_id": id}, function(data) {
 				var attribute_conditionals = data.risk_conditionals;
-				table_data.push(attribute_conditionals[0])
+				for (var idx in attribute_conditionals) {
+					table_data.push(attribute_conditionals[idx])	
+				}
 				helperFunctions.updateTableData("#all-conditionals-table", table_data);
 			})
 		})	
@@ -234,7 +237,7 @@ var helperFunctions = {
 		return informationToLoad	
 	},
 	
-	//Loads mustache template (params: script selector, template selector and data to be inserted)
+	//Loads mustache template (params: script selector, loader selector and data to be inserted)
 	mustacheLoad: function(script_selector, loader_selector, data) {
 		var data, template, informationToLoad;
 		data = data || {};
@@ -330,7 +333,15 @@ var tabLoaderFunctions = {
 		    	helperFunctions.mustacheLoad("#assumptions-details-script", "#assumption-details-loader");
 	    	});
 		});
+	},
 
+	//Scenarios tab
+	scenariosTabLoader: function () {
+		helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load");
+		helperFunctions.displayTableData('#scenario-risk-profiles-table', [{"name": ""}]);
+
+		//TODO >> get user's scenarios (Scenarios API not done)
+		
 
 	}
 }
@@ -343,7 +354,33 @@ Number.prototype.formatNumberSeparator = function(n, x) {
 }
 
 
+//RISK PROFILE PAGE >> Show risk factor details when clicking "+"
+function detailFormatter(index, row) {
+    var html = [];
+    $.each(row, function (key, value) {
+    	if (key == "id") {
+			$.ajax({
+	    		url: "/risk_management/risk_factor_conditionals",
+	    		type: 'GET',
+		    	data: {"risk_factor_id": value},
+		    	async: false,
+		    	success: function(data) {
+		    		var conditional_result = data.risk_conditionals;
+		    		for (var idx in conditional_result) {
+    					obj_conditional = conditional_result[idx];
+    					html.push('<p><b>' + 'Conditional' + ':</b> ' + '  ' + obj_conditional['conditional'] + '  ' + obj_conditional['value']);
+    				}
+    			}
+    		})
+		}
+	})
+    return html.join('');
+}
 
 
-
+//Loading animations according to ajax functionality
+$(document).on({
+    ajaxStart: function() { $("body").addClass("loading"); },
+    ajaxStop: function() { $("body").removeClass("loading"); }    
+});
 

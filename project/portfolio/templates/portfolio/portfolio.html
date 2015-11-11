@@ -1,0 +1,57 @@
+{% extends "portfolio/base_logged_user.html" %}
+{% load staticfiles %}
+
+
+{% block head_title %} 
+	<title>Portfolio</title>
+{% endblock head_title %}
+
+
+{% block head_js_files %}
+	<script src="{% static 'portfolio/portfolio.js' %}"></script> 
+{% endblock head_js_files %}
+
+
+{% block head_css_files %}
+	<link rel="stylesheet" href="{% static 'portfolio/portfolio.css' %}"> 
+{% endblock head_css_files %}
+
+
+{% block scripts %}
+	{% include "portfolio/port-overview.html" %}
+	{% include "portfolio/port-loans.html" %}
+{% endblock scripts %}
+
+
+{% block main_content %}
+	<div class="container-fluid">
+		<div class="row">
+			<a href="/portfolio/dashboard">Back</a>	
+		</div>
+
+		<div class="row">
+        	<div class="col-sm-3 col-md-2 sidebar">
+				<ul class="nav nav-sidebar" id="portfolio-nav">
+					<li class="active"><a href="#overview">Overview <span class="sr-only">(current)</span></a></li>
+					<li><a href="#loans">Loans</a></li>
+					<li><a href="#scenarios">Risk Scenarios</a></li>
+					<li><a href="#analytics">Analysis</a></li>
+				</ul>
+			</div>
+
+			<div class="col-sm-9 main">
+				<h1 class="page-header" id="{{portfolio.id}}">{{portfolio.name}}</h1>
+
+
+				<div id="portfolio-content"></div>
+				
+			</div>
+		</div>
+	</div>
+
+{% endblock main_content %}
+
+
+
+
+

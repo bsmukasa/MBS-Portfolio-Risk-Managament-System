@@ -1,0 +1,108 @@
+<script id="scenarios-template" type="x-tmpl-mustache">
+				
+	<div class="col-sm-4">
+		<h3 class="column-heading-scenarios">Scenarios</h3>
+		<div id="toolbar">
+    		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-new-scenario-name">
+				<i class="glyphicon glyphicon-plus"></i> Add
+			</button> 
+			<button id="view-scenario" class="btn btn-danger" type="button">
+				<i class="glyphicon glyphicon-eye-open"></i> View
+    		</button>
+			<button id="edit-scenario" class="btn btn-danger">
+				<i class="glyphicon glyphicon-pencil"></i> Edit
+    		</button>
+    		<button id="remove-scenario" class="btn btn-danger">
+				<i class="glyphicon glyphicon-trash"></i> Delete
+    		</button>
+    	</div>
+
+		<div class="modal fade" id="modal-new-scenario-name" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Crete new scenario</h4>
+					</div>
+					<form role="form" id="new-scenario-name">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="name">Name:</label>
+								<input type="text" class="form-control" name='name' placeholder="Enter scenario name" required>
+    						</div>
+	    				</div>
+	    				<div class="modal-footer">
+	    					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        			<button type="submit" class="btn btn-primary">Continue</button>
+		        		</div>
+    				</form>
+    			</div>
+  			</div>	  	
+        </div>
+
+		<table id="user-scenario" data-single-select="true" data-unique-id="id" data-toggle="table">
+		    <thead>
+		    	<tr>
+		    		<th data-field="state" data-checkbox="true"></th>
+		    		<th data-field="name">Name</th>
+		    	</tr>
+		    </thead>
+		</table>
+	</div>
+	
+	<div class="col-sm-4">
+		<h3 class="column-heading-scenarios">Economic Assumptions</h3>
+		<table id="scenario-assumptions-table" class='table'>
+			{% verbatim %}
+				<thead>
+					{{ name }}
+				</thead>
+				<tbody>
+			    	<tr>
+			    		<th>GDP Growth</th>
+			    		<td>{{ gdp_growth }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Unemployment Rate</th>
+			    		<td>{{ unemployment_rate }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>National Home Price Index Growth</th>
+			    		<td>{{ national_home_price_index_growth }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>High Yield Spread</th>
+			    		<td>{{ high_yield_spread }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Constant Default Rate (CDR)</th>
+			    		<td>{{ constant_default_rate }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Constante Prepayment Rate (CPR)</th>
+			    		<td>{{ constant_prepayment_rate }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Recovery</th>
+			    		<td>{{ recovery }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Lag</th>
+			    		<td>{{ lag }}</td>
+			    	</tr>
+			    </tbody>
+			{% endverbatim %}
+		</table>
+	</div>
+
+	<div class="col-sm-4">
+		<h3 class="column-heading-scenarios">Risk Profiles</h3>
+		<table id="scenario-risk-profiles-table" data-unique-id="id" data-toggle="table">
+		    <thead>
+		    	<tr>
+		    		<th data-field="name">Profile Name</th>
+		    	</tr>
+		    </thead>
+		</table>
+	</div>	
+</script>

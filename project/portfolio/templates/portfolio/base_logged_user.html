@@ -16,8 +16,8 @@
 
     	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
     	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
-    	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/locale/bootstrap-table-zh-CN.min.js"></script>
-		
+    	
+
 		{% block head_js_files %} {% endblock head_js_files %}
 		<link rel="stylesheet" href="{% static 'portfolio/main.css' %}">
 		{% block head_css_files %} {% endblock head_css_files %}
@@ -55,11 +55,12 @@
 
 		{% block main_content %} {% endblock main_content %}
 
-		<footer class="footer">
+<!-- 		<footer class="footer">
 			<div class="container">
 				<p class="standard_footer">© 2015 Capitalists</p>
 			</div>
-		</footer>
+		</footer> -->
 
+		<div class="modal-loading-page"><!-- Place at bottom of page --></div>
 	</body>
 </html>
