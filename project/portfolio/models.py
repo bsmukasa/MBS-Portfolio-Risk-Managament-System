@@ -1,10 +1,8 @@
-from django.conf import settings
 from django.db import models
 
 
 # Create your models here.
 class Portfolio(models.Model):
-    # user = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_update = models.DateField(auto_now=True)
@@ -30,7 +28,7 @@ class Loan(models.Model):
 
     )
 
-    #Also has empty fields
+    # Also has empty fields
     PROPERTY_TYPE_CODE_CHOICES = (
         ('CO', 'CO'),
         ('SF', 'SF'),
@@ -64,14 +62,14 @@ class Loan(models.Model):
         ('CMS', 'CMS'),
     )
 
-    #Also has empty fields
+    # Also has empty fields
     PURPOSE_CHOICES = (
         ('C', 'C'),
         ('P', 'P'),
         ('R', 'R'),
         ('CN', 'CN'),
     )
-    
+
     LIEN_POSITION_CHOICES = (
         ('0', '0'),
         ('1', '1'),
@@ -79,7 +77,7 @@ class Loan(models.Model):
         ('3', '3'),
     )
 
-    #Also has empty fields
+    # Also has empty fields
     PMI_CHOICES = (
         ('No PMI Insurance', 'No PMI Insurance'),
         ('FHA', 'FHA'),
@@ -164,10 +162,10 @@ class Loan(models.Model):
     zipcode = models.CharField(max_length=5)
     reset_index = models.CharField(max_length=6, null=True, blank=True)
     pmi_insurance = models.CharField(max_length=128, blank=True, null=True)
-    as_of_date = models.DateField(null=True,blank=True)
-    first_payment_date = models.DateField(null=True,blank=True)
-    original_date = models.DateField(null=True,blank=True)
-    first_index_rate_adjustment_date = models.DateField(null=True,blank=True)
+    as_of_date = models.DateField(null=True, blank=True)
+    first_payment_date = models.DateField(null=True, blank=True)
+    original_date = models.DateField(null=True, blank=True)
+    first_index_rate_adjustment_date = models.DateField(null=True, blank=True)
     fico = models.IntegerField(blank=True, null=True)
     lien_position = models.IntegerField(blank=True, null=True)
     interest_reset_interval = models.IntegerField(null=True, blank=True)
@@ -193,7 +191,7 @@ class Loan(models.Model):
     BK_flag = models.CharField(max_length=1, null=True)
     MSR = models.CharField(max_length=1, null=True)
     second_lien_piggyback_flag = models.CharField(max_length=1, blank=True, null=True)
-    remaining_term = models.IntegerField(blank=True, null=True) 
+    remaining_term = models.IntegerField(blank=True, null=True)
     amortized_term = models.IntegerField(null=True)
     IO_term = models.IntegerField(null=True, blank=True)
     current_FICO_score = models.IntegerField(null=True, blank=True)
@@ -203,15 +201,12 @@ class Loan(models.Model):
     current_principal_balance = models.DecimalField(decimal_places=2, max_digits=20, blank=True, null=True)
     current_interest_rate = models.DecimalField(decimal_places=5, max_digits=20, blank=True, null=True)
     senior_lien_balance = models.DecimalField(decimal_places=3, max_digits=20, blank=True, null=True)
-    modification_date = models.DateField(null=True,blank=True)
-    foreclosure_referral_date = models.DateField(null=True,blank=True)
-    current_value_date = models.DateField(null=True,blank=True)
-    last_payment_received = models.DateField(null=True,blank=True)
-    senior_lien_balance_date = models.DateField(null=True,blank=True)
-    junior_lien_balance_date = models.DateField(null=True,blank=True)
-    
-    
-
+    modification_date = models.DateField(null=True, blank=True)
+    foreclosure_referral_date = models.DateField(null=True, blank=True)
+    current_value_date = models.DateField(null=True, blank=True)
+    last_payment_received = models.DateField(null=True, blank=True)
+    senior_lien_balance_date = models.DateField(null=True, blank=True)
+    junior_lien_balance_date = models.DateField(null=True, blank=True)
 
 # class LoanAdjustedAssumptions(models.Model):
 #     loan = models.ForeignKey(Loan)  # TODO Change to loan snapshot when functionality is added.
