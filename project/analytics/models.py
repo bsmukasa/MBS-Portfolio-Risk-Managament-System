@@ -12,12 +12,6 @@ class CashFlowsResults(models.Model):
     analysis_results_name = models.CharField()
 
 
-class ScoreCardProfile(models.Model):
-    name = models.CharField(max_length=128)
-    date_created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-
 class ScoreCard(models.Model):
     ASSUMPTION_CHOICES = (
         ('CDR', 'Constant Default Rate'),
@@ -25,7 +19,6 @@ class ScoreCard(models.Model):
         ('RECOVERY', 'Recovery')
     )
 
-    score_card_profile = models.ForeignKey(ScoreCardProfile)
     assumption_type = models.CharField(max_length=64, choices=ASSUMPTION_CHOICES)
     # total_score = models.DecimalField(decimal_places=4, max_digits=10)
     # updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
