@@ -163,6 +163,39 @@ class LoanPortfolio:
         ].sum().reset_index()
         return aggregate_cash_flows_df
 
+    def net_present_values_for_portfolio(self):
+        """ Calculates net present values for each loan in a portfolio.
+
+        Returns: A series representing the net present values of each loan.
+
+        """
+        npv_series = self.loan_df.apply(
+            self.net_present_value_for_loan,
+            axis=1
+        )
+        return npv_series
+
+    def net_present_value_for_loan(self, loan):
+        """ Calculates a loan's net present value from its cash flows.
+
+        Args:
+            loan: The loan which is being valued.
+
+        Returns: The net present value of the loan.
+
+        """
+        cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
+        npv = np.npv(self.discount_rate / 12, cash_flows['total_payment'])
+        return npv
+
+    def net_present_value_aggregate_for_portfolio(self):
+        """ Gets the portfolio's aggregate net present value.
+
+        Returns: The portfolio's aggregate net present value.
+
+        """
+        return self.net_present_values_for_portfolio().sum()
+
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
     """ Creates a payment schedule or cash flows for a loan.
