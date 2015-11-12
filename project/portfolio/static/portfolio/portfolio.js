@@ -60,7 +60,6 @@ navMenuLoader = {
 			helperFunctions.displayTableData("#status-summary-table", data.data);
 		})
 		$.get("/portfolio/fico_summary", {"portfolio_id": globalVariable.portfolio_id}, function (data) {
-			console.log(data);
 			helperFunctions.displayTableData("#fico-summary-table", data.data);
 		})
 	},

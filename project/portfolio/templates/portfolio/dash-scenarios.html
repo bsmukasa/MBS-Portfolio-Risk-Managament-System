@@ -24,21 +24,48 @@
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<h4 class="modal-title" id="myModalLabel">Crete new scenario</h4>
 					</div>
+					
 					<form role="form" id="new-scenario-name">
+						
 						<div class="modal-body">
-							<div class="form-group">
-								<label for="name">Name:</label>
-								<input type="text" class="form-control" name='name' placeholder="Enter scenario name" required>
-    						</div>
+							<div class="row">
+								<div class="form-group">
+									<label for="name">Name:</label>
+									<input type="text" class="form-control" name='name' placeholder="Enter scenario name" required>
+	    						</div>
+	    					</div>
+
+	    					<div class="row">
+	    						<div class="col-sm-6">
+									<select class="form-control" id="select-economic-assumption" name="economic_assumption">
+											<option value=""> - Select Economic Assumption - </option>
+									{% verbatim %}
+										{{ #assumptions }}
+												<option value={{ id }}>{{ name }}</option>
+										{{ /assumptions }}
+									{% endverbatim %}
+									</select>
+								</div>
+							</div>
+	    				
+
+
 	    				</div>
+	    				
 	    				<div class="modal-footer">
 	    					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        			<button type="submit" class="btn btn-primary">Continue</button>
+		        			<button type="submit" class="btn btn-primary">Save</button>
 		        		</div>
     				</form>
-    			</div>
-  			</div>	  	
-        </div>
+
+    				
+
+
+
+    			
+	    		</div>
+	  		</div>	  	
+	    </div>
 
 		<table id="user-scenario" data-single-select="true" data-unique-id="id" data-toggle="table">
 		    <thead>

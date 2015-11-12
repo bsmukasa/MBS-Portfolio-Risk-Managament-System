@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, ScoreCardProfile, \
-    ScoreCard, ScoreCardAttribute
+    ScoreCard, ScoreCardAttribute, Scenario
 from django.core import serializers
 from portfolio.models import Loan
 
@@ -247,6 +247,43 @@ class RiskConditionalAPI(View):
             return JsonResponse({'status': 'FAIL', 'message': 'Risk Factor does not exist.'})
 
 
+class RiskFactorAttributeChoicesAPI(View):
+    model = Loan
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(RiskFactorAttributeChoicesAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):  
+        """ Get all choices related to an attribute.
+
+        Example Result:
+            { "related_choices": [] }
+
+            { "related_choices": ["CA", "NY", "MI"] }
+
+        :param request: Request
+        return: JsonResponse list of assumption profiles.
+        """
+        selected_attribute = request.GET.dict()['attribute']
+
+        attribute_with_choices = {
+            'mortgage_type': 'MORTGAGE_TYPE_CHOICES',
+            'property_type': 'PROPERTY_TYPE_CODE_CHOICES',
+            'purpose': 'PURPOSE_CHOICES',
+            'lien_position': 'LIEN_POSITION_CHOICES',
+            'PMI': 'PMI_CHOICES',
+            'state': 'STATE_CHOICES'
+        }
+        
+        choices = []
+        if selected_attribute in attribute_with_choices.keys():
+            attr_value = attribute_with_choices[selected_attribute]
+            choices = getattr(self.model, attr_value)
+
+        return JsonResponse({"attribute_choices": choices})
+
+
 class AssumptionProfileAPI(View):
     model = AssumptionProfile
 
@@ -384,6 +421,41 @@ class AssumptionProfileAPI(View):
         return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})
 
 
+class AssumptionNameAPI(View):
+    model = AssumptionProfile
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AssumptionNameAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get all saved assumption profiles.
+
+        Example Result:
+            {
+                "assumption_profiles": [
+                    {
+                        "name": "3 Month Timber Shortage",
+                        "id": 1
+                    },
+                    {
+                        "name": "GDP Growing at 3%",
+                        "id": 2
+                    }
+                ]
+            }
+
+        :param request: Request
+        return: JsonResponse list of assumption profiles on success, status and message if not.
+        """
+        filter_dict = request.GET.dict()
+        assumption_names = self.model.objects.values_list("id", "name")
+
+        print(assumption_names)
+        
+        return JsonResponse(dict(assumption_names=list(assumption_names)))
+
+
 class ScoreCardProfileAPI(View):
     model = ScoreCardProfile
 
@@ -438,9 +510,8 @@ class ScoreCardProfileAPI(View):
         :param request: Request.
         :return: JsonResponse with status and message.
         """
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        name = body['name']
+        request_data = request.POST.dict()
+        name = request_data['name']
 
         score_card_profile = self.model(
             name=name
@@ -513,14 +584,18 @@ class ScoreCardAPI(View):
         """
         filter_dict = request.GET.dict()
         score_card_profile_id = filter_dict['score_card_profile_id']
-        score_card_profile = RiskFactor.objects.filter(pk=score_card_profile_id)
+        score_card_profile = ScoreCardProfile.objects.filter(pk=score_card_profile_id)
 
         if score_card_profile.exists():
             filter_dict['score_card_profile'] = score_card_profile
 
             score_cards = self.model.objects.filter(**filter_dict).values()
 
-            return JsonResponse(dict(score_cards=list(score_cards)))
+            pk_score_card = score_cards[1]["id"]
+            scorecard_instance = ScoreCard.objects.filter(pk=pk_score_card)
+            attributes = ScoreCardAttribute.objects.filter(score_card=scorecard_instance).values()
+
+            return JsonResponse(dict(score_cards=list(score_cards), attributes=list(attributes)))
         else:
             return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
 
@@ -547,38 +622,60 @@ class ScoreCardAttributeAPI(View):
             return JsonResponse({'status': 'FAIL', 'message': 'Score Card Profile does not exist.'})
 
 
-class RiskFactorAttributeChoicesAPI(View):
-    model = Loan
+
+class ScenarioAPI(View):
+    model = Scenario
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(RiskFactorAttributeChoicesAPI, self).dispatch(request, *args, **kwargs)
+        return super(ScenarioAPI, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request):  
-        """ Get all choices related to an attribute.
+    def get(self, request):
+        """ Get all saved scenarios.
 
         Example Result:
-            { "related_choices": [] }
-
-            { "related_choices": ["CA", "NY", "MI"] }
+            {
+                "scenarios": [
+                    {
+                        "id": 1,
+                        "name" = "US growing 5%",
+                        "date_created": "2015-10-30T21:16:06.398Z",
+                        "last_updated": "2015-10-30T21:16:06.398Z",
+                        "assumption_profile": 1,
+                        "score_card_profile": 3,
+                        "risk_profiles": 1
+                    },
+                ]
+            }
 
         :param request: Request
-        return: JsonResponse list of assumption profiles.
+        return: JsonResponse list of assumption profiles on success, status and message if not.
         """
-        selected_attribute = request.GET.dict()['attribute']
+        filter_dict = request.GET.dict()
+        all_scenarios = self.model.objects.filter(**filter_dict).values()
 
-        attribute_with_choices = {
-            'mortgage_type': 'MORTGAGE_TYPE_CHOICES',
-            'property_type': 'PROPERTY_TYPE_CODE_CHOICES',
-            'purpose': 'PURPOSE_CHOICES',
-            'lien_position': 'LIEN_POSITION_CHOICES',
-            'PMI': 'PMI_CHOICES',
-            'state': 'STATE_CHOICES'
-        }
-        
-        choices = []
-        if selected_attribute in attribute_with_choices.keys():
-            attr_value = attribute_with_choices[selected_attribute]
-            choices = getattr(self.model, attr_value)
+        return JsonResponse(dict(scenarios=list(all_scenarios)))
 
-        return JsonResponse({"attribute_choices": choices})
+    def post(self, request):
+        """ Creates a new scenario and saves it to the database.
+
+        Json in the Request must include:
+        -name
+
+        Example Request:
+            {
+                "name": Zipcode's in NJ
+            }
+
+        :param request: Request
+        :return: JsonResponse including a status and message.
+        """    
+        request_result = request.POST.dict()
+        name = request_result['name']
+
+        new_risk_profile = self.model(name=name)
+        new_risk_profile.save()
+        saved_risk_profile = self.model.objects.filter(pk=new_risk_profile.pk).values()
+
+        return JsonResponse(dict(status="OK", message="Risk Profile created", new_risk_profile=list(saved_risk_profile)[0]))
+

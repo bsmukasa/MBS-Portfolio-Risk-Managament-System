@@ -38,6 +38,7 @@ $(document).ready(function(){
 	$('#dashboard-tabs a[href="#scorecards"]').click(function (event) {
 		event.preventDefault()
 		$(this).tab('show')
+		tabLoaderFunctions.scorecardsTabLoader();
 	})	
 
 
@@ -184,7 +185,12 @@ $(document).ready(function(){
 			})
 		})	
 	})
-	
+
+
+	//Back button
+	$('#main-content').on('click', '#back-risk-profile', function() {
+		tabLoaderFunctions.riskProfileTabLoader();
+	})
 
 
 //................................................................................................................................................
@@ -220,6 +226,71 @@ $(document).ready(function(){
 	})
 
 
+//................................................................................................................................................
+	//SCORECARD TAB
+
+	//Create new scorecard
+	$('#main-content').on('submit',"#form-new-scorecard-name", function(event) {
+		event.preventDefault();
+		var form_data = $("#form-new-scorecard-name")
+		$.ajax({
+    		url: "/risk_management/score_card_profile",
+    		type: 'POST',
+	    	data: form_data.serialize(),
+    		success: function(data) {
+    			if (data.status == "OK") {
+  		  			$(this).modal('hide');
+    				$('body').removeClass('modal-open');
+    				$('.modal-backdrop').remove();
+    				tabLoaderFunctions.scorecardsTabLoader();
+    			}
+    		}
+    	})
+	})
+
+
+	//View selected scorecard
+	$('#main-content').on('click', '#view-scorecard', function() {
+		var selected_assumption = helperFunctions.getTableSelections('#user-scorecard');
+		$.get("/risk_management/get_score_cards", {"score_card_profile_id": selected_assumption[0]}, function(return_data) {
+
+			// console.log(return_data);
+		// TODO >> add scorecard and edit their weights
+		})
+	})
+
+//................................................................................................................................................
+	//SCENARIO TAB
+
+	//Create new scenario
+	$('#main-content').on('submit',"#new-scenario-name", function(event) {
+		event.preventDefault();
+		var form_data = $("#new-scenario-name")
+		$.ajax({
+    		url: "/risk_management/score_card_profile",
+    		type: 'POST',
+	    	data: form_data.serialize(),
+    		success: function(data) {
+    			if (data.status == "OK") {
+  		  			$(this).modal('hide');
+    				$('body').removeClass('modal-open');
+    				$('.modal-backdrop').remove();
+    				tabLoaderFunctions.scorecardsTabLoader();
+    			}
+    		}
+    	})
+	})
+
+
+	//View selected scorecard
+	$('#main-content').on('click', '#view-scorecard', function() {
+		var selected_assumption = helperFunctions.getTableSelections('#user-scorecard');
+		$.get("/risk_management/get_score_cards", {"score_card_profile_id": selected_assumption[0]}, function(return_data) {
+
+			// console.log(return_data);
+		// TODO >> add scorecard and edit their weights
+		})
+	})
 //................................................................................................................................................
 //$document closing
 });
@@ -311,7 +382,6 @@ var tabLoaderFunctions = {
 				else {
 					helperFunctions.displayTableData('#user-risk-profiles', [{"name": ""}])
 		    	}
-
 		    	helperFunctions.displayTableData('#user-risk-details', 
 		    		[{"attribute": "", "changing_assumption": "", "percentage_change": ""}])
 	    	});
@@ -322,7 +392,7 @@ var tabLoaderFunctions = {
 	assumptionsTabLoader: function() {
 		helperFunctions.mustacheLoad("#assumptions-template", "#main-content-load");
 
-		$.get( "/risk_management/assumption_profile", function( return_data ) {
+		$.get( "/risk_management/assumption_profile", function (return_data) {
 			$(function () {
 				if (return_data.assumption_profiles.length > 0) {
 					helperFunctions.displayTableData('#assumptions-table', return_data.assumption_profiles);
@@ -337,12 +407,50 @@ var tabLoaderFunctions = {
 
 	//Scenarios tab
 	scenariosTabLoader: function () {
-		helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load");
-		helperFunctions.displayTableData('#scenario-risk-profiles-table', [{"name": ""}]);
+		$.ajax({
+    		url: "/risk_management/assumptions_name",
+    		type: 'GET',
+	    	async: false,
+	    	success: function(return_data) {
+	    		names_array = return_data.assumption_names
+				assumptionsObj = {"assumptions": []}
+				arrayNames = []
+				for (var idx in names_array) {
+					new_obj = {"id": names_array[idx][0], "name":names_array[idx][1]}
+					arrayNames.push(new_obj);
+				}
+				assumptionsObj.assumptions = arrayNames
+				helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load", assumptionsObj);
+			}
+		})
+	
+		helperFunctions.displayTableData('#scenario-risk-profiles-table');
+		$.get( "/risk_management/scenarios", function (return_data) {
+			helperFunctions.displayTableData('#user-scenario', return_data.scenarios);
+		})
 
-		//TODO >> get user's scenarios (Scenarios API not done)
-		
+	},
 
+	//Scorecards tab
+	scorecardsTabLoader: function () {
+		helperFunctions.mustacheLoad("#scorecards-template", "#main-content-load");
+
+		$.get("/risk_management/score_card_profile", function (data) {
+			if (data.score_card_profiles.length > 0) {
+				helperFunctions.displayTableData('#user-scorecard', data.score_card_profiles);
+			}
+			else {
+				helperFunctions.displayTableData('#user-scorecard', [{"name": ""}]);
+	    	}
+    		emptyData = []
+	    	for (var idx in globalVariables.riskFactorAttributeChoices) {
+	    		var dict = {"weight": 0, "attribute": globalVariables.riskFactorAttributeChoices[idx]}
+	    		emptyData.push(dict)
+	    	}
+	    	helperFunctions.displayTableData('#scorecard-CDR', emptyData);
+	    	helperFunctions.displayTableData('#scorecard-CPR', emptyData);
+	    	helperFunctions.displayTableData('#scorecard-recovery', emptyData);
+		})
 	}
 }
 
@@ -384,3 +492,12 @@ $(document).on({
     ajaxStop: function() { $("body").removeClass("loading"); }    
 });
 
+
+//Global variables
+var globalVariables = {
+	riskFactorAttributeChoices: ['FICO', 'Property Type', 'Purpose', 'Mortgage Type', 'Lien Position', 'Current Interest Rate', 'Remaining Term', 'State', 
+		'PMI', 'Zipcode', 'Gross Margin', 'Interest Cap', 'LCAP', 'First Interest Adjustment Date', 'Current LTV']
+}
+
+
+        
