@@ -139,6 +139,30 @@ class LoanPortfolio:
         """
         return self.cash_flows_df['recovery'].sum()
 
+    def aggregate_cash_flows_for_portfolio(
+            self,
+            fields_list=(
+                'start_balance',
+                'scheduled_principal',
+                'unscheduled_principal',
+                'interest', 'defaults',
+                'losses',
+                'recovery'
+            )
+    ):
+        """ Generates a portfolio's aggregate cash flows for a given set of fields.
+
+        Args:
+            fields_list: The list of fields from a loan cash flows to be aggregated.
+
+        Returns: The portfolio's aggregated cash flows.
+
+        """
+        aggregate_cash_flows_df = self.cash_flows_df.groupby('period')[
+            fields_list
+        ].sum().reset_index()
+        return aggregate_cash_flows_df
+
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
     """ Creates a payment schedule or cash flows for a loan.
