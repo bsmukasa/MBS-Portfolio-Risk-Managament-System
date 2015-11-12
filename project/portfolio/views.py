@@ -1,27 +1,22 @@
-import json
-from django.shortcuts import render, render_to_response, redirect
-from django.contrib.auth import get_user_model
-from django.http import JsonResponse
-from django.views.generic import View
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from portfolio.models import Portfolio, Loan
-from risk_management.models import RiskFactor
-from risk_management.forms import AssumptionForm
-from portfolio.helper import calculate_aggregate_portfolio_data, loans_status_summary, fico_summary
 import csv
-import codecs
+
 import datetime
-
-
-
-#Check if its needed and saves correctly
+import codecs
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
+from portfolio.helper import calculate_aggregate_portfolio_data
+from portfolio.models import Portfolio, Loan
+from risk_management.forms import AssumptionForm
+from risk_management.models import RiskFactor
+# Check if its needed and saves correctly
 from portfolio.forms import FileForm
 
 
-
 # Create your views here.
-class DashboardView(View):
+class Dashboard(View):
     template = "portfolio/dashboard.html"
     form_portfolio_tab = FileForm
     form_assumptions_tab = AssumptionForm
@@ -35,8 +30,9 @@ class DashboardView(View):
         :return: Render dashboard
         """
 
-        return render(request, self.template, {'form_upload': self.form_portfolio_tab, 
-            'form_assumptions': self.form_assumptions_tab, 'choices': RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES})
+        return render(request, self.template, {'form_upload': self.form_portfolio_tab,
+                                               'form_assumptions': self.form_assumptions_tab,
+                                               'choices': RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES})
 
 
 class PortfolioAPI(View):
@@ -98,67 +94,66 @@ class PortfolioAPI(View):
             new_portfolio.weighted_average_coupon = 0
             new_portfolio.weighted_average_life_to_maturity = 0
             new_portfolio.save()
-                
+
             # new_portfolio.user = user
 
-            upload_file = request.FILES['loan_file']
             loan_list = []
 
             data = csv.DictReader(codecs.iterdecode(request.FILES['loan_file'], 'utf-8'))
             for row in data:
                 loan = Loan(
                     portfolio=new_portfolio,
-                    deferred_balance=isSet(row['DEFERRED_BAL']),
-                    pmi_insurance=isSet(row['PMI']),
+                    deferred_balance=is_set(row['DEFERRED_BAL']),
+                    pmi_insurance=is_set(row['PMI']),
                     first_payment_date=convert_date_string(row['First_Payment_Date']),
-                    junior_lien_balance=isSet(row['Junior Lien Bal']),
-                    senior_lien_balance=isSet(row['Senior Lien Bal']),
-                    mortgage_type=isSet(row['Mortgagetype']),
-                    gross_margin=isSet(row['Gross_Margin']),
-                    original_amount=isSet(row['Original_Amount']),
+                    junior_lien_balance=is_set(row['Junior Lien Bal']),
+                    senior_lien_balance=is_set(row['Senior Lien Bal']),
+                    mortgage_type=is_set(row['Mortgagetype']),
+                    gross_margin=is_set(row['Gross_Margin']),
+                    original_amount=is_set(row['Original_Amount']),
                     current_value_date=convert_date_string(row['Current_Value_Date']),
-                    us_state=isSet(row['STATE']),
-                    BK_flag=isSet(row['BK_FLAG']),
-                    negam_initial_minimum_payment_period=isSet(row['Negam_Initial_Minimum_Payment_Period']),
-                    product_type=isSet(row['Product_Type']),
-                    remaining_term=isSet(row['Remaining_Term']),
-                    first_recast_or_next_recast=isSet(row['First_Recast/Next_Recast']),
-                    amortized_term=isSet(row['Amor_Term']),
-                    recast_cap=isSet(row['Recast_Cap']),
-                    occupancy_code=isSet(row['Occupancy']),
+                    state=is_set(row['STATE']),
+                    BK_flag=is_set(row['BK_FLAG']),
+                    negam_initial_minimum_payment_period=is_set(row['Negam_Initial_Minimum_Payment_Period']),
+                    product_type=is_set(row['Product_Type']),
+                    remaining_term=is_set(row['Remaining_Term']),
+                    first_recast_or_next_recast=is_set(row['First_Recast/Next_Recast']),
+                    amortized_term=is_set(row['Amor_Term']),
+                    recast_cap=is_set(row['Recast_Cap']),
+                    occupancy_code=is_set(row['Occupancy']),
                     modification_date=convert_date_string(row['Modification_Date']),
-                    negam_payment_reset_frequency=isSet(row['Negam_Payment_Reset_Frequency']),
-                    IO_term=isSet(row['IO_Term']),
+                    negam_payment_reset_frequency=is_set(row['Negam_Payment_Reset_Frequency']),
+                    IO_term=is_set(row['IO_Term']),
                     senior_lien_balance_date=convert_date_string(row['Senior Lien Bal Date']),
-                    icap=isSet(row['ICAP']),
-                    current_interest_rate=isSet(row['Current_Interest_Rate']),
-                    SF=isSet(row['SF']),
-                    fico=isSet(row['FICO']),
-                    pcap=isSet(row['PCAP']),
-                    interest_reset_interval=isSet(row['Interest_Reset_Interval']),
-                    recast_frequency=isSet(row['Recast_Frequency']),
-                    original_term=isSet(row['Original_Term']),
+                    icap=is_set(row['ICAP']),
+                    current_interest_rate=is_set(row['Current_Interest_Rate']),
+                    SF=is_set(row['SF']),
+                    fico=is_set(row['FICO']),
+                    pcap=is_set(row['PCAP']),
+                    interest_reset_interval=is_set(row['Interest_Reset_Interval']),
+                    recast_frequency=is_set(row['Recast_Frequency']),
+                    original_term=is_set(row['Original_Term']),
                     as_of_date=convert_date_string(row['AS_OF_DATE']),
-                    lcap=isSet(row['LCAP']),
-                    status=isSet(row['STATUS']),
-                    MSR=isSet(row['MSR']),
-                    original_appraisal_amount=isSet(row['Original_Appraisal_Amount']),
-                    lfloor=isSet(row['LFLOOR']),
-                    purpose=isSet(row['Purpose']),
-                    reset_index=isSet(row['Reset_Index']),
-                    zipcode=isSet(row['ZIP']),
-                    property_type_code=isSet(row['Property']),
-                    lien_position=isSet(row['Lien_Position']),
-                    current_FICO_score=isSet(row['Current_FICO_Score']),
-                    current_property_value=isSet(row['Current_Property_Value']),
+                    lcap=is_set(row['LCAP']),
+                    status=is_set(row['STATUS']),
+                    MSR=is_set(row['MSR']),
+                    original_appraisal_amount=is_set(row['Original_Appraisal_Amount']),
+                    lfloor=is_set(row['LFLOOR']),
+                    purpose=is_set(row['Purpose']),
+                    reset_index=is_set(row['Reset_Index']),
+                    zipcode=is_set(row['ZIP']),
+                    property_type_code=is_set(row['Property']),
+                    lien_position=is_set(row['Lien_Position']),
+                    current_FICO_score=is_set(row['Current_FICO_Score']),
+                    current_property_value=is_set(row['Current_Property_Value']),
                     foreclosure_referral_date=convert_date_string(row['Foreclosure_Referral_Date']),
-                    current_principal_balance=isSet(row['Current_Principal_Balance']),
+                    current_principal_balance=is_set(row['Current_Principal_Balance']),
                     last_payment_received=convert_date_string(row['LAST_PMT_RECD']),
-                    original_rate=isSet(row['ORATE']),
+                    original_rate=is_set(row['ORATE']),
                     original_date=convert_date_string(row['Origination_Date']),
-                    city=isSet(row['CITY']),
-                    bank_loan_id=isSet(row['LoanID']),
-                    second_lien_piggyback_flag=isSet(row['2nd Lien Piggyback Flag']),
+                    city=is_set(row['CITY']),
+                    bank_loan_id=is_set(row['LoanID']),
+                    second_lien_piggyback_flag=is_set(row['2nd Lien Piggyback Flag']),
                     junior_lien_balance_date=convert_date_string(row['Junior Lien Bal Date']),
                     first_index_rate_adjustment_date=convert_date_string(row['First_Interest_Rate_Adjustment_Date']),
                 )
@@ -173,20 +168,20 @@ class PortfolioAPI(View):
             new_portfolio.total_loan_count = portfolio_loans_calculations['total_loan_count']
             new_portfolio.average_loan_balance = portfolio_loans_calculations['avg_loan_balance']
             new_portfolio.weighted_average_coupon = portfolio_loans_calculations['weighted_avg_coupon']
-            new_portfolio.weighted_average_life_to_maturity = portfolio_loans_calculations['weighted_avg_life_to_maturity']
+            new_portfolio.weighted_average_life_to_maturity = portfolio_loans_calculations[
+                'weighted_avg_life_to_maturity']
             new_portfolio.save()
             # End Tab
 
             return JsonResponse({'status': 'OK', 'message': 'Risk Profile Created!!'})
 
 
-
-class LoanPaginationAPI(View):
+class LoanAPI(View):
     model = Loan
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(LoanPaginationAPI, self).dispatch(request, *args, **kwargs)
+        return super(LoanAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         """ Gets all the loans from a selected portfolio in the session using
@@ -199,92 +194,12 @@ class LoanPaginationAPI(View):
         :param request: Request.
         :return: Json object with loans.
         """
-        pagination_data = request.GET.dict()
-        portfolio_id = pagination_data['portfolio_id']
-        limit = int(pagination_data['limit'])
-        offset = int(pagination_data['offset'])
-
-        portfolio = Portfolio.objects.filter(pk=portfolio_id)
-        loans = self.model.objects.filter(portfolio=portfolio)[offset:limit].values()
-        total_count = self.model.objects.filter(portfolio=portfolio).count()
-
-        return JsonResponse({"total": total_count, "rows": list(loans)})
-
-
-
-class PortfolioView(View):
-    template = "portfolio/portfolio.html"
-    model = Portfolio
-
-    def get(self, request, portfolio_id):
-        """ Gets portfolio's information to show on page.
-
-        User must be logged.
-
-        :param request: Request; must include name; portfolio_id: Id of portfolio clicked
-        :return: Render dashboard
-        """
-        portfolio = self.model.objects.filter(pk=portfolio_id).values()[0]
-        portfolio['weighted_average_coupon'] = portfolio['weighted_average_coupon'] * 100
-        return render(request, self.template, {"portfolio": portfolio})
-
-
-class PortfolioStatusAPI(View):
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(PortfolioStatusAPI, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request):
-        """ Gets all the loans from a selected portfolio in the session using
-        filter values in the request.GET.
-
-        Portfolio is retrieved using the portfolio_id stored in the session. If the portfolio exists,
-        call helper function to calculate Current Balance and Loan Count for each possible loan status
-        in the portfolio.
-        Status choices: CURRENT, 90 DPD, FC, 60 DPD, REO, REPERF, 30 DPD, REM, CLAIM
-
-        :param request: Request, portfolio_id
-        :return: Json object with status summary.
-        """
-        request_data = request.GET.dict()
-        portfolio_id = request_data['portfolio_id']
-
-        portfolio = Portfolio.objects.get(pk=portfolio_id)
-        loans = Loan.objects.filter(portfolio=portfolio).values()
-
-        result = loans_status_summary(loans)
-
-        return JsonResponse({'data':result}, safe=False)
-
-
-class PortfolioFICOAPI(View):
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(PortfolioFICOAPI, self).dispatch(request, *args, **kwargs)
-
-    def get(self, request):
-        """ Gets all the loans from a selected portfolio in the session using
-        filter values in the request.GET.
-
-        Portfolio is retrieved using the portfolio_id stored in the session. If the portfolio exists,
-        call helper function to calculate Current Balance and Loan Count for each possible loan status
-        in the portfolio.
-        Status choices: CURRENT, 90 DPD, FC, 60 DPD, REO, REPERF, 30 DPD, REM, CLAIM
-
-        :param request: Request, portfolio_id
-        :return: Json object with status summary.
-        """
-        request_data = request.GET.dict()
-        portfolio_id = request_data['portfolio_id']
-
-        portfolio = Portfolio.objects.get(pk=portfolio_id)
-        loans = Loan.objects.filter(portfolio=portfolio).values()
-
-        result = fico_summary(loans)
-
-        return JsonResponse({'data':result}, safe=False)
+        portfolio = Portfolio.objects.filter(pk=request.session['portfolio_id'])
+        if portfolio.exists():
+            filter_dict = request.GET.dict()
+            filter_dict['portfolio'] = portfolio
+            profile_loans = self.model.objects.filter(**filter_dict).values()
+            return JsonResponse(dict(loans=list(profile_loans)))
 
 
 # class LoanAdjustedAssumptionsAPI(View):
@@ -299,7 +214,6 @@ class PortfolioFICOAPI(View):
 #             affected_loans = self.model.objects.filter(**filter_dict).values()
 
 
-
 def convert_date_string(date_string):
     if date_string == '':
         return None
@@ -308,8 +222,7 @@ def convert_date_string(date_string):
         return parse_date
 
 
-def isSet(field):
+def is_set(field):
     if not field:
         return None
     return field
-

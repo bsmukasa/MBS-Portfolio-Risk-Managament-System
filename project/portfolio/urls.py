@@ -40,4 +40,3 @@ urlpatterns = patterns(
         name='fico_summary_api'
     ),
 )
-
