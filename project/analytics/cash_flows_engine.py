@@ -91,6 +91,14 @@ class LoanPortfolio:
         """
         return self.loan_df['Current_Principal_Balance'].sum()
 
+    def interest_aggregate_for_portfolio(self):
+        """ Gets the portfolio's total interest from aggregate cash flows.
+
+        Returns: Portfolio's aggregate total interest from cash flows.
+
+        """
+        return self.cash_flows_df['total_interest'].sum()
+
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
     """ Creates a payment schedule or cash flows for a loan.
