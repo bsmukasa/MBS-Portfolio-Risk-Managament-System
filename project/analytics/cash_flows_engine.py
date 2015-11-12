@@ -196,6 +196,41 @@ class LoanPortfolio:
         """
         return self.net_present_values_for_portfolio().sum()
 
+    def internal_rates_of_return_for_portfolio(self):
+        """ Calculates the internal rates of return for each loan in a portfolio.
+
+        Returns: A series representing the internal rates of return of each loan.
+
+        """
+        irr_series = self.loan_df.apply(
+            self.internal_rate_of_return_for_loan,
+            axis=1
+        )
+        return irr_series
+
+    def internal_rate_of_return_for_loan(self, loan):
+        """ Calculates a loan's internal rate of return from its cash flows.
+
+        Args:
+            loan: The loan which is being considered.
+
+        Returns: The internal rate of return of the loan.
+
+        """
+        cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
+        total_payments = list(cash_flows['total_payment'])
+        total_payments[0] = -loan['Original_Amount']
+        irr = np.irr(total_payments)
+        return irr
+
+    def internal_rate_of_return_aggregate_for_portfolio(self):
+        """ Calculates the portfolio's aggregate internal rate of return.
+
+        Returns: The portfolio's aggregate internal rate of return.
+
+        """
+        return self.internal_rates_of_return_for_portfolio().sum()
+
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
     """ Creates a payment schedule or cash flows for a loan.
