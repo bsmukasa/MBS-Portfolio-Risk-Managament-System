@@ -1,0 +1,104 @@
+<script id="scorecards-template" type="x-tmpl-mustache">
+	
+	<div class="col-sm-3">
+		<h4 class="scorecard-table-title">Scorecards</h4>
+		<div id="toolbar">
+			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-new-scorecard-profile-name">
+				<i class="glyphicon glyphicon-plus"></i>
+			</button> 
+			<button id="view-scorecard" class="btn btn-danger" type="button">
+				<i class="glyphicon glyphicon-eye-open"></i>
+			</button>
+			<button id="edit-scenario" class="btn btn-danger">
+				<i class="glyphicon glyphicon-pencil"></i>
+			</button>
+			<button id="remove-scenario" class="btn btn-danger">
+				<i class="glyphicon glyphicon-trash"></i>
+			</button>
+		</div>
+
+			<div class="modal fade" id="modal-new-scorecard-profile-name" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Crete new scorecard</h4>
+						</div>
+						<form role="form" id="form-new-scorecard-name">
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="name">Name:</label>
+									<input type="text" class="form-control" name='name' placeholder="Enter scorecard name" required>
+								</div>
+		    				</div>
+		    				<div class="modal-footer">
+		    					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        			<button type="submit" class="btn btn-primary">Continue</button>
+			        		</div>
+						</form>
+					</div>
+					</div>	  	
+		    </div>
+
+		<table id="user-scorecard" data-single-select="true" data-unique-id="id" data-toggle="table" data-height="650">
+		    <thead>
+		    	<tr>
+		    		<th data-field="state" data-checkbox="true"></th>
+		    		<th data-field="name">Name</th>
+		    	</tr>
+		    </thead>
+		</table>
+	</div>
+
+	<div class="col-sm-3">
+		<h4 class="scorecard-table-title">CDR</h4>
+		<div id="toolbar">
+			<button id="edit-CDR" class="btn btn-danger">
+				<i class="glyphicon glyphicon-pencil"></i>
+			</button>
+		</div>
+		<table id="scorecard-CDR" data-unique-id="id" data-height="650">
+		    <thead>
+		    	<tr>
+		    		<th data-field="attribute">Attribute</th>
+		    		<th data-field="weight">Weight</th>
+		    	</tr>
+		    </thead>
+		</table>
+	</div>
+
+	<div class="col-sm-3">
+		<h4 class="scorecard-table-title">CPR</h4>
+		<div id="toolbar">
+			<button id="edit-CPR" class="btn btn-danger">
+				<i class="glyphicon glyphicon-pencil"></i>
+			</button>
+		</div>
+		<table id="scorecard-CPR" data-unique-id="id" data-height="650">
+		    <thead>
+		    	<tr>
+		    		<th data-field="attribute">Attribute</th>
+		    		<th data-field="weight">Weight</th>
+		    	</tr>
+		    </thead>
+		</table>
+	</div>
+
+	<div class="col-sm-3">
+		<h4 class="scorecard-table-title">Recovery</h4>
+		<div id="toolbar">
+			<button id="edit-recovery" class="btn btn-danger">
+				<i class="glyphicon glyphicon-pencil"></i>
+			</button>
+		</div>
+		<table id="scorecard-recovery" data-unique-id="id" data-height="650">
+		    <thead>
+		    	<tr>
+		    		<th data-field="attribute">Attribute</th>
+		    		<th data-field="weight">Weight</th>
+		    	</tr>
+		    </thead>
+		</table>
+	</div>
+</script>
+

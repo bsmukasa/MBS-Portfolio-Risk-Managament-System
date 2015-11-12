@@ -83,4 +83,8 @@ body > .container > .row {
 	border-bottom-color: rgba(0,0,0,0);
 }
 
+.modal.modal-wide .modal-dialog {
+  width: 90%;
+  height: 70%;
+}
 

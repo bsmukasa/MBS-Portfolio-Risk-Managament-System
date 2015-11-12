@@ -42,15 +42,9 @@ urlpatterns = patterns(
     ),
 
     url(
-        regex=r'^add_score_card_profile$',
+        regex=r'^score_card_profile$',
         view=views.ScoreCardProfileAPI.as_view(),
-        name='add_score_card_profile_api'
-    ),
-
-    url(
-        regex=r'^get_score_card_profiles$',
-        view=views.ScoreCardProfileAPI.as_view(),
-        name='get_score_card_profiles_api'
+        name='score_card_profile_api'
     ),
 
     url(
@@ -69,6 +63,18 @@ urlpatterns = patterns(
         regex=r'^factor_attribute$',
         view=views.RiskFactorAttributeChoicesAPI.as_view(),
         name='risk_factor_api'
+    ),
+
+    url(
+        regex=r'^scenarios$',
+        view=views.ScenarioAPI.as_view(),
+        name='scenario_api'
+    ),
+
+    url(
+        regex=r'^assumptions_name$',
+        view=views.AssumptionNameAPI.as_view(),
+        name='assumptions_name_api'
     ),
 )
 

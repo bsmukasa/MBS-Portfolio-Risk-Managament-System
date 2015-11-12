@@ -7,13 +7,13 @@
         		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-profile-name">
 					<i class="glyphicon glyphicon-plus"></i> Add
 				</button> 
-				<button id="view-risk" class="btn btn-danger" type="button">
+				<button id="view-scenario" class="btn btn-danger" type="button">
 					<i class="glyphicon glyphicon-eye-open"></i> View
         		</button>
-				<button id="edit-risk" class="btn btn-danger">
+				<button id="edit-scenario" class="btn btn-danger">
 					<i class="glyphicon glyphicon-pencil"></i> Edit
         		</button>
-        		<button id="remove-risk" class="btn btn-danger">
+        		<button id="remove-scenario" class="btn btn-danger">
 					<i class="glyphicon glyphicon-trash"></i> Delete
         		</button>
         	</div>
@@ -68,6 +68,7 @@
 
 
 <script id="riskProfile-creation-template" type="x-tmpl-mustache">
+	<button type="button" class="btn btn-default" aria-expanded="false" id="back-risk-profile">Back</button>
 	<div class="col-sm-8">
 		{% verbatim %}
 			<h3 class="risk-profile-name-id" id={{ id }}>{{ name }} </h3>
