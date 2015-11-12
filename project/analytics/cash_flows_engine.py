@@ -5,20 +5,18 @@ import pandas as pd
 
 
 class LoanPortfolio:
-    def __init__(self, portfolio_dict_list, discount_rate):
-        """ Creates an instance of LoanPortfolio for use in cash flows generation.
-
-        Args:
-            portfolio_dict_list: The list of dictionaries representing the portfolios loans.
-        """
-        self.loan_df = pd.DataFrame(portfolio_dict_list)
+    def __init__(self, discount_rate, loan_df, cash_flow_df=None):
         self.discount_rate = discount_rate
+        self.loan_df = loan_df
 
-        self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
-        self.cash_flows_df['losses'] = self.losses_for_cash_flow()
-        self.cash_flows_df['total_interest'] = self.total_interests_for_cash_flow()
-        self.cash_flows_df['total_principal'] = self.total_principals_for_cash_flow()
-        self.cash_flows_df['total_payments'] = self.total_payments_for_cash_flow()
+        if cash_flow_df is None:
+            self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
+            self.cash_flows_df['losses'] = self.losses_for_cash_flow()
+            self.cash_flows_df['total_interest'] = self.total_interests_for_cash_flow()
+            self.cash_flows_df['total_principal'] = self.total_principals_for_cash_flow()
+            self.cash_flows_df['total_payments'] = self.total_payments_for_cash_flow()
+        else:
+            self.cash_flows_df = cash_flow_df
 
     def cash_flows_data_frame_for_portfolio(self):
         """ Creates a pandas DataFrame containing all of cash flows for the loans in the LoanPortfolio.
