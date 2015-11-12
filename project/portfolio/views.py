@@ -1,23 +1,19 @@
-import json
-from django.shortcuts import render, render_to_response, redirect
-from django.contrib.auth import get_user_model
-from django.http import JsonResponse
-from django.views.generic import View
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from portfolio.models import Portfolio, Loan
-from risk_management.models import RiskFactor
-from risk_management.forms import AssumptionForm
-from portfolio.helper import calculate_aggregate_portfolio_data, loans_status_summary, fico_summary
-import csv
 import codecs
+import csv
 import datetime
 
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
 
-
-#Check if its needed and saves correctly
+from portfolio.helper import calculate_aggregate_portfolio_data, loans_status_summary, fico_summary
+from portfolio.models import Portfolio, Loan
+from risk_management.forms import AssumptionForm
+from risk_management.models import RiskFactor
+# Check if its needed and saves correctly
 from portfolio.forms import FileForm
-
 
 
 # Create your views here.
@@ -35,8 +31,9 @@ class DashboardView(View):
         :return: Render dashboard
         """
 
-        return render(request, self.template, {'form_upload': self.form_portfolio_tab, 
-            'form_assumptions': self.form_assumptions_tab, 'choices': RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES})
+        return render(request, self.template, {'form_upload': self.form_portfolio_tab,
+                                               'form_assumptions': self.form_assumptions_tab,
+                                               'choices': RiskFactor.RISK_FACTOR_ATTRIBUTE_CHOICES})
 
 
 class PortfolioAPI(View):
@@ -98,10 +95,9 @@ class PortfolioAPI(View):
             new_portfolio.weighted_average_coupon = 0
             new_portfolio.weighted_average_life_to_maturity = 0
             new_portfolio.save()
-                
+
             # new_portfolio.user = user
 
-            upload_file = request.FILES['loan_file']
             loan_list = []
 
             data = csv.DictReader(codecs.iterdecode(request.FILES['loan_file'], 'utf-8'))
@@ -173,12 +169,12 @@ class PortfolioAPI(View):
             new_portfolio.total_loan_count = portfolio_loans_calculations['total_loan_count']
             new_portfolio.average_loan_balance = portfolio_loans_calculations['avg_loan_balance']
             new_portfolio.weighted_average_coupon = portfolio_loans_calculations['weighted_avg_coupon']
-            new_portfolio.weighted_average_life_to_maturity = portfolio_loans_calculations['weighted_avg_life_to_maturity']
+            new_portfolio.weighted_average_life_to_maturity = portfolio_loans_calculations[
+                'weighted_avg_life_to_maturity']
             new_portfolio.save()
             # End Tab
 
             return JsonResponse({'status': 'OK', 'message': 'Risk Profile Created!!'})
-
 
 
 class LoanPaginationAPI(View):
@@ -211,7 +207,6 @@ class LoanPaginationAPI(View):
         return JsonResponse({"total": total_count, "rows": list(loans)})
 
 
-
 class PortfolioView(View):
     template = "portfolio/portfolio.html"
     model = Portfolio
@@ -225,12 +220,11 @@ class PortfolioView(View):
         :return: Render dashboard
         """
         portfolio = self.model.objects.filter(pk=portfolio_id).values()[0]
-        portfolio['weighted_average_coupon'] = portfolio['weighted_average_coupon'] * 100
+        portfolio['weighted_average_coupon'] *= 100
         return render(request, self.template, {"portfolio": portfolio})
 
 
 class PortfolioStatusAPI(View):
-
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(PortfolioStatusAPI, self).dispatch(request, *args, **kwargs)
@@ -255,11 +249,10 @@ class PortfolioStatusAPI(View):
 
         result = loans_status_summary(loans)
 
-        return JsonResponse({'data':result}, safe=False)
+        return JsonResponse({'data': result}, safe=False)
 
 
 class PortfolioFICOAPI(View):
-
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(PortfolioFICOAPI, self).dispatch(request, *args, **kwargs)
@@ -284,7 +277,7 @@ class PortfolioFICOAPI(View):
 
         result = fico_summary(loans)
 
-        return JsonResponse({'data':result}, safe=False)
+        return JsonResponse({'data': result}, safe=False)
 
 
 # class LoanAdjustedAssumptionsAPI(View):
@@ -299,7 +292,6 @@ class PortfolioFICOAPI(View):
 #             affected_loans = self.model.objects.filter(**filter_dict).values()
 
 
-
 def convert_date_string(date_string):
     if date_string == '':
         return None
@@ -312,4 +304,3 @@ def isSet(field):
     if not field:
         return None
     return field
-
