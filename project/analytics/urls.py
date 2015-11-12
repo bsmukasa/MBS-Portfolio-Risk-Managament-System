@@ -5,8 +5,8 @@ urlpatterns = patterns(
     '',
 
     url(
-        regex=r'^get_cash_flows$',
+        regex=r'^analyze_portfolio$',
         view=views.CashFlowsAPI.as_view(),
-        name='get_cash_flows_api'
+        name='analyze_portfolio_api'
     ),
 )
