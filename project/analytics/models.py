@@ -8,4 +8,4 @@ class CashFlowsResults(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     scenario = models.ForeignKey(Scenario)
     portfolio = models.ForeignKey(Portfolio)
-    analytics_file_name = models.CharField()
+    analysis_results_file_name = models.CharField()
