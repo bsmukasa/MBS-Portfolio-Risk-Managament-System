@@ -9,4 +9,4 @@ class CashFlowsResults(models.Model):
     scenario = models.ForeignKey(Scenario)
     portfolio = models.ForeignKey(Portfolio)
     discount_rate = models.DecimalField(max_digits=10, decimal_places=4)
-    analysis_results_file_name = models.CharField()
+    analysis_results_name = models.CharField()

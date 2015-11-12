@@ -12,7 +12,7 @@ urlpatterns = patterns(
 
     url(
         regex=r'^get_aggregate_cash_flows$',
-        view=views.CashFlowsAPI.as_view(),
+        view=views.AggregateCashFlowsAPI.as_view(),
         name='get_aggregate_cash_flows_api'
     ),
 )
