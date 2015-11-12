@@ -19,6 +19,17 @@ class CashFlowsAPI(View):
         return super(CashFlowsAPI, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
+        """ Conducts new analysis on portfolio, scenario combinations.
+
+        If cash_flow_results do not exist with the same scenario_id, portfolio_id and analysis_results_name,
+        a new cash flow is generated.
+
+        Args:
+            request: Request
+
+        Returns: Status and message indicating if there it is a new analysis.
+
+        """
         request_dict = request.POST.dict()
 
         scenario_id = request_dict['scenario_id']
