@@ -202,11 +202,11 @@ class LoanPortfolio:
         Returns: A series representing the internal rates of return of each loan.
 
         """
-        irr_series = self.loan_df.apply(
+        internal_rate_of_return_series = self.loan_df.apply(
             self.internal_rate_of_return_for_loan,
             axis=1
         )
-        return irr_series
+        return internal_rate_of_return_series
 
     def internal_rate_of_return_for_loan(self, loan):
         """ Calculates a loan's internal rate of return from its cash flows.
@@ -220,9 +220,10 @@ class LoanPortfolio:
         cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
         total_payments = list(cash_flows['total_payment'])
         total_payments[0] = -loan['Original_Amount']
-        irr = np.irr(total_payments)
-        return irr
+        internal_rate_of_return = np.irr(total_payments)
+        return internal_rate_of_return
 
+    # TODO Portfolio IRR MUST BE FROM AGG CASH FLOWS - NOT SUM
     def internal_rate_of_return_aggregate_for_portfolio(self):
         """ Calculates the portfolio's aggregate internal rate of return.
 
