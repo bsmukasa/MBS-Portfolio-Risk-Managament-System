@@ -3,6 +3,7 @@ $(document).ready(function(){
 	//Page load >> default is Overview
 	navMenuLoader.overviewSection();
 
+
 //GENERAL NAVitems	
 //................................................................................................................................................	
 	//Overview
@@ -15,6 +16,12 @@ $(document).ready(function(){
 	$('#portfolio-nav a[href="#loans"]').click(function (event) {
 		event.preventDefault();
 		navMenuLoader.loansSection();
+	})
+
+	//Analysis
+	$('#portfolio-nav a[href="#analysis"]').click(function (event) {
+		event.preventDefault();
+		navMenuLoader.analysisSection();
 	})
 
 
@@ -34,6 +41,50 @@ $(document).ready(function(){
 	})
 
 
+//ANALYSIS NAV SECTION
+//................................................................................................................................................	
+	//Scenario selection
+	$("#portfolio-content").on('page-change.bs.table', "#all-loans-table", function(e, number, size) {
+		var options = $("#all-loans-table").bootstrapTable('getOptions');
+		var send_data = {
+			"portfolio_id": globalVariable.portfolio_id, 
+			limit: (options.pageNumber * options.pageSize),
+			offset: options.pageSize
+		};
+		$.get("/portfolio/all_loans", send_data, function (data) {
+			$("#all-loans-table").bootstrapTable('load', data);
+		})
+	})
+
+
+	$("#portfolio-content").on('submit', "#form-analysis-criteria", function (event) {
+		event.preventDefault();
+
+		$('#select-scenario-analysis').prop('readonly', true);
+		$('#discount-rate').prop('readonly', true);
+		$("#run-scenario-btn").text('New scenario');
+
+		var send_data = {
+			portfolio_id: globalVariable.portfolio_id,
+			scenario_id: $("#select-scenario-analysis").val(),
+			discount_rate: $("#discount-rate").val()
+		}
+
+
+		//Waiting for api integration to make get work
+		// $.get("analytics/analyze_portfolio", send_data, function (data) {
+		// 	if (data.status == "OK") {
+		// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+		// 	}
+		// })
+
+		//Remove after api integrations
+		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+	})
+
+
+//Analytics tabs	
+//................................................................................................................................................	
 
 
 
@@ -62,7 +113,7 @@ globalVariable = {
 //===============================================================================================================================================
 navMenuLoader = {
 
-	//Overview loader
+	//Overview section load
 	overviewSection: function() {
 		helperFunctions.mustacheLoad("#portfolio-overview-script", "#portfolio-content");
 		$.get("/portfolio/port_loans_status", {"portfolio_id": globalVariable.portfolio_id}, function (data) {
@@ -73,7 +124,7 @@ navMenuLoader = {
 		})
 	},
 
-	//Loans loader
+	//Loans section load
 	loansSection: function() {
 		helperFunctions.mustacheLoad("#loans-script", "#portfolio-content");
 
@@ -358,6 +409,14 @@ navMenuLoader = {
 				}
 			]
 		});
+	},
+
+	//Analysis section load
+	analysisSection: function () {
+		$.get("/risk_management/scenarios", function (data) {
+			helperFunctions.mustacheLoad("#analysis-script", "#portfolio-content", data.scenarios);
+		})
+
 	}
 
 }
