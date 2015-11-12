@@ -1,0 +1,52 @@
+
+<script id="analysis-script" type="x-tmpl-mustache">
+	
+	<form role="form" id="form-analysis-criteria">
+		<div class="row">
+			<div class="col-sm-5">
+				<h4 class="form-analysis-h4">Scenario:</h4>
+				<select class="form-control" id="select-scenario-analysis" name="scenario">
+						<option value=""> - Select Scenario - </option>
+							{% verbatim %}
+								{{ #scenarios }}
+										<option value={{ id }}>{{ name }}</option>
+								{{ /scenarios }}
+							{% endverbatim %}
+				</select>
+			</div>
+
+			<div class="col-sm-1"></div>
+
+			<div class="col-sm-3">
+				<div class="form-group">
+					<h4 class="form-analysis-h4">Discount Rate:</h4>
+					<input id="discount-rate" type="number" step="any" class="form-control" name='discount-rate' placeholder="Cash flow discount rate" required>
+				</div>
+			</div>
+
+			<div class="col-sm-1"></div>
+			
+			<div class="col-sm-2">
+				<h4 class="form-analysis-h4">&nbsp</h4>
+				<button type="submit" class="btn btn-primary" id="run-scenario-btn">RUN</button>
+			</div>
+		</div>
+	</form>
+
+	<br><br>
+	<div id="analysis-results"></div>
+
+</script>
+
+
+
+<script id="analysis-tabs" type="x-tmpl-mustache">
+	<div class="container">
+		<ul class="nav nav-tabs" id="analysis-tabs">
+			<li class="active"><a href="#summary" id="tab-analysis">Summary</a></li>
+			<li><a href="#cash-flow">Cash Flow</a></li>
+			<li><a href="#graphs">Graphs</a></li>
+		</ul>		
+	</div>
+</script>
+
