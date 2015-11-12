@@ -123,6 +123,14 @@ class LoanPortfolio:
         """
         return self.cash_flows_df['defaults'].sum()
 
+    def losses_aggregate_for_portfolio(self):
+        """ Gets the portfolio's total losses from aggregate cash flows.
+
+        Returns: Portfolio's aggregate total losses from cash flows.
+
+        """
+        return self.cash_flows_df['losses'].sum()
+
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
     """ Creates a payment schedule or cash flows for a loan.
