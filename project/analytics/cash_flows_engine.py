@@ -113,7 +113,7 @@ class LoanPortfolio:
         """
         return self.cash_flows_df['unscheduled_principal'].sum()
 
-    def aggregate_defaults_for_portfolio(self):
+    def defaults__aggregate_for_portfolio(self):
         """ Gets the portfolio's total defaults from aggregate cash flows.
 
         Returns: Portfolio's aggregate total defaults from cash flows.
@@ -137,7 +137,7 @@ class LoanPortfolio:
         """
         return self.cash_flows_df['recovery'].sum()
 
-    def aggregate_cash_flows_for_portfolio(
+    def cash_flows_aggregate_for_portfolio(
             self,
             fields_list=(
                 'start_balance',
