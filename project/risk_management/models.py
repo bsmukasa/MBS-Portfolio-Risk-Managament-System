@@ -120,35 +120,6 @@ class AssumptionProfile(models.Model):
     lag = models.DecimalField(decimal_places=4, max_digits=10)
 
 
-class ScoreCardProfile(models.Model):
-    name = models.CharField(max_length=128)
-    date_created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-
-class ScoreCard(models.Model):
-    ASSUMPTION_CHOICES = (
-        ('CDR', 'Constant Default Rate'),
-        ('CPR', 'Constant Prepayment Rate'),
-        ('RECOVERY', 'Recovery')
-    )
-
-    score_card_profile = models.ForeignKey(ScoreCardProfile)
-    assumption_type = models.CharField(max_length=64, choices=ASSUMPTION_CHOICES)
-    # total_score = models.DecimalField(decimal_places=4, max_digits=10)
-    # updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
-
-
-class ScoreCardAttribute(models.Model):
-    score_card = models.ForeignKey(ScoreCard)
-    attribute = models.CharField(max_length=32)
-    weight = models.DecimalField(decimal_places=4, max_digits=10)
-    original_index = models.DecimalField(decimal_places=2, max_digits=5)
-    original_score = models.DecimalField(decimal_places=4, max_digits=10)
-    # index_change = models.DecimalField(decimal_places=2, max_digits=5)
-    # updated_score = models.DecimalField(decimal_places=4, max_digits=10)
-
-
 class Scenario(models.Model):
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
