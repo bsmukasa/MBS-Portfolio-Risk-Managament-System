@@ -130,8 +130,7 @@ class ScoreCard(models.Model):
     ASSUMPTION_CHOICES = (
         ('CDR', 'Constant Default Rate'),
         ('CPR', 'Constant Prepayment Rate'),
-        ('RECOV', 'Recovery'),
-        ('LAG', 'Lag')
+        ('RECOVERY', 'Recovery')
     )
 
     score_card_profile = models.ForeignKey(ScoreCardProfile)
