@@ -2,10 +2,9 @@ $(document).ready(function(){
 
 	//Page load >> default is Overview
 	navMenuLoader.overviewSection();
-	
-//................................................................................................................................................	
-	//GENERAL NAVitems
 
+//GENERAL NAVitems	
+//................................................................................................................................................	
 	//Overview
 	$('#portfolio-nav a[href="#overview"]').click(function (event) {
 		event.preventDefault();
@@ -19,8 +18,8 @@ $(document).ready(function(){
 	})
 
 
+//LOANS NAV SECTION
 //................................................................................................................................................	
-	//Loans table
 	//Pagination control
 	$("#portfolio-content").on('page-change.bs.table', "#all-loans-table", function(e, number, size) {
 		var options = $("#all-loans-table").bootstrapTable('getOptions');
@@ -38,19 +37,29 @@ $(document).ready(function(){
 
 
 
-//................................................................................................................................................
 //$document closing
+//................................................................................................................................................
+});
+
+
+//Loading animations according to ajax functionality
+//===============================================================================================================================================
+$(document).on({
+    ajaxStart: function() { $("body").addClass("loading");    },
+    ajaxStop: function() { $("body").removeClass("loading"); }    
 });
 
 
 
-//Global variables 
+//Global variables
+//===============================================================================================================================================
 globalVariable = {
 	portfolio_id: window.location.pathname.split('/')[3],
 }
 
 
-//Functions to load each section in portfolio navs
+//Functions to load NAV Menu
+//===============================================================================================================================================
 navMenuLoader = {
 
 	//Overview loader
@@ -354,7 +363,8 @@ navMenuLoader = {
 }
 
 
-//Callable helper functions 
+//Global helper functions
+//===============================================================================================================================================
 helperFunctions = {
 
 	//Loads mustache template (params: script selector, loader selector and data to be inserted)
@@ -378,11 +388,7 @@ helperFunctions = {
 }
 
 
-//Loading animations according to ajax functionality
-$(document).on({
-    ajaxStart: function() { $("body").addClass("loading");    },
-    ajaxStop: function() { $("body").removeClass("loading"); }    
-});
+
 
 
 

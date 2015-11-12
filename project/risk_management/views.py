@@ -670,12 +670,76 @@ class ScenarioAPI(View):
         :param request: Request
         :return: JsonResponse including a status and message.
         """    
-        request_result = request.POST.dict()
-        name = request_result['name']
+        request_result = json.loads(request.body.decode('utf-8'))
+        
+        #Printing requests_result:
+        request_result = {
+            'scenario_name': 'Nada',
+            'economic_assumption_id': '2',
+            'risk_profiles': [
+                {'last_updated': '2015-11-12T00:04:13.783Z', 'state': True, 'date_created': '2015-11-12T00:04:13.783Z', 
+                    'id': 1, 'name': 'Blablabla'},
+                {'last_updated': '2015-11-12T00:08:27.624Z', 'state': True, 'date_created': '2015-11-12T00:08:27.624Z', 
+                    'id': 2, 'name': 'Hulahula'}
+            ]
+        }
 
-        new_risk_profile = self.model(name=name)
-        new_risk_profile.save()
-        saved_risk_profile = self.model.objects.filter(pk=new_risk_profile.pk).values()
+        # name = request_result['name']
 
-        return JsonResponse(dict(status="OK", message="Risk Profile created", new_risk_profile=list(saved_risk_profile)[0]))
+        # new_risk_profile = self.model(name=name)
+        # new_risk_profile.save()
+        # saved_risk_profile = self.model.objects.filter(pk=new_risk_profile.pk).values()
+
+
+        #Scenario model fields
+        # name = models.CharField(max_length=128)
+        # date_created = models.DateTimeField(auto_now_add=True)
+        # last_updated = models.DateTimeField(auto_now=True)
+        # assumption_profile = models.ForeignKey(AssumptionProfile)
+        # # score_card_profile = models.ForeignKey(ScoreCardProfile)
+        # risk_profiles = models.ManyToManyField(RiskProfile)
+
+
+        return JsonResponse(dict(status="OK", message="Scenario created"))
+
+
+class SingleScenarioAPI(View):
+    model = Scenario
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ScenarioAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        """ Get one given requested scenario.
+
+        Example Result:
+            {
+                "scenario": [
+                    {
+                        "id": 1,
+                        "name" = "US growing 5%",
+                        "date_created": "2015-10-30T21:16:06.398Z",
+                        "last_updated": "2015-10-30T21:16:06.398Z",
+                        "assumption_profile": 1,
+                        "score_card_profile": 3,
+                        "risk_profiles": 1
+                    },
+                ]
+            }
+
+        :param request: Request
+        return: JsonResponse list with selected scenario, status and message if not.
+        """
+        filter_dict = request.GET.dict()
+        scenario_id = filter_dict["id"]
+        single_scenario = self.model.objects.filter(pk=scenario_id).values()
+
+        return JsonResponse(dict(scenario=list(single_scenario)))
+
+
+
+
+
+
 

@@ -155,5 +155,5 @@ class Scenario(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     assumption_profile = models.ForeignKey(AssumptionProfile)
-    score_card_profile = models.ForeignKey(ScoreCardProfile)
+    # score_card_profile = models.ForeignKey(ScoreCardProfile)
     risk_profiles = models.ManyToManyField(RiskProfile)
