@@ -142,17 +142,23 @@ class AnalysisSummaryAPI(View):
             npv = analysis_portfolio.net_present_value_aggregate_for_portfolio()
             price = npv / analysis_portfolio.current_balance_aggregate_for_portfolio() * 100
             yield_irr = analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()
-            # weighted_average_life = analysis_portfolio.weighted_average_life()
-            # weighted_average_cdr = analysis_portfolio.weighted_average_cdr()
-            # weighted_average_cpr = analysis_portfolio.weighted_average_cpr()
-            # weighted_average_recovery = analysis_portfolio.weighted_average_recovery()
+            weighted_average_life = analysis_portfolio.weighted_average_life_for_portfolio()
+            original_cdr = analysis_portfolio.loan_df[0]['constant_default_rate']
+            original_cpr = analysis_portfolio.loan_df[0]['constant_prepayment_rate']
+            original_recovery = analysis_portfolio.loan_df[0]['recovery_percentage']
+            weighted_average_cdr = analysis_portfolio.weighted_average_cdr_for_portfolio()
+            weighted_average_cpr = analysis_portfolio.weighted_average_cpr_for_portfolio()
+            weighted_average_recovery = analysis_portfolio.weighted_average_recovery_for_portfolio()
             return JsonResponse(dict(
-                remaining_balance=remaining_balance,
+                portfolio_balance=remaining_balance,
                 npv=npv,
                 price=price,
                 yield_irr=yield_irr,
-                # weighted_average_life=weighted_average_life,
-                # weighted_average_cdr=weighted_average_cdr,
-                # weighted_average_cpr=weighted_average_cpr,
-                # weighted_average_recovery=weighted_average_recovery
+                weighted_average_life=weighted_average_life,
+                original_cdr=original_cdr,
+                original_cpr=original_cpr,
+                original_recovery=original_recovery,
+                weighted_average_cdr=weighted_average_cdr,
+                weighted_average_cpr=weighted_average_cpr,
+                weighted_average_recovery=weighted_average_recovery
             ))

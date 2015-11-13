@@ -93,7 +93,7 @@ class LoanPortfolio:
         Returns: Portfolio's total current balance.
 
         """
-        return self.loan_df['Current_Principal_Balance'].sum()
+        return self.loan_df['current_principal_balance'].sum()
 
     def interest_aggregate_for_portfolio(self):
         """ Gets the portfolio's total interest from aggregate cash flows.
@@ -225,7 +225,7 @@ class LoanPortfolio:
         """
         cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
         total_payments = list(cash_flows['total_payment'])
-        total_payments[0] = -loan['Original_Amount']
+        total_payments[0] = -loan['current_principal_balance']
         internal_rate_of_return = np.irr(total_payments)
         return internal_rate_of_return
 
@@ -237,6 +237,29 @@ class LoanPortfolio:
 
         """
         return self.internal_rates_of_return_for_portfolio().sum()
+
+    def weighted_average_life_for_portfolio(self):
+        df = self.cash_flows_df.groupby('period')['total_principal'].sum().reset_index()
+        period_principal_sum = (df['period'] * df['total_principal']).sum()
+        return period_principal_sum / self.current_balance_aggregate_for_portfolio()
+
+    def weighted_average_cdr_for_portfolio(self):
+        aggregate_cdr_principal_balance_product = (
+            self.loan_df['adjusted_cdr'] * self.loan_df['current_principal_balance']
+        ).sum()
+        return aggregate_cdr_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+
+    def weighted_average_cpr_for_portfolio(self):
+        aggregate_cpr_principal_balance_product = (
+            self.loan_df['adjusted_cpr'] * self.loan_df['current_principal_balance']
+        ).sum()
+        return aggregate_cpr_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+
+    def weighted_average_recovery_for_portfolio(self):
+        aggregate_recovery_principal_balance_product = (
+            self.loan_df['adjusted_recovery'] * self.loan_df['current_principal_balance']
+        ).sum()
+        return aggregate_recovery_principal_balance_product / self.current_balance_aggregate_for_portfolio()
 
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
