@@ -122,7 +122,6 @@ $(document).ready(function(){
 	//Button to generate graphs
 	$("#portfolio-content").on("click", "#test-graph", function (event) {
 		event.preventDefault();
-		console.log("123");
 
 		var data = {
 			labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
