@@ -7,7 +7,10 @@ import pandas as pd
 class LoanPortfolio:
     def __init__(self, discount_rate, loan_df, cash_flow_df=None):
         self.discount_rate = discount_rate
-        self.loan_df = loan_df[['current_principal_balance', 'current_interest_rate', 'remaining_term', 'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery']]
+        self.loan_df = loan_df[[
+            'current_principal_balance', 'current_interest_rate', 'remaining_term',
+            'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery'
+        ]]
 
         if cash_flow_df is None:
             self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
