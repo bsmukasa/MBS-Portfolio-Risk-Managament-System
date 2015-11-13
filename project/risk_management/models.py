@@ -105,7 +105,7 @@ class AssumptionProfile(models.Model):
     # Default Assumptions
     constant_default_rate = models.DecimalField(decimal_places=4, max_digits=10)
     constant_prepayment_rate = models.DecimalField(decimal_places=4, max_digits=10)
-    recovery = models.DecimalField(decimal_places=4, max_digits=10)
+    recovery_percentage = models.DecimalField(decimal_places=4, max_digits=10)
 
 
 class Scenario(models.Model):
