@@ -218,38 +218,6 @@ $(document).ready(function(){
 		})
 	})
 
-//SCORECARD TAB
-//................................................................................................................................................
-	//Create new scorecard
-	$('#main-content').on('submit',"#form-new-scorecard-name", function(event) {
-		event.preventDefault();
-		var form_data = $("#form-new-scorecard-name")
-		$.ajax({
-    		url: "/risk_management/score_card_profile",
-    		type: 'POST',
-	    	data: form_data.serialize(),
-    		success: function(data) {
-    			if (data.status == "OK") {
-  		  			$(this).modal('hide');
-    				$('body').removeClass('modal-open');
-    				$('.modal-backdrop').remove();
-    				tabLoaderFunctions.scorecardsTabLoader();
-    			}
-    		}
-    	})
-	})
-
-
-	//View selected scorecard
-	$('#main-content').on('click', '#view-scorecard', function() {
-		var selected_assumption = helperFunctions.getTableSelections('#user-scorecard');
-		$.get("/risk_management/get_score_cards", {"score_card_profile_id": selected_assumption[0]}, function(return_data) {
-
-			// console.log(return_data);
-		// TODO >> add scorecard and edit their weights
-		})
-	})
-
 //SCENARIO TAB
 //................................................................................................................................................
 	//Modal open load risk profile tables
@@ -295,7 +263,7 @@ $(document).ready(function(){
 		
 		dataToSave = {
 			scenario_name: name,
-			economic_assumption_id: selected_assumption,
+			assumption_profile_id: selected_assumption,
 			risk_profiles: risk_profiles
 		}	
 		
@@ -477,27 +445,7 @@ var tabLoaderFunctions = {
 
 	},
 
-	//Scorecards tab
-	scorecardsTabLoader: function () {
-		helperFunctions.mustacheLoad("#scorecards-template", "#main-content-load");
 
-		$.get("/risk_management/score_card_profile", function (data) {
-			if (data.score_card_profiles.length > 0) {
-				helperFunctions.displayTableData('#user-scorecard', data.score_card_profiles);
-			}
-			else {
-				helperFunctions.displayTableData('#user-scorecard', [{"name": ""}]);
-	    	}
-    		emptyData = []
-	    	for (var idx in globalVariables.riskFactorAttributeChoices) {
-	    		var dict = {"weight": 0, "attribute": globalVariables.riskFactorAttributeChoices[idx]}
-	    		emptyData.push(dict)
-	    	}
-	    	helperFunctions.displayTableData('#scorecard-CDR', emptyData);
-	    	helperFunctions.displayTableData('#scorecard-CPR', emptyData);
-	    	helperFunctions.displayTableData('#scorecard-recovery', emptyData);
-		})
-	}
 }
 
 
@@ -537,9 +485,63 @@ function detailFormatter(index, row) {
 //Global variables
 //===============================================================================================================================================
 var globalVariables = {
-	riskFactorAttributeChoices: ['FICO', 'Property Type', 'Purpose', 'Mortgage Type', 'Lien Position', 'Current Interest Rate', 'Remaining Term', 
-		'State', 'PMI', 'Zipcode', 'Gross Margin', 'Interest Cap', 'LCAP', 'First Interest Adjustment Date', 'Current LTV']
+	riskFactorAttributeChoices: ['FICO', 'Property Type', 'Purpose', 'Mortgage Type', 'Current Interest Rate', 'Remaining Term', 
+		'State', 'Zipcode', 'Gross Margin', 'Current LTV']
 }
 
 
+
+//SCORECARD TAB
+//................................................................................................................................................
+	// //Create new scorecard
+	// $('#main-content').on('submit',"#form-new-scorecard-name", function(event) {
+	// 	event.preventDefault();
+	// 	var form_data = $("#form-new-scorecard-name")
+	// 	$.ajax({
+ //    		url: "/risk_management/score_card_profile",
+ //    		type: 'POST',
+	//     	data: form_data.serialize(),
+ //    		success: function(data) {
+ //    			if (data.status == "OK") {
+ //  		  			$(this).modal('hide');
+ //    				$('body').removeClass('modal-open');
+ //    				$('.modal-backdrop').remove();
+ //    				tabLoaderFunctions.scorecardsTabLoader();
+ //    			}
+ //    		}
+ //    	})
+	// })
+
+
+	// //View selected scorecard
+	// $('#main-content').on('click', '#view-scorecard', function() {
+	// 	var selected_assumption = helperFunctions.getTableSelections('#user-scorecard');
+	// 	$.get("/risk_management/get_score_cards", {"score_card_profile_id": selected_assumption[0]}, function(return_data) {
+
+	// 		// console.log(return_data);
+	// 	// TODO >> add scorecard and edit their weights
+	// 	})
+	// })
+
+	// //Scorecards tab
+	// scorecardsTabLoader: function () {
+	// 	helperFunctions.mustacheLoad("#scorecards-template", "#main-content-load");
+
+	// 	$.get("/risk_management/score_card_profile", function (data) {
+	// 		if (data.score_card_profiles.length > 0) {
+	// 			helperFunctions.displayTableData('#user-scorecard', data.score_card_profiles);
+	// 		}
+	// 		else {
+	// 			helperFunctions.displayTableData('#user-scorecard', [{"name": ""}]);
+	//     	}
+ //    		emptyData = []
+	//     	for (var idx in globalVariables.riskFactorAttributeChoices) {
+	//     		var dict = {"weight": 0, "attribute": globalVariables.riskFactorAttributeChoices[idx]}
+	//     		emptyData.push(dict)
+	//     	}
+	//     	helperFunctions.displayTableData('#scorecard-CDR', emptyData);
+	//     	helperFunctions.displayTableData('#scorecard-CPR', emptyData);
+	//     	helperFunctions.displayTableData('#scorecard-recovery', emptyData);
+	// 	})
+	// }
         

@@ -10,6 +10,7 @@ from analytics.adjusted_assumptions_engine import get_adjusted_assumptions
 from analytics.cash_flows_engine import LoanPortfolio
 from analytics.models import CashFlowsResults
 from portfolio.models import Loan
+from risk_management.models import ScoreCardProfile, ScoreCard, ScoreCardAttribute
 
 
 class CashFlowsAPI(View):

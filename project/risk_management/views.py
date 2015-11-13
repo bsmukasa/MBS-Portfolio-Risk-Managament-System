@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from risk_management.models import RiskProfile, RiskFactor, RiskConditional, AssumptionProfile, Scenario
 from portfolio.models import Loan
-
+import json
 
 # Create your views here.
 class RiskProfileAPI(View):
@@ -422,7 +422,7 @@ class AssumptionNameAPI(View):
     def dispatch(self, request, *args, **kwargs):
         return super(AssumptionNameAPI, self).dispatch(request, *args, **kwargs)
 
-    def get(self):
+    def get(self, request):
         """ Get all saved assumption profiles.
 
         Example Result:
@@ -496,11 +496,20 @@ class ScenarioAPI(View):
         :param request: Request
         :return: JsonResponse including a status and message.
         """    
-        request_dict = request.POST.dict()
-        assumption_profile_id = request_dict['assumption_profile_id']
-        risk_profile_id_list = request_dict['risk_profile_id_list']
+        
+        body_unicode = request.body.decode('utf-8')
+        request_dict = json.loads(body_unicode)
 
-        new_scenario = self.model(assumption_profile_id=assumption_profile_id)
+        assumption_profile_id = request_dict['assumption_profile_id']
+        scenario_name = request_dict['scenario_name']
+        new_scenario = self.model(assumption_profile_id=assumption_profile_id, name=scenario_name)
+        new_scenario.save()
+
+        risk_profiles = request_dict['risk_profiles']
+        risk_profile_id_list = []
+        for profile in risk_profiles:
+            profile_id = profile.get("id")
+            risk_profile_id_list.append(profile_id)
 
         for risk_profile_id in risk_profile_id_list:
 

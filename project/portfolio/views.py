@@ -113,7 +113,7 @@ class PortfolioAPI(View):
                     gross_margin=is_set(row['Gross_Margin']),
                     original_amount=is_set(row['Original_Amount']),
                     current_value_date=convert_date_string(row['Current_Value_Date']),
-                    state=is_set(row['STATE']),
+                    us_state=is_set(row['STATE']),
                     BK_flag=is_set(row['BK_FLAG']),
                     negam_initial_minimum_payment_period=is_set(row['Negam_Initial_Minimum_Payment_Period']),
                     product_type=is_set(row['Product_Type']),
