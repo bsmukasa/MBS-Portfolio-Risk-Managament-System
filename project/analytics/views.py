@@ -162,3 +162,43 @@ class AnalysisSummaryAPI(View):
                 weighted_average_cpr=weighted_average_cpr,
                 weighted_average_recovery=weighted_average_recovery
             ))
+
+
+class PrincipalGraphDataAPI(View):
+    model = CashFlowsResults
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(PrincipalGraphDataAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        request_dict = request.GET.dict()
+
+        scenario_id = request_dict['scenario_id']
+        portfolio_id = request_dict['portfolio_id']
+        discount_rate = float(request_dict['discount_rate']) / 100
+
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id,
+                                                                                       discount_rate)
+
+        cash_flow_results = self.model.objects.filter(
+            scenario_id=scenario_id,
+            portfolio_id=portfolio_id,
+            discount_rate=discount_rate,
+            analysis_results_name=analysis_results_name
+        )
+
+        if cash_flow_results.exists():
+            aggregate_cash_flow_df = pd.read_pickle(analysis_results_name + '_aggregate_flows.pk')
+            periods = list(aggregate_cash_flow_df['period'])
+            scheduled_principals = list(aggregate_cash_flow_df['scheduled_principal'])
+            unscheduled_principals = list(aggregate_cash_flow_df['unscheduled_principal'])
+            principals_sums = list(
+                aggregate_cash_flow_df['scheduled_principal'] + aggregate_cash_flow_df['unscheduled_principal']
+            )
+
+            return JsonResponse(dict(
+                periods=periods,
+                scheduled_principals=scheduled_principals,
+                unscheduled_principals=unscheduled_principals,
+                principals_sums=principals_sums
+            ))

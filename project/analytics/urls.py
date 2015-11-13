@@ -21,4 +21,10 @@ urlpatterns = patterns(
         view=views.AnalysisSummaryAPI.as_view(),
         name='get_analysis_summary_api'
     ),
+
+    url(
+        regex=r'^principal_graph_data$',
+        view=views.PrincipalGraphAPI.as_view(),
+        name='get_principal_graph_data_api'
+    ),
 )
