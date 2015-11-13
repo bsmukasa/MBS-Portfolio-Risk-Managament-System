@@ -41,7 +41,7 @@
 
 
 <script id="analysis-tabs" type="x-tmpl-mustache">
-	<ul class="nav nav-tabs" id="analysis-tabs">
+	<ul class="nav nav-tabs" id="analysis-tabs-list">
 		<li class="active"><a href="#summary" id="tab-analysis">Summary</a></li>
 		<li><a href="#cash-flow">Cash Flow</a></li>
 		<li><a href="#graphs">Graphs</a></li>
@@ -116,3 +116,19 @@
 		</div>
 	</div>
 </script>
+
+
+
+<script id="cash-flow-tab" type="x-tmpl-mustache">
+	<table id="cash-flow" data-unique-id="id" data-toggle="table">
+	    <thead>
+	    	<tr>
+	    		<th data-field="name">Name</th>
+	    	</tr>
+	    </thead>
+	</table>
+</script>
+
+
+
+

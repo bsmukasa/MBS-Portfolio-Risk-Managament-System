@@ -143,7 +143,7 @@ def fico_summary(loans_query_result):
 	wa_fico = np.average(fico, weights=balance)
 
 	result = [
-		{"max_fico": max_fico, "min_fico": min_fico, "wa_fico": round(wa_fico)}
+		{"max_fico": str(max_fico), "min_fico": str(min_fico), "wa_fico": str(int(wa_fico))}
 	]
 
 	return result

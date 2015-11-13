@@ -25,6 +25,30 @@ $(document).ready(function(){
 	})
 
 
+//ANALYTICS TABS	
+//................................................................................................................................................	
+	//Summary
+	$("#portfolio-content").on("click", "#analysis-tabs-list a[href='#summary']", function (event) {
+		event.preventDefault();
+		$(this).tab('show')
+		analyticsTab.summaryTab();
+	})
+
+	//Cash flows
+	$("#portfolio-content").on("click", "#analysis-tabs-list a[href='#cash-flow']", function (event) {
+		event.preventDefault();
+		$(this).tab('show')
+		analyticsTab.cashFlowTab();
+	})
+
+	//Graphs
+	$("#portfolio-content").on("click", "#analysis-tabs-list a[href='#graphs']", function (event) {
+		event.preventDefault();
+		$(this).tab('show')
+		analyticsTab.summaryTab();
+	})
+
+
 //LOANS NAV SECTION
 //................................................................................................................................................	
 	//Pagination control
@@ -73,16 +97,12 @@ $(document).ready(function(){
 				discount_rate: $("#discount-rate").val()
 			}
 
-			//Waiting for api integration to make get work
-			// $.get("analytics/analyze_portfolio", send_data, function (data) {
-			// 	if (data.status == "OK") {
-			// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-			// 	}
-			// })
-
-			//Remove after api integrations
-			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-			analyticsTab.summaryTab();
+			$.post("/analytics/analyze_portfolio", send_data, function (data) {
+				if (data.status == "PASS") {
+					helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+					analyticsTab.summaryTab();
+				}
+			})
 
 		} else {
 			$('#select-scenario-analysis').prop("disabled", false);
@@ -114,7 +134,7 @@ $(document).on({
 //Global variables
 //===============================================================================================================================================
 globalVariable = {
-	portfolio_id: window.location.pathname.split('/')[3],
+	portfolio_id: window.location.pathname.split('/')[3], 
 }
 
 
@@ -434,8 +454,8 @@ navMenu = {
 //===============================================================================================================================================
 analyticsTab = {
 
-	//Overview section load
-	summaryTab: function() {
+	//Load summary tab
+	summaryTab: function () {
 		//TODO >> get data and load script
 		// $.get("URL ROUTE", {"portfolio_id": globalVariable.portfolio_id}, function (data) {
 		// 	LOAD MUSTACHE WITH DATA
@@ -457,6 +477,20 @@ analyticsTab = {
 		}
 		helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData)
 	},
+
+	//Load cash flows tab
+	cashFlowTab: function () {
+		var send_data = {
+			"portfolio_id": globalVariable.portfolio_id,
+			"scenario_id": $("#select-scenario-analysis").val(),
+			"discount_rate": $("#discount-rate").val()
+		}
+		$.get("/analytics/get_aggregate_cash_flows", send_data, function (data) {
+			//GETTING AN ERROR WHEN EXECUTING DJANGO VIEW
+		})
+		//GET CASH FLOWS
+		// helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content", data)
+	}
 }
 
 

@@ -75,9 +75,9 @@ class AggregateCashFlowsAPI(View):
 
     def get(self, request):
         request_dict = request.GET.dict()
-
+        
         scenario_id = request_dict['scenario_id']
-        portfolio_id = request_dict['scenario_id']
+        portfolio_id = request_dict['portfolio_id']
         discount_rate = request_dict['discount_rate']
         adjusted_assumptions = get_adjusted_assumptions(scenario_id, portfolio_id)
 
