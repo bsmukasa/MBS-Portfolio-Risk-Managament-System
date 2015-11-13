@@ -41,12 +41,78 @@
 
 
 <script id="analysis-tabs" type="x-tmpl-mustache">
-	<div class="container">
+	
 		<ul class="nav nav-tabs" id="analysis-tabs">
 			<li class="active"><a href="#summary" id="tab-analysis">Summary</a></li>
 			<li><a href="#cash-flow">Cash Flow</a></li>
 			<li><a href="#graphs">Graphs</a></li>
-		</ul>		
-	</div>
+		</ul>
+
+		<div id="analysis-tab-content"></div>
+
 </script>
 
+
+
+<script id="summary-tab" type="x-tmpl-mustache">
+	<div class="row">
+		
+		<div class="col-sm-6">
+			<table id="summary-main-table" class='table'>
+			{% verbatim %}
+				<tbody>
+			    	<tr>
+			    		<th>Price</th>
+			    		<td>{{ price }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>NPV</th>
+			    		<td>{{ npv }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Remaining Balance</th>
+			    		<td>{{ total_remaining_balance }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Yield</th>
+			    		<td>{{ yield }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Weighted Average Life</th>
+			    		<td>{{ wa_avg_life }}</td>
+			    	</tr>
+			    </tbody>
+			{% endverbatim %}
+			</table>
+		</div>
+
+		<div class="col-sm-6">
+			<table id="summary-attributes-table" class='table'>
+			{% verbatim %}
+				<thead>
+					<th>&nbsp</th>
+					<th>Initial Assumption</th>
+					<th>New WA</th>
+				</thead>
+				<tbody>
+			    	<tr>
+			    		<th scope="row">CPR</th>
+			    		<td>{{ assumption_cpr }}</td>
+			    		<td>{{ wa_cpr }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th scope="row">CDR</th>
+			    		<td>{{ assumption_cdr }}</td>
+			    		<td>{{ wa_cdr }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th scope="row">Recovery</th>
+			    		<td>{{ assumption_recovery }}</td>
+			    		<td>{{ wa_recovery }}</td>
+			    	</tr>
+			    </tbody>
+			{% endverbatim %}
+			</table>
+		</div>
+	</div>
+</script>
