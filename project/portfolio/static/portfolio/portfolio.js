@@ -82,6 +82,7 @@ $(document).ready(function(){
 
 			//Remove after api integrations
 			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+			analyticsTab.summaryTab();
 
 		} else {
 			$('#select-scenario-analysis').prop("disabled", false);
@@ -149,9 +150,9 @@ navMenu = {
 			sidePagination: 'server',
 			pageSize: 30,
 			pageList: "[20, 100, 200, 500]",
-			search: true,
-			showColumns: true,
-			clickToSelect: true,
+			search: false,
+			showColumns: false,
+			clickToSelect: false,
 			uniqueId: "id",
 			columns: [
 				{
@@ -435,7 +436,26 @@ analyticsTab = {
 
 	//Overview section load
 	summaryTab: function() {
-		//get data and load script
+		//TODO >> get data and load script
+		// $.get("URL ROUTE", {"portfolio_id": globalVariable.portfolio_id}, function (data) {
+		// 	LOAD MUSTACHE WITH DATA
+		// })
+
+		//DELETE LATER
+		var testData = {
+			price: "1,500,000",
+			npv: "100,0000,000",
+			total_remaining_balance: "87,000,440.90",
+			yield: "5.4",
+			wa_avg_life: "278",
+			assumption_cpr: "7.8",
+			wa_cpr: "6.5",
+			assumption_cdr: "13.5",
+			wa_cdr: "9.95",
+			assumption_recovery: "77.90",
+			wa_recovery: "65"
+		}
+		helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData)
 	},
 }
 
