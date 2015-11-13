@@ -1,7 +1,5 @@
 import random
-
 import pandas as pd
-import numpy as np
 
 from portfolio.models import Loan
 from risk_management.models import Scenario
@@ -18,24 +16,23 @@ def generate_adjusted_assumptions(portfolio_id, scenario_id):
     loan_df['constant_prepayment_rate'] = float(assumptions.constant_prepayment_rate) / 100
     loan_df['recovery_percentage'] = float(assumptions.recovery_percentage) / 100
 
-
     adjusted_cdr_series = loan_df.apply(
-            generate_adjusted_cdr,
-            axis=1
+        generate_adjusted_cdr,
+        axis=1
     )
 
     loan_df['adjusted_cdr'] = adjusted_cdr_series
 
     adjusted_cpr_series = loan_df.apply(
-            generate_adjusted_cpr,
-            axis=1
+        generate_adjusted_cpr,
+        axis=1
     )
 
     loan_df['adjusted_cpr'] = adjusted_cpr_series
 
     adjusted_recovery_series = loan_df.apply(
-            generate_adjusted_recovery,
-            axis=1
+        generate_adjusted_recovery,
+        axis=1
     )
 
     loan_df['adjusted_recovery'] = adjusted_recovery_series
@@ -43,12 +40,10 @@ def generate_adjusted_assumptions(portfolio_id, scenario_id):
     return loan_df
 
 
-
 def generate_adjusted_cdr(row):
-
     change = random_change()
     adjusted_cdr = row['constant_default_rate'] * change / 100
-    
+
     if adjusted_cdr < 0.005:
         return 0.005
     elif adjusted_cdr > 0.25:
