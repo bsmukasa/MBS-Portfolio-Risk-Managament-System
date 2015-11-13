@@ -80,7 +80,6 @@ class AssumptionProfile(models.Model):
         - constant_default_rate     =>  0.5% to 25%
         - constant_prepayment_rate  =>  5% to 25%
         - recovery                  =>  0% to 100%
-        - lag                       =>
 
     Economic Assumptions are used to calculate Default Assumptions. All Economic Assumptions
     are given equal weight and impact the Default Assumptions in the following ways:
@@ -107,7 +106,6 @@ class AssumptionProfile(models.Model):
     constant_default_rate = models.DecimalField(decimal_places=4, max_digits=10)
     constant_prepayment_rate = models.DecimalField(decimal_places=4, max_digits=10)
     recovery = models.DecimalField(decimal_places=4, max_digits=10)
-    lag = models.DecimalField(decimal_places=4, max_digits=10)
 
 
 class Scenario(models.Model):
