@@ -9,36 +9,26 @@ class RiskProfile(models.Model):
 
 
 class RiskFactor(models.Model):
+    FICO = 'FICO'  # TODO Figure out acronym
     TYPE = 'property_type'
     PURPOSE = 'purpose'
     MORTGAGE_TYPE = 'mortgage_type'
-    LIEN = 'lien_position'
     CIR = 'current_interest_rate'
     RT = 'remaining_term'
     STATE = 'state'
-    PMI = 'PMI'  # TODO Figure out acronym
     ZIP = 'zipcode'
-    FICO = 'FICO'  # TODO Figure out acronym
     MARGIN = 'gross_margin'
-    ICAP = 'ICAP'  # TODO Figure out acronym
-    LCAP = 'LCAP'  # TODO Figure out acronym
-    INTEREST_ADJ_DATE = 'first_interest_adjustment_date'
     LTV = 'current_LTV'
     RISK_FACTOR_ATTRIBUTE_CHOICES = (
         (FICO, 'FICO'),  # TODO Figure out acronym
         (TYPE, 'Property Type'),
         (PURPOSE, 'Purpose'),
         (MORTGAGE_TYPE, 'Mortgage Type'),
-        (LIEN, 'Lien Position'),
         (CIR, 'Current Interest Rate'),
         (RT, 'Remaining Term'),
         (STATE, 'State'),
-        (PMI, 'PMI'),  # TODO Figure out acronym
         (ZIP, 'Zipcode'),
         (MARGIN, 'Gross Margin'),
-        (ICAP, 'Interest Cap'),
-        (LCAP, 'LCAP'),  # TODO Figure out acronym
-        (INTEREST_ADJ_DATE, 'First Interest Adjustment Date'),
         (LTV, 'Current LTV')  # TODO Figure out acronym
     )
 
