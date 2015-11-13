@@ -10,7 +10,7 @@ from analytics.adjusted_assumptions_engine import generate_adjusted_assumptions
 from analytics.cash_flows_engine import LoanPortfolio
 from analytics.models import CashFlowsResults
 from portfolio.models import Loan
-from risk_management.models import ScoreCardProfile, ScoreCard, ScoreCardAttribute
+
 
 
 class CashFlowsAPI(View):
@@ -36,27 +36,32 @@ class CashFlowsAPI(View):
 
         scenario_id = request_dict['scenario_id']
         portfolio_id = request_dict['portfolio_id']
-        discount_rate = request_dict['discount_rate']
+        discount_rate = float(request_dict['discount_rate']) / 100
 
-        analysis_results_name = "scenario_{}_portfolio_{}_analysis".format(scenario_id, portfolio_id)
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id, discount_rate)
 
         cash_flow_results = self.model.objects.filter(
             scenario_id=scenario_id,
             portfolio_id=portfolio_id,
-            analysis_results_name=analysis_results_name
+            analysis_results_name=analysis_results_name,
+            discount_rate=discount_rate
         )
 
         if not cash_flow_results.exists():
+
             loan_df = generate_adjusted_assumptions(portfolio_id, scenario_id)
+
             loan_df.to_pickle(analysis_results_name + '_loans.pk')
 
             analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df)
+            
             analysis_portfolio.cash_flows_df.to_pickle(analysis_results_name + '_cash_flows.pk')
 
             analysis_results = self.model(
+                discount_rate=discount_rate,
                 scenario_id=scenario_id,
                 portfolio_id=portfolio_id,
-                analysis_results_file_name=analysis_results_name)
+                analysis_results_name=analysis_results_name)
             analysis_results.save()
 
             message = 'New Analysis has been run.'
@@ -78,9 +83,10 @@ class AggregateCashFlowsAPI(View):
         
         scenario_id = request_dict['scenario_id']
         portfolio_id = request_dict['portfolio_id']
-        discount_rate = request_dict['discount_rate']
+        discount_rate = float(request_dict['discount_rate']) / 100
+        # adjusted_assumptions = generate_adjusted_assumptions(scenario_id, portfolio_id)
 
-        analysis_results_name = "scenario_{}_portfolio_{}_analysis".format(scenario_id, portfolio_id)
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id, discount_rate)
 
         cash_flow_results = self.model.objects.filter(
             scenario_id=scenario_id,
@@ -96,4 +102,7 @@ class AggregateCashFlowsAPI(View):
             analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df, cash_flow_df=cash_flow_df)
             aggregate_cash_flow_df = analysis_portfolio.cash_flows_aggregate_for_portfolio()
             aggregate_cash_flow = aggregate_cash_flow_df.to_json(orient="records")
-            return JsonResponse(dict(aggregate_cash_flows=list(aggregate_cash_flow)))
+            
+            return JsonResponse(dict(aggregate_cash_flows=aggregate_cash_flow))
+
+
