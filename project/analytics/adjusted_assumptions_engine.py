@@ -1,19 +1,23 @@
 import random
 
 import pandas as pd
+import numpy as np
 
 from portfolio.models import Loan
 from risk_management.models import Scenario
 
 
 def generate_adjusted_assumptions(portfolio_id, scenario_id):
-    scenario = Scenario.objects.get(scenario_id=scenario_id)
+    scenario = Scenario.objects.get(pk=scenario_id)
+
     assumptions = scenario.assumption_profile
 
-    loan_df = pd.DataFrame(list(Loan.objects.filter(portfolio_id=portfolio_id)))
-    loan_df['constant_default_rate'] = assumptions.constant_default_rate
-    loan_df['constant_repayment_rate'] = assumptions.constant_prepayment_rate
-    loan_df['recovery_percentage'] = assumptions.recovery_percentage
+    loan_df = pd.DataFrame(list(Loan.objects.filter(portfolio_id=portfolio_id).values()))
+
+    loan_df['constant_default_rate'] = float(assumptions.constant_default_rate) / 100
+    loan_df['constant_prepayment_rate'] = float(assumptions.constant_prepayment_rate) / 100
+    loan_df['recovery_percentage'] = float(assumptions.recovery_percentage) / 100
+
 
     adjusted_cdr_series = loan_df.apply(
             generate_adjusted_cdr,
@@ -36,9 +40,15 @@ def generate_adjusted_assumptions(portfolio_id, scenario_id):
 
     loan_df['adjusted_recovery'] = adjusted_recovery_series
 
+    return loan_df
+
+
 
 def generate_adjusted_cdr(row):
-    adjusted_cdr = row['constant_default_rate'] * random_change() / 100
+
+    change = random_change()
+    adjusted_cdr = row['constant_default_rate'] * change / 100
+    
     if adjusted_cdr < 0.005:
         return 0.005
     elif adjusted_cdr > 0.25:

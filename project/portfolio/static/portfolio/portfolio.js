@@ -98,16 +98,17 @@ $(document).ready(function(){
 			}
 
 
-			//FIX VIEWS THEN UNCOMMENT
-			// $.post("/analytics/analyze_portfolio", send_data, function (data) {
-			// 	if (data.status == "PASS") {
-			// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-			// 		analyticsTab.summaryTab();
-			// 	}
-			// })
+			// FIX VIEWS THEN UNCOMMENT
+			$.post("/analytics/analyze_portfolio", send_data, function (data) {
+				if (data.status == "PASS") {
+					console.log(data.message);
+					helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+					analyticsTab.summaryTab();
+				}
+			})
 
-			//Delete later
-			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+			// //Delete later
+			// helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
 
 		} else {
 			$('#select-scenario-analysis').prop("disabled", false);
@@ -502,10 +503,26 @@ analyticsTab = {
 			"discount_rate": $("#discount-rate").val()
 		}
 
-		//FIX VIEWS AND UNCOMMENT
+		// FIX VIEWS AND UNCOMMENT
+
+		// $.ajax({
+  //   		url: "/analytics/get_aggregate_cash_flows",
+  //   		type: 'GET',
+  //   		data: send_data,
+	 //    	async: false,
+	 //    	success: function(return_data) {
+	 //    		console.log("123");
+	 //    		helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
+	 //    		helperFunctions.displayTableData("#cash-flow-table", return_data.aggregate_cash_flows)
+		// 	}
+		// })
+
+
 		// $.get("/analytics/get_aggregate_cash_flows", send_data, function (data) {
-			// helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
-			// helperFunctions.mustacheLoad("#cash-flow-table", data)
+		// 	console.log(data.aggregate_cash_flows);
+
+		// 	helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
+		// 	helperFunctions.displayTableData("#cash-flow-table", data.aggregate_cash_flows)
 		// })
 		
 

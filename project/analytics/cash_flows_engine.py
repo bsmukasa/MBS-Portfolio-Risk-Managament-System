@@ -7,7 +7,7 @@ import pandas as pd
 class LoanPortfolio:
     def __init__(self, discount_rate, loan_df, cash_flow_df=None):
         self.discount_rate = discount_rate
-        self.loan_df = loan_df
+        self.loan_df = loan_df[['current_principal_balance', 'current_interest_rate', 'remaining_term', 'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery']]
 
         if cash_flow_df is None:
             self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
@@ -27,7 +27,9 @@ class LoanPortfolio:
             self.generate_loan_cash_flows,
             axis=1
         )
+
         cash_flows_list_dicts = list(chain.from_iterable(cash_flow_list_list_dicts))
+
         cash_flows_data_frame = pd.DataFrame(cash_flows_list_dicts)
         return cash_flows_data_frame
 
@@ -42,13 +44,14 @@ class LoanPortfolio:
         """
         cash_flows_list_of_dicts = payment_schedule_for_loan(
             loan_df_pk=row.name,
-            original_balance=row['current_principal_balance'],
-            interest_rate=row['current_interest_rate'],
+            original_balance=float(row['current_principal_balance']),
+            interest_rate=float(row['current_interest_rate']),
             maturity=row['remaining_term'],
-            cdr=row['current_default_rate'],
-            cpr=row['current_prepayment_rate'],
-            recovery_percentage=row['recovery']
+            cdr=row['adjusted_cdr'],
+            cpr=row['adjusted_cpr'],
+            recovery_percentage=row['adjusted_recovery']
         )
+
         return cash_flows_list_of_dicts
 
     def losses_for_cash_flow(self):
@@ -268,6 +271,7 @@ def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, matur
         .....etc....
     ]
     """
+
     period_0 = dict(
         loan_df_pk=loan_df_pk,
         period=0,
@@ -281,6 +285,7 @@ def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, matur
         recovery=0,
         end_balance=original_balance
     )
+
     period_list = [0] * (maturity + 1)
     period_list[0] = period_0
 
@@ -324,6 +329,7 @@ def create_payment_schedule_period(
         end_balance: 86293.355798
     }
     """
+
     interest = interest_rate / 12 * start_balance
     payment = calculate_monthly_payment(start_balance, interest_rate / 12, remaining_term)
     scheduled_principal = payment - interest

@@ -24,7 +24,6 @@ class AssumptionForm(ModelForm):
             'national_home_price_index_growth': 'National Home Price Index Growth',
             'high_yield_spread': 'High Yield Spread',
             'constant_default_rate': 'Constant Default Rate (CDR)',
-            'constant_prepayment_rate': 'Constante Prepayment Rate (CPR)',
-            'recovery': 'Recovery',
-            'lag': 'Lag'
+            'constant_prepayment_rate': 'Constant Prepayment Rate (CPR)',
+            'recovery_percentage': 'Recovery'
         }
