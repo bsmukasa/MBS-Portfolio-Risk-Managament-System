@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
 	//Page load >> default is Overview
-	navMenuLoader.overviewSection();
+	navMenu.overviewSection();
 
 
 //GENERAL NAVitems	
@@ -9,19 +9,19 @@ $(document).ready(function(){
 	//Overview
 	$('#portfolio-nav a[href="#overview"]').click(function (event) {
 		event.preventDefault();
-		navMenuLoader.overviewSection();
+		navMenu.overviewSection();
 	})
 
 	//Loans
 	$('#portfolio-nav a[href="#loans"]').click(function (event) {
 		event.preventDefault();
-		navMenuLoader.loansSection();
+		navMenu.loansSection();
 	})
 
 	//Analysis
 	$('#portfolio-nav a[href="#analysis"]').click(function (event) {
 		event.preventDefault();
-		navMenuLoader.analysisSection();
+		navMenu.analysisSection();
 	})
 
 
@@ -56,30 +56,38 @@ $(document).ready(function(){
 		})
 	})
 
-
+	//Send scenario and discount rate to run calculations model
 	$("#portfolio-content").on('submit', "#form-analysis-criteria", function (event) {
 		event.preventDefault();
 
-		$('#select-scenario-analysis').prop('readonly', true);
-		$('#discount-rate').prop('readonly', true);
-		$("#run-scenario-btn").text('New scenario');
+		var buttonText = $("#run-scenario-btn").text()
 
-		var send_data = {
-			portfolio_id: globalVariable.portfolio_id,
-			scenario_id: $("#select-scenario-analysis").val(),
-			discount_rate: $("#discount-rate").val()
+		if (buttonText == "RUN") {
+			$('#select-scenario-analysis').prop("disabled", true);
+			$('#discount-rate').prop('readonly', true);
+			$("#run-scenario-btn").text('New scenario');
+
+			var send_data = {
+				portfolio_id: globalVariable.portfolio_id,
+				scenario_id: $("#select-scenario-analysis").val(),
+				discount_rate: $("#discount-rate").val()
+			}
+
+			//Waiting for api integration to make get work
+			// $.get("analytics/analyze_portfolio", send_data, function (data) {
+			// 	if (data.status == "OK") {
+			// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+			// 	}
+			// })
+
+			//Remove after api integrations
+			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+
+		} else {
+			$('#select-scenario-analysis').prop("disabled", false);
+			$('#discount-rate').prop('readonly', false);
+			$("#run-scenario-btn").text('RUN');
 		}
-
-
-		//Waiting for api integration to make get work
-		// $.get("analytics/analyze_portfolio", send_data, function (data) {
-		// 	if (data.status == "OK") {
-		// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-		// 	}
-		// })
-
-		//Remove after api integrations
-		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
 	})
 
 
@@ -111,7 +119,7 @@ globalVariable = {
 
 //Functions to load NAV Menu
 //===============================================================================================================================================
-navMenuLoader = {
+navMenu = {
 
 	//Overview section load
 	overviewSection: function() {
@@ -414,11 +422,21 @@ navMenuLoader = {
 	//Analysis section load
 	analysisSection: function () {
 		$.get("/risk_management/scenarios", function (data) {
-			helperFunctions.mustacheLoad("#analysis-script", "#portfolio-content", data.scenarios);
+			helperFunctions.mustacheLoad("#analysis-script", "#portfolio-content", data);
 		})
-
 	}
 
+}
+
+
+//Functions to load ANALYTICS TABS
+//===============================================================================================================================================
+analyticsTab = {
+
+	//Overview section load
+	summaryTab: function() {
+		//get data and load script
+	},
 }
 
 
