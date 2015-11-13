@@ -543,5 +543,7 @@ class SingleScenarioAPI(View):
         filter_dict = request.GET.dict()
         scenario_id = filter_dict["id"]
         single_scenario = self.model.objects.filter(pk=scenario_id).values()
+        single = self.model.objects.get(pk=scenario_id)
+        risk_profiles_ids = single.risk_profiles.all().values()
 
-        return JsonResponse(dict(scenario=list(single_scenario)))
+        return JsonResponse(dict(scenario=list(single_scenario), risk_profiles=list(risk_profiles_ids)))

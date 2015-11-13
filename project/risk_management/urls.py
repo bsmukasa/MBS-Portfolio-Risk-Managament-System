@@ -58,5 +58,11 @@ urlpatterns = patterns(
         view=views.AssumptionNameAPI.as_view(),
         name='assumptions_name_api'
     ),
+
+    url(
+        regex=r'^single_scenario$',
+        view=views.SingleScenarioAPI.as_view(),
+        name='single_scenario_api'
+    ),    
 )
 

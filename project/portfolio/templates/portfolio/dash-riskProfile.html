@@ -2,19 +2,19 @@
 <script id="riskProfile-template" type="x-tmpl-mustache">
 	<div class="row ">				
 		<div class="col-sm-4">
-			<h4 class="table-heading-risks">Saved Risk Profiles</h4>
-			<div id="toolbar">
-        		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-profile-name">
-					<i class="glyphicon glyphicon-plus"></i> Add
+			<h3 class="table-heading-risks">Saved Risk Profiles</h3>
+			<div class="dash-buttons-toolbar" id="toolbar">
+        		<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-profile-name">
+					<i class="glyphicon glyphicon-plus"></i>
 				</button> 
-				<button id="view-scenario" class="btn btn-danger" type="button">
-					<i class="glyphicon glyphicon-eye-open"></i> View
+				<button id="view-risk" class="btn btn-info" type="button">
+					<i class="glyphicon glyphicon-eye-open"></i>
         		</button>
-				<button id="edit-scenario" class="btn btn-danger">
-					<i class="glyphicon glyphicon-pencil"></i> Edit
+				<button id="edit-risk" class="btn btn-info">
+					<i class="glyphicon glyphicon-pencil"></i>
         		</button>
-        		<button id="remove-scenario" class="btn btn-danger">
-					<i class="glyphicon glyphicon-trash"></i> Delete
+        		<button id="remove-risk" class="btn btn-info">
+					<i class="glyphicon glyphicon-trash"></i>
         		</button>
         	</div>
 
@@ -40,7 +40,17 @@
 	    			</div>
 	  			</div>	  	
 	        </div>
+	    </div>
 
+    	<div class="col-sm-8">
+			<div class="risk-profiles-toolbar" id="toolbar">&nbsp</div>
+			<h4 class="table-heading-risks"></h4>
+		</div>
+	    
+	</div>
+
+	<div class="row ">				
+		<div class="col-sm-4">
 			<table id="user-risk-profiles" data-click-to-select="true" data-unique-id="id" data-toggle="table">
 			    <thead>
 			    	<tr>
@@ -52,7 +62,6 @@
 		</div>
 		
 		<div class="col-sm-8">
-			<h3 class="table-heading-risks">Profile Details</h3>
 			<table id="user-risk-details" data-unique-id="id" data-toggle="table" data-detail-view="true" data-detail-formatter="detailFormatter">
 			    <thead>
 			    	<tr>
@@ -64,6 +73,7 @@
 			</table>
 		</div>
 	</div>
+
 </script>
 
 

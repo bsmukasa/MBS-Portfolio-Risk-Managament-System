@@ -280,17 +280,29 @@ $(document).ready(function(){
     	})
 	})
 
+	//View selected scenario
+	// $('#main-content').on('click',"#view-scenario", function () {
+	// 	var selected_scenario = helperFunctions.getTableSelections('#user-scenario');
+	// 	$.get("/risk_management/single_scenario", {"id": selected_scenario[0]}, function (return_data) {
 
+	// 		var riskProfilesNames = []
+	// 		risk_profiles_list = return_data.risk_profiles
+	// 		for (var idx in risk_profiles_list) {
+	// 			if ("name" in risk_profiles_list[idx]){
+	// 				riskProfilesNames.push({"name": risk_profiles_list[idx].name})
+	// 			}
+	// 		}
+			
 
-	//TODO >> test get scenario return data and get respectives assumption and risk profiles to load on page
-	// //View a scenario
-	// $('#main-content').on('click', '#view-scenario', function() {
-	// 	var selected_scenario = helperFunctions.getTableSelections('#assumptions-table');
-	// 	$.get("/risk_management/assumption_profile", {"id": selected_assumption[0]}, function (return_data) {
-	// 		scenario_data = return_data.scenario
-	// 		assumption_id = scenario_data.assumption_profile
-	// 		risk_profiles = scenario_data.risk_profiles		
-	// })	
+	// 		var assumption = return_data.scenario.assumption_profile_id
+	// 		$.get("/risk_management/assumption_profile", {"id": assumption}, function (return_data) {	
+	// 			helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load", return_data.assumption_profiles[0]);
+	// 			helperFunctions.updateTableData('#scenario-risk-profiles-table', riskProfilesNames);
+	// 		})
+
+	
+	// 	})	
+	// })
 
 
 

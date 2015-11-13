@@ -1,7 +1,7 @@
 {% load bootstrap %}
 
 <script id="portfolio-template" type="x-tmpl-mustache">
-	<div class="row add_search">
+	<div class="row" id="toolbar-head">
         <div class="col-md-3" id="row-sub-header">
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
 				Add new portfolio
@@ -33,18 +33,17 @@
   			</div>	  	
         </div>
         
-        <div class="col-md-3">
-        	<div class="input-group">
-        		<input type="text" class="form-control" placeholder="Search portfolio...">
-        		<div class="input-group-btn">
-        			<button class="btn btn-link" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-        		</div>
-        	</div>
-        </div>
-        <div class="col-md-6"></div>
+        <div class="col-md-9"></div>
+     
 	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<div class="portfolio_panels" id="portfolio-load"></div>
+		</div>
+		
 
-	<div class="portfolio_panels" id="portfolio-load"></div>
+	</div>
 </script>
 
 

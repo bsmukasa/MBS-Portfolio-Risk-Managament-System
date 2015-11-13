@@ -101,7 +101,6 @@ $(document).ready(function(){
 			// FIX VIEWS THEN UNCOMMENT
 			$.post("/analytics/analyze_portfolio", send_data, function (data) {
 				if (data.status == "PASS") {
-					console.log(data.message);
 					helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
 					analyticsTab.summaryTab();
 				}
@@ -502,32 +501,62 @@ analyticsTab = {
 			"scenario_id": $("#select-scenario-analysis").val(),
 			"discount_rate": $("#discount-rate").val()
 		}
-
-		// FIX VIEWS AND UNCOMMENT
-
-		// $.ajax({
-  //   		url: "/analytics/get_aggregate_cash_flows",
-  //   		type: 'GET',
-  //   		data: send_data,
-	 //    	async: false,
-	 //    	success: function(return_data) {
-	 //    		console.log("123");
-	 //    		helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
-	 //    		helperFunctions.displayTableData("#cash-flow-table", return_data.aggregate_cash_flows)
-		// 	}
-		// })
-
-
-		// $.get("/analytics/get_aggregate_cash_flows", send_data, function (data) {
-		// 	console.log(data.aggregate_cash_flows);
-
-		// 	helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
-		// 	helperFunctions.displayTableData("#cash-flow-table", data.aggregate_cash_flows)
-		// })
-		
-
-		helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content");
-		helperFunctions.displayTableData("#cash-flow-table");
+		$.get("/analytics/get_aggregate_cash_flows", send_data, function (data) {
+			var data = eval(data.aggregate_cash_flows)
+			helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
+			$("#cash-flow-table").bootstrapTable({
+				cache: false,
+				data: data,
+				height: 800,
+				striped: true,
+				pagination: true,
+				pageSize: 50,
+				pageList: [30, 50, 100, 250, 500],
+				columns: [
+					{
+						field: 'period',
+						title: 'Period',
+						align: 'center',
+						sortable: false,
+					}, {
+						field: 'start_balance',
+						title: 'Starting Balance',
+						align: 'center',
+						sortable: false,
+					}, {					
+						field: 'scheduled_principal',
+						title: 'Scheduled Principal',
+						align: 'center',
+						sortable: false,
+					}, {					
+						field: 'unscheduled_principal',
+						title: 'Unscheduled Principal',
+						align: 'center',
+						sortable: false,
+					}, {					
+						field: 'interest',
+						title: 'Interest Payments',
+						align: 'center',
+						sortable: false,
+					}, {					
+						field: 'defaults',
+						title: 'Defaults',
+						align: 'center',
+						sortable: false,
+					}, {					
+						field: 'losses',
+						title: 'Lossses',
+						align: 'center',
+						sortable: false,
+					}, {
+						field: 'recovery',
+						title: 'Recovery',
+						align: 'center',
+						sortable: false,
+					}
+				]
+			})
+		})
 	},
 
 	//Load graphs tab

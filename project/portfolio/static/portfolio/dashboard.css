@@ -26,6 +26,7 @@ body > .container > .upload_form {
 
 .nav-tabs {
 	font-weight: 600;
+	margin-bottom: 10px;
 }
 
 body > .container > .row {
@@ -59,12 +60,12 @@ body > .container > .row {
 }
 
 .panel-title {
-	font-weight: 300;
+	font-weight: 600;
 	color: #fff;
 }
 .panel_footer {
 	margin-top: 0.5%;
-	margin-bottom: 2%;
+	margin-bottom: 3%;
 	font-weight: 300;
 	font-size: 12px;
 }
@@ -86,5 +87,14 @@ body > .container > .row {
 .modal.modal-wide .modal-dialog {
   width: 90%;
   height: 70%;
+}
+
+#toolbar-head {
+	margin-bottom: 2%;
+}
+
+.dash-buttons-toolbar {
+	float: right;
+	margin-bottom: 1%;
 }
 
