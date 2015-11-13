@@ -300,7 +300,6 @@ class AssumptionProfileAPI(View):
                         "date_created": "2015-10-30T21:06:42.621Z",
                         "name": "3 Month Timber Shortage",
                         "constant_prepayment_rate": "21.4444",
-                        "lag": "128.0000",
                         "last_updated": "2015-10-30T21:06:42.631Z",
                         "unemployment_rate": "8.5000",
                         "recovery": "59.2500",
@@ -314,7 +313,6 @@ class AssumptionProfileAPI(View):
                         "date_created": "2015-10-30T21:16:06.398Z",
                         "name": "GDP Growing at 3%",
                         "constant_prepayment_rate": "17.2500",
-                        "lag": "107.0000",
                         "last_updated": "2015-10-30T21:16:06.398Z",
                         "unemployment_rate": "8.5000",
                         "recovery": "-89.2300",
@@ -343,7 +341,6 @@ class AssumptionProfileAPI(View):
         - constant_default_rate
         - constant_prepayment_rate
         - recovery
-        - lag
 
         Example Request:
             {
@@ -355,10 +352,9 @@ class AssumptionProfileAPI(View):
                 "constant_default_rate": -100,
                 "constant_prepayment_rate": -100,
                 "recovery": -100,
-                "lag": 128
             }
 
-        Default Assumptions, except for lag, may be sent as -100 to be calculated by the system or manually entered.
+        Default Assumptions may be sent as -100 to be calculated by the system or manually entered.
 
         All Economic Assumptions are given equal weight in calculation of Default Assumptions.
 
@@ -389,8 +385,7 @@ class AssumptionProfileAPI(View):
         default_assumptions = {
             "constant_default_rate": post_data['constant_default_rate'],
             "constant_prepayment_rate": post_data['constant_prepayment_rate'],
-            "recovery": post_data['recovery'],
-            "lag": post_data['lag']
+            "recovery": post_data['recovery']
         }
 
         for key, value in default_assumptions.items():
@@ -407,9 +402,6 @@ class AssumptionProfileAPI(View):
                 if key == 'recovery':
                     recovery = national_home_price_index * 2.5 + 50
                     new_assumption_profile.recovery = recovery
-                if key == 'lag':
-                    lag = value
-                    new_assumption_profile.lag = lag
 
         new_assumption_profile.save()
         return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})

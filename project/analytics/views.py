@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
-from analytics.adjusted_assumptions_engine import get_adjusted_assumptions
+from analytics.adjusted_assumptions_engine import generate_adjusted_assumptions
 from analytics.cash_flows_engine import LoanPortfolio
 from analytics.models import CashFlowsResults
 from portfolio.models import Loan
@@ -47,7 +47,7 @@ class CashFlowsAPI(View):
         )
 
         if not cash_flow_results.exists():
-            loan_df = pd.DataFrame(list(Loan.objects.filter(portfolio_id=portfolio_id)))
+            loan_df = generate_adjusted_assumptions(portfolio_id, scenario_id)
             loan_df.to_pickle(analysis_results_name + '_loans.pk')
 
             analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df)
@@ -79,7 +79,7 @@ class AggregateCashFlowsAPI(View):
         scenario_id = request_dict['scenario_id']
         portfolio_id = request_dict['portfolio_id']
         discount_rate = request_dict['discount_rate']
-        adjusted_assumptions = get_adjusted_assumptions(scenario_id, portfolio_id)
+        adjusted_assumptions = generate_adjusted_assumptions(scenario_id, portfolio_id)
 
         analysis_results_name = "scenario_{}_portfolio_{}_analysis".format(scenario_id, portfolio_id)
 

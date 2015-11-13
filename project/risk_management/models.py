@@ -9,36 +9,26 @@ class RiskProfile(models.Model):
 
 
 class RiskFactor(models.Model):
+    FICO = 'FICO'  # TODO Figure out acronym
     TYPE = 'property_type'
     PURPOSE = 'purpose'
     MORTGAGE_TYPE = 'mortgage_type'
-    LIEN = 'lien_position'
     CIR = 'current_interest_rate'
     RT = 'remaining_term'
     STATE = 'state'
-    PMI = 'PMI'  # TODO Figure out acronym
     ZIP = 'zipcode'
-    FICO = 'FICO'  # TODO Figure out acronym
     MARGIN = 'gross_margin'
-    ICAP = 'ICAP'  # TODO Figure out acronym
-    LCAP = 'LCAP'  # TODO Figure out acronym
-    INTEREST_ADJ_DATE = 'first_interest_adjustment_date'
     LTV = 'current_LTV'
     RISK_FACTOR_ATTRIBUTE_CHOICES = (
         (FICO, 'FICO'),  # TODO Figure out acronym
         (TYPE, 'Property Type'),
         (PURPOSE, 'Purpose'),
         (MORTGAGE_TYPE, 'Mortgage Type'),
-        (LIEN, 'Lien Position'),
         (CIR, 'Current Interest Rate'),
         (RT, 'Remaining Term'),
         (STATE, 'State'),
-        (PMI, 'PMI'),  # TODO Figure out acronym
         (ZIP, 'Zipcode'),
         (MARGIN, 'Gross Margin'),
-        (ICAP, 'Interest Cap'),
-        (LCAP, 'LCAP'),  # TODO Figure out acronym
-        (INTEREST_ADJ_DATE, 'First Interest Adjustment Date'),
         (LTV, 'Current LTV')  # TODO Figure out acronym
     )
 
@@ -90,7 +80,6 @@ class AssumptionProfile(models.Model):
         - constant_default_rate     =>  0.5% to 25%
         - constant_prepayment_rate  =>  5% to 25%
         - recovery                  =>  0% to 100%
-        - lag                       =>
 
     Economic Assumptions are used to calculate Default Assumptions. All Economic Assumptions
     are given equal weight and impact the Default Assumptions in the following ways:
@@ -116,37 +105,7 @@ class AssumptionProfile(models.Model):
     # Default Assumptions
     constant_default_rate = models.DecimalField(decimal_places=4, max_digits=10)
     constant_prepayment_rate = models.DecimalField(decimal_places=4, max_digits=10)
-    recovery = models.DecimalField(decimal_places=4, max_digits=10)
-    lag = models.DecimalField(decimal_places=4, max_digits=10)
-
-
-class ScoreCardProfile(models.Model):
-    name = models.CharField(max_length=128)
-    date_created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-
-class ScoreCard(models.Model):
-    ASSUMPTION_CHOICES = (
-        ('CDR', 'Constant Default Rate'),
-        ('CPR', 'Constant Prepayment Rate'),
-        ('RECOVERY', 'Recovery')
-    )
-
-    score_card_profile = models.ForeignKey(ScoreCardProfile)
-    assumption_type = models.CharField(max_length=64, choices=ASSUMPTION_CHOICES)
-    # total_score = models.DecimalField(decimal_places=4, max_digits=10)
-    # updated_total_score = models.DecimalField(decimal_places=4, max_digits=10)
-
-
-class ScoreCardAttribute(models.Model):
-    score_card = models.ForeignKey(ScoreCard)
-    attribute = models.CharField(max_length=32)
-    weight = models.DecimalField(decimal_places=4, max_digits=10)
-    original_index = models.DecimalField(decimal_places=2, max_digits=5)
-    original_score = models.DecimalField(decimal_places=4, max_digits=10)
-    # index_change = models.DecimalField(decimal_places=2, max_digits=5)
-    # updated_score = models.DecimalField(decimal_places=4, max_digits=10)
+    recovery_percentage = models.DecimalField(decimal_places=4, max_digits=10)
 
 
 class Scenario(models.Model):
