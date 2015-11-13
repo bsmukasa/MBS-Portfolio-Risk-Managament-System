@@ -142,17 +142,17 @@ class AnalysisSummaryAPI(View):
             npv = analysis_portfolio.net_present_value_aggregate_for_portfolio()
             price = npv / analysis_portfolio.current_balance_aggregate_for_portfolio() * 100
             yield_irr = analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()
-            weighted_average_life = analysis_portfolio.weighted_average_life()
-            weighted_average_cdr = analysis_portfolio.weighted_average_cdr()
-            weighted_average_cpr = analysis_portfolio.weighted_average_cpr()
-            weighted_average_recovery = analysis_portfolio.weighted_average_recovery()
+            # weighted_average_life = analysis_portfolio.weighted_average_life()
+            # weighted_average_cdr = analysis_portfolio.weighted_average_cdr()
+            # weighted_average_cpr = analysis_portfolio.weighted_average_cpr()
+            # weighted_average_recovery = analysis_portfolio.weighted_average_recovery()
             return JsonResponse(dict(
                 remaining_balance=remaining_balance,
                 npv=npv,
                 price=price,
                 yield_irr=yield_irr,
-                weighted_average_life=weighted_average_life,
-                weighted_average_cdr=weighted_average_cdr,
-                weighted_average_cpr=weighted_average_cpr,
-                weighted_average_recovery=weighted_average_recovery
+                # weighted_average_life=weighted_average_life,
+                # weighted_average_cdr=weighted_average_cdr,
+                # weighted_average_cpr=weighted_average_cpr,
+                # weighted_average_recovery=weighted_average_recovery
             ))
