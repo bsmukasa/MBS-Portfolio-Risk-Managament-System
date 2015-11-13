@@ -1,16 +1,11 @@
-import shelve
-
 import pandas as pd
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-
 from analytics.adjusted_assumptions_engine import generate_adjusted_assumptions
 from analytics.cash_flows_engine import LoanPortfolio
 from analytics.models import CashFlowsResults
-from portfolio.models import Loan
-
 
 
 class CashFlowsAPI(View):
@@ -38,7 +33,8 @@ class CashFlowsAPI(View):
         portfolio_id = request_dict['portfolio_id']
         discount_rate = float(request_dict['discount_rate']) / 100
 
-        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id, discount_rate)
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id,
+                                                                                       discount_rate)
 
         cash_flow_results = self.model.objects.filter(
             scenario_id=scenario_id,
@@ -54,7 +50,7 @@ class CashFlowsAPI(View):
             loan_df.to_pickle(analysis_results_name + '_loans.pk')
 
             analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df)
-            
+
             analysis_portfolio.cash_flows_df.to_pickle(analysis_results_name + '_cash_flows.pk')
 
             analysis_results = self.model(
@@ -80,13 +76,55 @@ class AggregateCashFlowsAPI(View):
 
     def get(self, request):
         request_dict = request.GET.dict()
-        
+
         scenario_id = request_dict['scenario_id']
         portfolio_id = request_dict['portfolio_id']
         discount_rate = float(request_dict['discount_rate']) / 100
-        # adjusted_assumptions = generate_adjusted_assumptions(scenario_id, portfolio_id)
 
-        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id, discount_rate)
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id,
+                                                                                       discount_rate)
+
+        cash_flow_results = self.model.objects.filter(
+            scenario_id=scenario_id,
+            portfolio_id=portfolio_id,
+            discount_rate=discount_rate,
+            analysis_results_name=analysis_results_name
+        )
+
+        if cash_flow_results.exists():
+            if not cash_flow_results[0].aggregated:
+                loan_df = pd.read_pickle(analysis_results_name + '_loans.pk')
+                cash_flow_df = pd.read_pickle(analysis_results_name + '_cash_flows.pk')
+
+                analysis_portfolio = LoanPortfolio(
+                    discount_rate=discount_rate, loan_df=loan_df, cash_flow_df=cash_flow_df
+                )
+                aggregate_cash_flow_df = analysis_portfolio.cash_flows_aggregate_for_portfolio()
+                analysis_portfolio.cash_flows_df.to_pickle(analysis_results_name + '_aggregate_flows.pk')
+                cash_flow_results[0].aggregated = True
+                cash_flow_results[0].save()
+            else:
+                aggregate_cash_flow_df = pd.read_pickle(analysis_results_name + '_aggregate_flows.pk')
+
+            aggregate_cash_flow = aggregate_cash_flow_df.to_json(orient="records")
+            return JsonResponse(dict(aggregate_cash_flows=aggregate_cash_flow))
+
+
+class AnalysisSummaryAPI(View):
+    model = CashFlowsResults
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(AnalysisSummaryAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        request_dict = request.GET.dict()
+
+        scenario_id = request_dict['scenario_id']
+        portfolio_id = request_dict['portfolio_id']
+        discount_rate = float(request_dict['discount_rate']) / 100
+
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id,
+                                                                                       discount_rate)
 
         cash_flow_results = self.model.objects.filter(
             scenario_id=scenario_id,
@@ -100,9 +138,21 @@ class AggregateCashFlowsAPI(View):
             cash_flow_df = pd.read_pickle(analysis_results_name + '_cash_flows.pk')
 
             analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df, cash_flow_df=cash_flow_df)
-            aggregate_cash_flow_df = analysis_portfolio.cash_flows_aggregate_for_portfolio()
-            aggregate_cash_flow = aggregate_cash_flow_df.to_json(orient="records")
-            
-            return JsonResponse(dict(aggregate_cash_flows=aggregate_cash_flow))
-
-
+            remaining_balance = analysis_portfolio.current_balance_aggregate_for_portfolio()
+            npv = analysis_portfolio.net_present_value_aggregate_for_portfolio()
+            price = npv / analysis_portfolio.current_balance_aggregate_for_portfolio() * 100
+            yield_irr = analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()
+            weighted_average_life = analysis_portfolio.weighted_average_life()
+            weighted_average_cdr = analysis_portfolio.weighted_average_cdr()
+            weighted_average_cpr = analysis_portfolio.weighted_average_cpr()
+            weighted_average_recovery = analysis_portfolio.weighted_average_recovery()
+            return JsonResponse(dict(
+                remaining_balance=remaining_balance,
+                npv=npv,
+                price=price,
+                yield_irr=yield_irr,
+                weighted_average_life=weighted_average_life,
+                weighted_average_cdr=weighted_average_cdr,
+                weighted_average_cpr=weighted_average_cpr,
+                weighted_average_recovery=weighted_average_recovery
+            ))

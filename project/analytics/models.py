@@ -10,3 +10,4 @@ class CashFlowsResults(models.Model):
     portfolio = models.ForeignKey(Portfolio)
     discount_rate = models.DecimalField(max_digits=10, decimal_places=4)
     analysis_results_name = models.CharField(max_length=256)
+    aggregated = models.BooleanField(default=False)

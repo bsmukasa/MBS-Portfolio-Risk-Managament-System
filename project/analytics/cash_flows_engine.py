@@ -7,7 +7,10 @@ import pandas as pd
 class LoanPortfolio:
     def __init__(self, discount_rate, loan_df, cash_flow_df=None):
         self.discount_rate = discount_rate
-        self.loan_df = loan_df[['current_principal_balance', 'current_interest_rate', 'remaining_term', 'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery']]
+        self.loan_df = loan_df[[
+            'current_principal_balance', 'current_interest_rate', 'remaining_term',
+            'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery'
+        ]]
 
         if cash_flow_df is None:
             self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
@@ -195,7 +198,9 @@ class LoanPortfolio:
         Returns: The portfolio's aggregate net present value.
 
         """
-        return self.net_present_values_for_portfolio().sum()
+        df = self.cash_flows_df.groupby('period')['total_payment'].sum().reset_index()
+        npv = np.npv(self.discount_rate / 12, df['total_payment'])
+        return npv
 
     def internal_rates_of_return_for_portfolio(self):
         """ Calculates the internal rates of return for each loan in a portfolio.
