@@ -34,6 +34,8 @@ class CashFlowsAPI(View):
         """
         request_dict = request.POST.dict()
 
+        print(request_dict)
+
         scenario_id = request_dict['scenario_id']
         portfolio_id = request_dict['portfolio_id']
         discount_rate = request_dict['discount_rate']

@@ -42,12 +42,12 @@ class LoanPortfolio:
         """
         cash_flows_list_of_dicts = payment_schedule_for_loan(
             loan_df_pk=row.name,
-            original_balance=row['Current_Principal_Balance'],
-            interest_rate=row['Current_Interest_Rate'],
-            maturity=row['Remaining_Term'],
-            cdr=row['Current_Default_Rate'],
-            cpr=row['Current_Prepayment_Rate'],
-            recovery_percentage=row['Recovery']
+            original_balance=row['current_principal_balance'],
+            interest_rate=row['current_interest_rate'],
+            maturity=row['remaining_term'],
+            cdr=row['current_default_rate'],
+            cpr=row['current_prepayment_rate'],
+            recovery_percentage=row['recovery']
         )
         return cash_flows_list_of_dicts
 

@@ -45,7 +45,7 @@ $(document).ready(function(){
 	$("#portfolio-content").on("click", "#analysis-tabs-list a[href='#graphs']", function (event) {
 		event.preventDefault();
 		$(this).tab('show')
-		analyticsTab.summaryTab();
+		analyticsTab.graphsTab();
 	})
 
 
@@ -97,24 +97,40 @@ $(document).ready(function(){
 				discount_rate: $("#discount-rate").val()
 			}
 
-			$.post("/analytics/analyze_portfolio", send_data, function (data) {
-				if (data.status == "PASS") {
-					helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-					analyticsTab.summaryTab();
-				}
-			})
+
+			//FIX VIEWS THEN UNCOMMENT
+			// $.post("/analytics/analyze_portfolio", send_data, function (data) {
+			// 	if (data.status == "PASS") {
+			// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+			// 		analyticsTab.summaryTab();
+			// 	}
+			// })
+
+			//Delete later
+			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
 
 		} else {
 			$('#select-scenario-analysis').prop("disabled", false);
 			$('#discount-rate').prop('readonly', false);
 			$("#run-scenario-btn").text('RUN');
 		}
-	})
+	});
 
 
-//Analytics tabs	
+//ANALYTICS >> GRAPHS TAB
 //................................................................................................................................................	
+	//Button to generate graphs
+	$("#portfolio-content").on("click", "#test-graph", function (event) {
+		event.preventDefault();
 
+		var data = {
+			labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+			series: [[5, 2, 4, 2, 0], [2,5,3,1,2]]
+		};
+		new Chartist.Line('.ct-chart', data);
+
+
+	})
 
 
 //$document closing
@@ -474,8 +490,8 @@ analyticsTab = {
 			wa_cdr: "9.95",
 			assumption_recovery: "77.90",
 			wa_recovery: "65"
-		}
-		helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData)
+		};
+		helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData);
 	},
 
 	//Load cash flows tab
@@ -485,11 +501,21 @@ analyticsTab = {
 			"scenario_id": $("#select-scenario-analysis").val(),
 			"discount_rate": $("#discount-rate").val()
 		}
-		$.get("/analytics/get_aggregate_cash_flows", send_data, function (data) {
-			//GETTING AN ERROR WHEN EXECUTING DJANGO VIEW
-		})
-		//GET CASH FLOWS
-		// helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content", data)
+
+		//FIX VIEWS AND UNCOMMENT
+		// $.get("/analytics/get_aggregate_cash_flows", send_data, function (data) {
+			// helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content")
+			// helperFunctions.mustacheLoad("#cash-flow-table", data)
+		// })
+		
+
+		helperFunctions.mustacheLoad("#cash-flow-tab", "#analysis-tab-content");
+		helperFunctions.displayTableData("#cash-flow-table");
+	},
+
+	//Load graphs tab
+	graphsTab: function () {
+		helperFunctions.mustacheLoad("#graphs-tab", "#analysis-tab-content");
 	}
 }
 
