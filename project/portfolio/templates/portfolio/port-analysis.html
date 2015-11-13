@@ -36,6 +36,7 @@
 	<br><br>
 	<div id="analysis-results"></div>
 
+
 </script>
 
 
@@ -46,7 +47,7 @@
 		<li><a href="#cash-flow">Cash Flow</a></li>
 		<li><a href="#graphs">Graphs</a></li>
 	</ul>
-
+	<br><br>
 	<div id="analysis-tab-content"></div>
 </script>
 
@@ -120,10 +121,17 @@
 
 
 <script id="cash-flow-tab" type="x-tmpl-mustache">
-	<table id="cash-flow" data-unique-id="id" data-toggle="table">
+	<table id="cash-flow-table" data-unique-id="id" data-toggle="table">
 	    <thead>
 	    	<tr>
-	    		<th data-field="name">Name</th>
+	    		<th data-field="period_number">#</th>
+	    		<th data-field="start_balance">Starting Balance</th>
+	    		<th data-field="scheduled_principal">Scheduled Principal</th>
+	    		<th data-field="unscheduled_principal">Unscheduled Principal</th>
+	    		<th data-field="interest">Interest Payments</th>
+	    		<th data-field="defaults">Default</th>
+	    		<th data-field="losses">Losses</th>
+	    		<th data-field="recovery">Recovery</th>
 	    	</tr>
 	    </thead>
 	</table>
@@ -131,4 +139,41 @@
 
 
 
+
+<script id="graphs-tab" type="x-tmpl-mustache">
+	<div class="row">
+		<div class="col-sm-8">
+			<h4 class="graphs-btn-header">Cash Flow</h4>
+		</div>
+		<div class="col-sm-4">
+			<h4 class="graphs-btn-header">US Map</h4>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-4">
+			<div id="toolbar" class="graph-buttons">
+				<button type="button" class="btn btn-primary" id="btn-cf-principal">Principal</button>
+				<button type="button" class="btn btn-primary" id="btn-cf-scheduled-principal">Scheduled</button>
+				<button type="button" class="btn btn-primary" id="btn-cf-unscheduled-principal">Unscheduled</button>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div id="toolbar" class="graph-buttons">
+				<button type="button" class="btn btn-primary" id="btn-cf-default">Default</button>
+				<button type="button" class="btn btn-primary" id="btn-cf-losses">Losses</button>
+				<button type="button" class="btn btn-primary" id="btn-cf-recovery">Recovery</button>
+			</div>			
+		</div>
+		<div class="col-sm-4">
+			<div id="toolbar" class="graph-buttons">
+				<button type="button" class="btn btn-primary" id="btn-map-cdr">CDR</button>
+				<button type="button" class="btn btn-primary" id="btn-map-cpr">CPR</button>
+			</div>		
+		</div>
+	</div>
+	
+	<div class="ct-chart ct-perfect-fourth"></div>
+
+</script>
 
