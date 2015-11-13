@@ -108,3 +108,51 @@ class AggregateCashFlowsAPI(View):
 
             aggregate_cash_flow = aggregate_cash_flow_df.to_json(orient="records")
             return JsonResponse(dict(aggregate_cash_flows=aggregate_cash_flow))
+
+
+class AnalysisSummaryAPI(View):
+    model = CashFlowsResults
+
+    def dispatch(self, request, *args, **kwargs):
+        return super(AnalysisSummaryAPI, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        request_dict = request.GET.dict()
+
+        scenario_id = request_dict['scenario_id']
+        portfolio_id = request_dict['portfolio_id']
+        discount_rate = float(request_dict['discount_rate']) / 100
+
+        analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id,
+                                                                                       discount_rate)
+
+        cash_flow_results = self.model.objects.filter(
+            scenario_id=scenario_id,
+            portfolio_id=portfolio_id,
+            discount_rate=discount_rate,
+            analysis_results_name=analysis_results_name
+        )
+
+        if cash_flow_results.exists():
+            loan_df = pd.read_pickle(analysis_results_name + '_loans.pk')
+            cash_flow_df = pd.read_pickle(analysis_results_name + '_cash_flows.pk')
+
+            analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df, cash_flow_df=cash_flow_df)
+            remaining_balance = analysis_portfolio.current_balance_aggregate_for_portfolio()
+            npv = analysis_portfolio.net_present_value_aggregate_for_portfolio()
+            price = npv / analysis_portfolio.current_balance_aggregate_for_portfolio() * 100
+            yield_irr = analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()
+            weighted_average_life = analysis_portfolio.weighted_average_life()
+            weighted_average_cdr = analysis_portfolio.weighted_average_cdr()
+            weighted_average_cpr = analysis_portfolio.weighted_average_cpr()
+            weighted_average_recovery = analysis_portfolio.weighted_average_recovery()
+            return JsonResponse(dict(
+                remaining_balance=remaining_balance,
+                npv=npv,
+                price=price,
+                yield_irr=yield_irr,
+                weighted_average_life=weighted_average_life,
+                weighted_average_cdr=weighted_average_cdr,
+                weighted_average_cpr=weighted_average_cpr,
+                weighted_average_recovery=weighted_average_recovery
+            ))
