@@ -2,13 +2,15 @@ import random
 
 import pandas as pd
 
+from portfolio.models import Loan
 from risk_management.models import Scenario
 
 
-def get_adjusted_assumptions(loan_df, scenario_id):
+def generate_adjusted_assumptions(portfolio_id, scenario_id):
     scenario = Scenario.objects.get(scenario_id=scenario_id)
     assumptions = scenario.assumption_profile
 
+    loan_df = pd.DataFrame(list(Loan.objects.filter(portfolio_id=portfolio_id)))
     loan_df['constant_default_rate'] = assumptions.constant_default_rate
     loan_df['constant_repayment_rate'] = assumptions.constant_prepayment_rate
     loan_df['recovery_percentage'] = assumptions.recovery_percentage
