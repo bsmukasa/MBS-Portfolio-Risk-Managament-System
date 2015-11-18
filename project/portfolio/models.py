@@ -4,13 +4,13 @@ from django.db import models
 # Create your models here.
 class Portfolio(models.Model):
     name = models.CharField(max_length=128)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateField(auto_now_add=True)
     date_last_update = models.DateField(auto_now=True)
     total_loan_balance = models.IntegerField()
     total_loan_count = models.IntegerField()
     average_loan_balance = models.DecimalField(decimal_places=2, max_digits=20)
     weighted_average_coupon = models.DecimalField(decimal_places=5, max_digits=20)
-    weighted_average_life_to_maturity = models.DecimalField(decimal_places=5, max_digits=20)
+    weighted_average_life_to_maturity = models.DecimalField(decimal_places=4, max_digits=20)
 
 
 class Loan(models.Model):
