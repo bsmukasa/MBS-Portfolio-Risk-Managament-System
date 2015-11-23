@@ -27,6 +27,8 @@ class CashFlowsAPI(View):
         Returns: Status and message indicating if there it is a new analysis.
 
         """
+
+        # try:
         request_dict = request.POST.dict()
 
         scenario_id = request_dict['scenario_id']
@@ -63,6 +65,11 @@ class CashFlowsAPI(View):
             message = 'New Analysis has been run.'
         else:
             message = 'Analysis has already been run.'
+
+        # except err as e:
+        #     print("sssss")
+        #     print(e)
+
 
         return JsonResponse({'status': 'PASS', 'message': message})
 

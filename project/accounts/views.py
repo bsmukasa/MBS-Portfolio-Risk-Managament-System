@@ -46,7 +46,10 @@ class Signup(View):
 
 
 class Contact(View):
-	pass
+	template = "accounts/contact.html"
+
+	def get(self, request):
+		return render(request, self.template)
 
 
 class Logout(View):

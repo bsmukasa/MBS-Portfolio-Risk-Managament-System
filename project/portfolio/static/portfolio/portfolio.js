@@ -97,14 +97,16 @@ $(document).ready(function(){
 				discount_rate: $("#discount-rate").val()
 			}
 
+			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
 
 			// FIX VIEWS THEN UNCOMMENT
-			$.post("/analytics/analyze_portfolio", send_data, function (data) {
-				if (data.status == "PASS") {
-					helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-					analyticsTab.summaryTab();
-				}
-			})
+			// $.post("/analytics/analyze_portfolio", send_data, function (data) {
+			// 	if (data.status == "PASS") {
+			// 		console.log(data.status)
+			// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+			// 		analyticsTab.summaryTab();
+			// 	}
+			// })
 
 			// //Delete later
 			// helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
