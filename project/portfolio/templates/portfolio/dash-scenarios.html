@@ -123,42 +123,45 @@
 	
 	
 		<div class="col-sm-4">
-			<table id="scenario-assumptions-table" class='table'>
-				{% verbatim %}
-					<thead>
-					</thead>
-					<tbody>
-				    	<tr>
-				    		<th>GDP Growth</th>
-				    		<td>{{ gdp_growth }}</td>
-				    	</tr>
-				    	<tr>
-				    		<th>Unemployment Rate</th>
-				    		<td>{{ unemployment_rate }}</td>
-				    	</tr>
-				    	<tr>
-				    		<th>National Home Price Index Growth</th>
-				    		<td>{{ national_home_price_index_growth }}</td>
-				    	</tr>
-				    	<tr>
-				    		<th>High Yield Spread</th>
-				    		<td>{{ high_yield_spread }}</td>
-				    	</tr>
-				    	<tr>
-				    		<th>Constant Default Rate (CDR)</th>
-				    		<td>{{ constant_default_rate }}</td>
-				    	</tr>
-				    	<tr>
-				    		<th>Constante Prepayment Rate (CPR)</th>
-				    		<td>{{ constant_prepayment_rate }}</td>
-				    	</tr>
-				    	<tr>
-				    		<th>Recovery Percentage</th>
-				    		<td>{{ recovery_percentage }}</td>
-				    	</tr>
-				    </tbody>
-				{% endverbatim %}
-			</table>
+			<div id="assumptions-scenario-load">
+				<table id="scenario-assumptions-table" class='table'>
+					{% verbatim %}
+						<thead>
+							<h4>Economic Assumption</h4>
+						</thead>
+						<tbody>
+					    	<tr>
+					    		<th>GDP Growth</th>
+					    		<td>{{ gdp_growth }}</td>
+					    	</tr>
+					    	<tr>
+					    		<th>Unemployment Rate</th>
+					    		<td>{{ unemployment_rate }}</td>
+					    	</tr>
+					    	<tr>
+					    		<th>National Home Price Index Growth</th>
+					    		<td>{{ national_home_price_index_growth }}</td>
+					    	</tr>
+					    	<tr>
+					    		<th>High Yield Spread</th>
+					    		<td>{{ high_yield_spread }}</td>
+					    	</tr>
+					    	<tr>
+					    		<th>Constant Default Rate (CDR)</th>
+					    		<td>{{ constant_default_rate }}</td>
+					    	</tr>
+					    	<tr>
+					    		<th>Constante Prepayment Rate (CPR)</th>
+					    		<td>{{ constant_prepayment_rate }}</td>
+					    	</tr>
+					    	<tr>
+					    		<th>Recovery Percentage</th>
+					    		<td>{{ recovery_percentage }}</td>
+					    	</tr>
+					    </tbody>
+					{% endverbatim %}
+				</table>
+			</div>
 		</div>
 
 		<div class="col-sm-4">
@@ -178,6 +181,9 @@
 <script id="assumptions-form-template" type="x-tmpl-mustache">
 	<table id="scenario-assumptions-form-table" class='table'>
 		{% verbatim %}
+			<thead>
+				<h4>Economic Assumption</h4>
+			</thead>
 			<tbody>
 		    	<tr>
 		    		<th>GDP Growth</th>

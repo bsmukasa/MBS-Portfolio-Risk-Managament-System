@@ -3,6 +3,7 @@ $(document).ready(function(){
 	//Standard on page load, tab active is portfolios
 	tabLoaderFunctions.portfolioTabLoader();
 
+
 //GENERAL TABS 
 //................................................................................................................................................	
 	//Click on Portfolio TAB
@@ -40,6 +41,7 @@ $(document).ready(function(){
 		tabLoaderFunctions.scorecardsTabLoader();
 	})	
 
+
 //PORTFOLIO TAB
 //................................................................................................................................................
 	//Upload new portfolio
@@ -61,6 +63,7 @@ $(document).ready(function(){
     		}
 		});
 	})
+
 
 //RISK PROFILE TAB
 //................................................................................................................................................
@@ -168,6 +171,7 @@ $(document).ready(function(){
 		tabLoaderFunctions.riskProfileTabLoader();
 	})
 
+
 //ASSUMPTIONS TAB
 //................................................................................................................................................
 	//Create new assumption
@@ -197,6 +201,7 @@ $(document).ready(function(){
 		})
 	})
 
+
 //SCENARIO TAB
 //................................................................................................................................................
 	//Modal open load risk profile tables
@@ -207,6 +212,7 @@ $(document).ready(function(){
 		helperFunctions.displayTableData("#scenario-modal-selected-risk-profiles");
 	})
 
+
 	//Create new scenario >> Show selected assumption data
 	$('#main-content').on('change',"#select-economic-assumption", function () {
 		var selected_assumption = $("#select-economic-assumption").val();
@@ -216,6 +222,7 @@ $(document).ready(function(){
 		})	
 	})
 
+
 	//Add selected risk profiles to "Added Risk Profiles" table
 	$('#main-content').on('click', "#modal-add-risk-profile", function () {
 		var selected_risk_profiles = $("#scenario-modal-all-risk-profiles").bootstrapTable('getSelections');
@@ -224,13 +231,6 @@ $(document).ready(function(){
 		$("#scenario-modal-all-risk-profiles").bootstrapTable('remove', {field: "id", values: ids});
 	})
 
-	//Add selected risk profiles to "Added Risk Profiles" table
-	$('#main-content').on('click', "#modal-remove-risk-profile", function () {
-		var selected_risk_profiles = $("#scenario-modal-selected-risk-profiles").bootstrapTable('getSelections');
-		$("#scenario-modal-all-risk-profiles").bootstrapTable('append', selected_risk_profiles);
-		ids = helperFunctions.getTableSelections("#scenario-modal-selected-risk-profiles");
-		$("#scenario-modal-selected-risk-profiles").bootstrapTable('remove', {field: "id", values: ids});
-	})
 
 	//Save new scenario (save, close modal, reload page)
 	$('#main-content').on('submit',"#form-new-scenario", function (event) {
@@ -244,8 +244,7 @@ $(document).ready(function(){
 			scenario_name: name,
 			assumption_profile_id: selected_assumption,
 			risk_profiles: risk_profiles
-		}	
-		
+		}		
 		$.ajax({
     		url: "/risk_management/scenarios",
     		type: 'POST',
@@ -259,41 +258,42 @@ $(document).ready(function(){
     	})
 	})
 
+
 	//View selected scenario
-	// $('#main-content').on('click',"#view-scenario", function () {
-	// 	var selected_scenario = helperFunctions.getTableSelections('#user-scenario');
-	// 	$.get("/risk_management/single_scenario", {"id": selected_scenario[0]}, function (return_data) {
+	$('#main-content').on('click',"#view-scenario", function () {
+		var selected_scenario = helperFunctions.getTableSelections('#user-scenario');
+		
+		$.get("/risk_management/single_scenario", {"id": selected_scenario[0]}, function (return_data) {
+			var riskProfilesNames = []
+			risk_profiles_array = return_data.risk_profiles
+			for (var idx in risk_profiles_array) {
+				if ("name" in risk_profiles_array[idx]){
+					riskProfilesNames.push({"name": risk_profiles_array[idx].name})
+				}
+			}
 
-	// 		var riskProfilesNames = []
-	// 		risk_profiles_list = return_data.risk_profiles
-	// 		for (var idx in risk_profiles_list) {
-	// 			if ("name" in risk_profiles_list[idx]){
-	// 				riskProfilesNames.push({"name": risk_profiles_list[idx].name})
-	// 			}
-	// 		}
-			
-
-	// 		var assumption = return_data.scenario.assumption_profile_id
-	// 		$.get("/risk_management/assumption_profile", {"id": assumption}, function (return_data) {	
-	// 			helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load", return_data.assumption_profiles[0]);
-	// 			helperFunctions.updateTableData('#scenario-risk-profiles-table', riskProfilesNames);
-	// 		})
-
-	
-	// 	})	
-	// })
-
-
-
+			var scenario_data = return_data["scenario"][0];
+			var assumption_id = scenario_data.assumption_profile_id;
+			$.get("/risk_management/assumption_profile", {"id": assumption_id}, function (return_data) {	
+				helperFunctions.mustacheLoad("#assumptions-form-template", "#assumptions-scenario-load", return_data.assumption_profiles[0]);
+				helperFunctions.updateTableData('#scenario-risk-profiles-table', riskProfilesNames);
+			})
 
 	
-//$document closing
+		})	
+	})
+
+
+
+
+	
+// $ document closing
 //................................................................................................................................................
 });
 
 
 //Loading animations according to ajax functionality
-//................................................................................................................................................
+//===============================================================================================================================================
 $(document).on({
     ajaxStart: function() { $("body").addClass("loading"); },
     ajaxStop: function() { $("body").removeClass("loading"); }    
@@ -324,9 +324,7 @@ var helperFunctions = {
 	//Get items selected in a table (params: table selector)
 	getTableSelections: function(table_selector) {
 		var data = $(table_selector).bootstrapTable('getSelections');
-		var selected_ids = $.map(data, function(item) {
-			return item.id;
-		})
+		var selected_ids = $.map(data, function(item) { return item.id; })
 		return selected_ids;
 	},
 
@@ -412,10 +410,11 @@ var tabLoaderFunctions = {
 
 	//Scenarios tab
 	scenariosTabLoader: function () {
+		//Get assumptions to load on new scenario form
 		$.ajax({
     		url: "/risk_management/assumptions_name",
     		type: 'GET',
-	    	async: false,
+    		async: false,
 	    	success: function(return_data) {
 	    		names_array = return_data.assumption_names
 				assumptionsObj = {"assumptions": []}
@@ -427,9 +426,9 @@ var tabLoaderFunctions = {
 				assumptionsObj.assumptions = arrayNames
 				helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load", assumptionsObj);
 			}
-		})	
-		helperFunctions.displayTableData('#scenario-risk-profiles-table');
+		})		
 		$.get( "/risk_management/scenarios", function (return_data) {
+			helperFunctions.displayTableData('#scenario-risk-profiles-table');
 			helperFunctions.displayTableData('#user-scenario', return_data.scenarios);
 		})
 
