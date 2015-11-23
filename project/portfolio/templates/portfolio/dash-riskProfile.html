@@ -78,89 +78,96 @@
 
 
 <script id="riskProfile-creation-template" type="x-tmpl-mustache">
-	<button type="button" class="btn btn-default" aria-expanded="false" id="back-risk-profile">Back</button>
-	<div class="col-sm-8">
-		{% verbatim %}
-			<h3 class="risk-profile-name-id" id={{ id }}>{{ name }} </h3>
-		{% endverbatim %}
-		
-		<div id="toolbar">
-			<h4>Risk Factors</h4>
-			<button id="view-conditional" class="btn btn-danger" type="button" data-toggle="modal" data-target="#new-factor-modal">
-				<i class="glyphicon glyphicon-plus"></i> Add
-	        </button>
-			<button id="view-conditional" class="btn btn-danger" type="button">
-				<i class="glyphicon glyphicon-eye-open"></i> View
-	        </button>
-			<button id="edit-conditional" class="btn btn-danger">
-				<i class="glyphicon glyphicon-pencil"></i> Edit
-	        </button>
-	        <button id="remove-conditional" class="btn btn-danger">
-				<i class="glyphicon glyphicon-trash"></i> Delete
-	        </button>
-	    </div>
-		
-		<div class="modal fade new-risk-profile" id="new-factor-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					
-					<form role="form" id="new-risk-factor">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							<h4 class="modal-title" id="myModalLabel">Add new risk attribute</h4>
-						
-							<div class="form-group">
-								<label for="attribute">Attribute:</label>
-								<select class="form-control" id="select-risk-factor-attribute" name="attribute">
-									<option value=""> - Select - </option>
-									{% for k,v in choices %}
-										<option value="{{ k }}">{{v}}</option>
-									{% endfor %}
-								</select>
+	<div class="row" id="risk-factor-title-row">
+		<div class="col-sm-8">
+			{% verbatim %}
+				<h3 class="risk-profile-name-id" id="{{ id }}">{{ name }}</h3>
+			{% endverbatim %}			
+		</div>	
+		<div class="col-sm-4">
+			<button type="button" class="btn btn-link btn-sm" id="back-risk-profile">Back</button>		
+		</div>		
+	</div>
+
+	<div class="row">
+		<div class="col-sm-7">
+			<div class="dash-buttons-toolbar" id="toolbar-left">
+				<button id="view-conditional" class="btn btn-info" type="button" data-toggle="modal" data-target="#new-factor-modal">
+					<i class="glyphicon glyphicon-plus"></i>
+		        </button>
+				<button id="view-conditional" class="btn btn-info" type="button">
+					<i class="glyphicon glyphicon-eye-open"></i>
+		        </button>
+				<button id="edit-conditional" class="btn btn-info">
+					<i class="glyphicon glyphicon-pencil"></i>
+		        </button>
+		        <button id="remove-conditional" class="btn btn-info">
+					<i class="glyphicon glyphicon-trash"></i>
+		        </button>
+        	</div>
+
+			<div class="modal fade new-risk-profile" id="new-factor-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  			<div class="modal-dialog" role="document">
+					<div class="modal-content">						
+						<form role="form" id="new-risk-factor">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="myModalLabel">Add new risk attribute</h4>
+							
+								<div class="form-group">
+									<label for="attribute">Attribute:</label>
+									<select class="form-control" id="select-risk-factor-attribute" name="attribute">
+										<option value=""> - Select - </option>
+										{% for k,v in choices %}
+											<option value="{{ k }}">{{v}}</option>
+										{% endfor %}
+									</select>
+								</div>
 							</div>
-						</div>
+							<div class="modal-body">
+								<div id="equal-conditionals-loader"></div>
+								<div id="range-conditionals-loader"></div>
+							</div>							
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary">Save</button>
+							</div>	
+	    				</form>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
 
-						<div class="modal-body">
-							<div id="equal-conditionals-loader"></div>
-							<div id="range-conditionals-loader"></div>
-						</div>
-						
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary">Save</button>
-						</div>	
-    				</form>
-    			
-    			</div>		
-    		</div>
-  		</div>	  	
-       
-		<table id="risk-factors-edit-table" data-click-to-select="true" data-unique-id="id" data-toggle="table">
-			<thead>
-		    	<tr>
-				   	<th data-field="state" data-checkbox="true"></th>
-			 		<th data-field="attribute">Attribute</th>
-			 		<th data-field="changing_assumption">Changing Assumption</th>
-			 		<th data-field="percentage_change">Percentage Change</th>
-		    	</tr>		
-			</thead>
-		</table>
+	    <div class="col-sm-5">
+	    	<h4>Conditionals</h4>    	
+	    </div>
 	</div>
 
+	<div class="row">
+		<div class="col-sm-7">
+			<table id="risk-factors-edit-table" data-click-to-select="true" data-unique-id="id" data-toggle="table">
+				<thead>
+			    	<tr>
+					   	<th data-field="state" data-checkbox="true"></th>
+				 		<th data-field="attribute">Attribute</th>
+				 		<th data-field="changing_assumption">Changing Assumption</th>
+				 		<th data-field="percentage_change">Percentage Change</th>
+			    	</tr>		
+				</thead>
+			</table>
+		</div>
 
-	<div class="col-sm-4">
-
-		<h3>Conditionals</h3>
-		<table id="all-conditionals-table" data-unique-id="id" data-toggle="table">
-			<thead>
-		    	<tr>
-			 		<th data-field="conditional">Conditional</th>
-			 		<th data-field="value">Value</th>
-		    	</tr>		
-			</thead>
-		</table>
+		<div class="col-sm-5">
+			<table id="all-conditionals-table" data-unique-id="id" data-toggle="table">
+				<thead>
+			    	<tr>
+				 		<th data-field="conditional">Conditional</th>
+				 		<th data-field="value">Value</th>
+			    	</tr>		
+				</thead>
+			</table>
+		</div>		
 	</div>
-
 </script>
 
 

@@ -98,3 +98,12 @@ body > .container > .row {
 	margin-bottom: 1%;
 }
 
+
+#back-risk-profile {
+	float: right;
+}
+
+.dash-buttons-toolbar#toolbar-left {
+	float: left;
+	margin-bottom: 1%;
+}
