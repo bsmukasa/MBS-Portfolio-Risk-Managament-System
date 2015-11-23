@@ -86,23 +86,6 @@ $(document).ready(function(){
 	})
 
 
-
-	//TO DO!!!!
-	//Popover with Risk Conditionals
-	// $('#main-content').on('click-row.bs.table', '#user-risk-details', function(event, row, $element) {
-	// 	$.get( "/risk_management/get_risk_factor_conditionals", {'risk_factor_id': row.id}, 
-	// 		function( return_data ) {
-
-	// 			$($element).popover({
-	// 				trigger: 'manual',
-	// 				placement: 'left',
-	// 				content: 'TEST'
-	// 			})
-	// 			$($element).popover('show');
-	// 	})
-	// })
-
-
 	//Save new risk profile name
 	$('#main-content').on('submit',"#new-risk-profile-name", function (event) {
 		event.preventDefault();
