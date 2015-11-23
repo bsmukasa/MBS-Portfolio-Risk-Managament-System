@@ -55,9 +55,7 @@ $(document).ready(function(){
 	    	contentType: false,
     		success: function(data) {
     			if (data.status == "OK") {
-    				$(this).modal('hide');
-    				$('body').removeClass('modal-open');
-    				$('.modal-backdrop').remove();
+    				helperFunctions.removeModal("#upload-csv-modal");
     				tabLoaderFunctions.portfolioTabLoader();
     			}
     		}
@@ -182,9 +180,7 @@ $(document).ready(function(){
 	    	data: form_data.serialize(),
     		success: function(data) {
     			if (data.status == "OK") {
-  		  			$(this).modal('hide');
-    				$('body').removeClass('modal-open');
-    				$('.modal-backdrop').remove();
+    				helperFunctions.removeModal("#new-assumption-modal");
     				tabLoaderFunctions.assumptionsTabLoader();
     			}
     		}
@@ -431,8 +427,7 @@ var tabLoaderFunctions = {
 				assumptionsObj.assumptions = arrayNames
 				helperFunctions.mustacheLoad("#scenarios-template", "#main-content-load", assumptionsObj);
 			}
-		})
-	
+		})	
 		helperFunctions.displayTableData('#scenario-risk-profiles-table');
 		$.get( "/risk_management/scenarios", function (return_data) {
 			helperFunctions.displayTableData('#user-scenario', return_data.scenarios);
