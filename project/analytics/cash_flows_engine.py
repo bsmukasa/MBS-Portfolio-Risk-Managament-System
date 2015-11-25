@@ -200,7 +200,7 @@ class LoanPortfolio:
         """
         df = self.cash_flows_df.groupby('period')['total_payments'].sum().reset_index()
         npv = np.npv(self.discount_rate / 12, df['total_payments'])
-        return npv
+        return float(npv)
 
     def internal_rates_of_return_for_portfolio(self):
         """ Calculates the internal rates of return for each loan in a portfolio.
