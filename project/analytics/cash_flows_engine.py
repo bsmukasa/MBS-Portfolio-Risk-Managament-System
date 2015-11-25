@@ -5,7 +5,7 @@ import pandas as pd
 
 
 class LoanPortfolio:
-    def __init__(self, discount_rate, loan_df, cash_flow_df=None, aggregate_cash_flows_df=None):
+    def __init__(self, discount_rate, loan_df, cash_flow_df=None, aggregate_flows_df=None):
         self.discount_rate = discount_rate
         self.loan_df = loan_df[[
             'current_principal_balance', 'current_interest_rate', 'remaining_term',
@@ -21,7 +21,7 @@ class LoanPortfolio:
         else:
             self.cash_flows_df = cash_flow_df
 
-        self.aggregate_cash_flows_df = aggregate_cash_flows_df
+        self.aggregate_flows_df = aggregate_flows_df
 
     def cash_flows_data_frame_for_portfolio(self):
         """ Creates a pandas DataFrame containing all of cash flows for the loans in the LoanPortfolio.
@@ -164,10 +164,10 @@ class LoanPortfolio:
         Returns: The portfolio's aggregated cash flows.
 
         """
-        aggregate_cash_flows_df = self.cash_flows_df.groupby('period')[
+        self.aggregate_flows_df = self.cash_flows_df.groupby('period')[
             fields_list
         ].sum().reset_index()
-        return aggregate_cash_flows_df
+        return self.aggregate_flows_df
 
     def net_present_values_for_portfolio(self):
         """ Calculates net present values for each loan in a portfolio.
