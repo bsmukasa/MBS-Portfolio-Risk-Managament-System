@@ -253,25 +253,25 @@ class LoanPortfolio:
     def weighted_average_life_for_portfolio(self):
         df = self.cash_flows_df.groupby('period')['total_principal'].sum().reset_index()
         period_principal_sum = (df['period'] * df['total_principal']).sum()
-        return period_principal_sum / self.current_balance_aggregate_for_portfolio()
+        return float(period_principal_sum / self.current_balance_aggregate_for_portfolio())
 
     def weighted_average_cdr_for_portfolio(self):
         aggregate_cdr_principal_balance_product = (
             self.loan_df['adjusted_cdr'] * self.loan_df['current_principal_balance']
         ).sum()
-        return aggregate_cdr_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+        return float(aggregate_cdr_principal_balance_product / self.current_balance_aggregate_for_portfolio())
 
     def weighted_average_cpr_for_portfolio(self):
         aggregate_cpr_principal_balance_product = (
             self.loan_df['adjusted_cpr'] * self.loan_df['current_principal_balance']
         ).sum()
-        return aggregate_cpr_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+        return float(aggregate_cpr_principal_balance_product / self.current_balance_aggregate_for_portfolio())
 
     def weighted_average_recovery_for_portfolio(self):
         aggregate_recovery_principal_balance_product = (
             self.loan_df['adjusted_recovery'] * self.loan_df['current_principal_balance']
         ).sum()
-        return aggregate_recovery_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+        return float(aggregate_recovery_principal_balance_product / self.current_balance_aggregate_for_portfolio())
 
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
