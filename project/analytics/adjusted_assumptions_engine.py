@@ -101,8 +101,5 @@ def random_change(factor_number=3, change_range=5, how_many_chances=5):
 
 
 def pandas_data_frame_columns_to_float(data_frame, field_list):
-    print('CASTING TYPES STARTED')
-    print('Field List: ', field_list)
     data_frame[field_list] = data_frame[field_list].astype(float)
-    print(data_frame.dtypes)
     return data_frame
