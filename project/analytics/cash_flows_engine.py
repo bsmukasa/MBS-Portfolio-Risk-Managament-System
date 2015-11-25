@@ -93,7 +93,7 @@ class LoanPortfolio:
         Returns: Portfolio's total current balance.
 
         """
-        return self.loan_df['current_principal_balance'].sum()
+        return float(self.loan_df['current_principal_balance'].sum())
 
     def interest_aggregate_for_portfolio(self):
         """ Gets the portfolio's total interest from aggregate cash flows.
