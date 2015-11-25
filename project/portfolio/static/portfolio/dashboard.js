@@ -264,27 +264,21 @@ $(document).ready(function(){
 		var selected_scenario = helperFunctions.getTableSelections('#user-scenario');
 		
 		$.get("/risk_management/single_scenario", {"id": selected_scenario[0]}, function (return_data) {
-			var riskProfilesNames = []
-			risk_profiles_array = return_data.risk_profiles
+			var riskProfilesNames = [];
+			var risk_profiles_array = return_data.risk_profiles;
 			for (var idx in risk_profiles_array) {
 				if ("name" in risk_profiles_array[idx]){
 					riskProfilesNames.push({"name": risk_profiles_array[idx].name})
 				}
 			}
-
 			var scenario_data = return_data["scenario"][0];
 			var assumption_id = scenario_data.assumption_profile_id;
 			$.get("/risk_management/assumption_profile", {"id": assumption_id}, function (return_data) {	
 				helperFunctions.mustacheLoad("#assumptions-form-template", "#assumptions-scenario-load", return_data.assumption_profiles[0]);
 				helperFunctions.updateTableData('#scenario-risk-profiles-table', riskProfilesNames);
 			})
-
-	
 		})	
 	})
-
-
-
 
 	
 // $ document closing

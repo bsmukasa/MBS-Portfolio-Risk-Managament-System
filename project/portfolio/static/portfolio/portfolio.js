@@ -97,19 +97,12 @@ $(document).ready(function(){
 				discount_rate: $("#discount-rate").val()
 			}
 
-			helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-
-			// FIX VIEWS THEN UNCOMMENT
-			// $.post("/analytics/analyze_portfolio", send_data, function (data) {
-			// 	if (data.status == "PASS") {
-			// 		console.log(data.status)
-			// 		helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
-			// 		analyticsTab.summaryTab();
-			// 	}
-			// })
-
-			// //Delete later
-			// helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+			$.post("/analytics/analyze_portfolio", send_data, function (data) {
+				if (data.status == "PASS") {
+					helperFunctions.mustacheLoad("#analysis-tabs", "#analysis-results");
+					analyticsTab.summaryTab();
+				}
+			})
 
 		} else {
 			$('#select-scenario-analysis').prop("disabled", false);
@@ -474,26 +467,30 @@ analyticsTab = {
 
 	//Load summary tab
 	summaryTab: function () {
-		//TODO >> get data and load script
-		// $.get("URL ROUTE", {"portfolio_id": globalVariable.portfolio_id}, function (data) {
-		// 	LOAD MUSTACHE WITH DATA
-		// })
+		var send_data = {
+			portfolio_id: globalVariable.portfolio_id,
+			scenario_id: $("#select-scenario-analysis").val(),
+			discount_rate: $("#discount-rate").val()
+		}
+		$.get("/analytics/get_analysis_summary", send_data, function (data) {
+			console.log(data)
+		})
 
 		//DELETE LATER
-		var testData = {
-			price: "1,500,000",
-			npv: "100,0000,000",
-			total_remaining_balance: "87,000,440.90",
-			yield: "5.4",
-			wa_avg_life: "278",
-			assumption_cpr: "7.8",
-			wa_cpr: "6.5",
-			assumption_cdr: "13.5",
-			wa_cdr: "9.95",
-			assumption_recovery: "77.90",
-			wa_recovery: "65"
-		};
-		helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData);
+		// var testData = {
+		// 	price: "1,500,000",
+		// 	npv: "100,0000,000",
+		// 	total_remaining_balance: "87,000,440.90",
+		// 	yield: "5.4",
+		// 	wa_avg_life: "278",
+		// 	assumption_cpr: "7.8",
+		// 	wa_cpr: "6.5",
+		// 	assumption_cdr: "13.5",
+		// 	wa_cdr: "9.95",
+		// 	assumption_recovery: "77.90",
+		// 	wa_recovery: "65"
+		// };
+		// helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData);
 	},
 
 	//Load cash flows tab

@@ -27,8 +27,6 @@ class CashFlowsAPI(View):
         Returns: Status and message indicating if there it is a new analysis.
 
         """
-
-        # try:
         request_dict = request.POST.dict()
 
         scenario_id = request_dict['scenario_id']
@@ -37,7 +35,6 @@ class CashFlowsAPI(View):
 
         analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(scenario_id, portfolio_id,
                                                                                        discount_rate)
-
         cash_flow_results = self.model.objects.filter(
             scenario_id=scenario_id,
             portfolio_id=portfolio_id,
@@ -66,11 +63,6 @@ class CashFlowsAPI(View):
         else:
             message = 'Analysis has already been run.'
 
-        # except err as e:
-        #     print("sssss")
-        #     print(e)
-
-
         return JsonResponse({'status': 'PASS', 'message': message})
 
 
@@ -82,6 +74,7 @@ class AggregateCashFlowsAPI(View):
         return super(AggregateCashFlowsAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
+        print("start")
         request_dict = request.GET.dict()
 
         scenario_id = request_dict['scenario_id']
@@ -114,6 +107,7 @@ class AggregateCashFlowsAPI(View):
                 aggregate_cash_flow_df = pd.read_pickle(analysis_results_name + '_aggregate_flows.pk')
 
             aggregate_cash_flow = aggregate_cash_flow_df.to_json(orient="records")
+            
             return JsonResponse(dict(aggregate_cash_flows=aggregate_cash_flow))
 
 
@@ -147,7 +141,13 @@ class AnalysisSummaryAPI(View):
             analysis_portfolio = LoanPortfolio(discount_rate=discount_rate, loan_df=loan_df, cash_flow_df=cash_flow_df)
             remaining_balance = analysis_portfolio.current_balance_aggregate_for_portfolio()
             npv = analysis_portfolio.net_present_value_aggregate_for_portfolio()
+
+
+            #ERROR OCURRING HERE
             price = npv / analysis_portfolio.current_balance_aggregate_for_portfolio() * 100
+            print("5")
+            
+            
             yield_irr = analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()
             weighted_average_life = analysis_portfolio.weighted_average_life_for_portfolio()
             original_cdr = analysis_portfolio.loan_df[0]['constant_default_rate']
