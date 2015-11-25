@@ -208,10 +208,12 @@ class LoanPortfolio:
         Returns: A series representing the internal rates of return of each loan.
 
         """
+        print('IRR for Portfolio Started')
         internal_rate_of_return_series = self.loan_df.apply(
             self.internal_rate_of_return_for_loan,
             axis=1
         )
+        print('IRR Series: ', internal_rate_of_return_series)
         return internal_rate_of_return_series
 
     def internal_rate_of_return_for_loan(self, loan):
@@ -224,8 +226,7 @@ class LoanPortfolio:
 
         """
         cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
-        total_payments = list(cash_flows['total_payment'])
-        total_payments[0] = -loan['current_principal_balance']
+        total_payments = list(cash_flows['total_payments'])
         internal_rate_of_return = np.irr(total_payments)
         return internal_rate_of_return
 
@@ -236,7 +237,8 @@ class LoanPortfolio:
         Returns: The portfolio's aggregate internal rate of return.
 
         """
-        return self.internal_rates_of_return_for_portfolio().sum()
+        print('Agg IRR Started!')
+        return float(self.internal_rates_of_return_for_portfolio().sum())
 
     def weighted_average_life_for_portfolio(self):
         df = self.cash_flows_df.groupby('period')['total_principal'].sum().reset_index()
