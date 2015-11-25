@@ -11,7 +11,6 @@ class LoanPortfolio:
             'current_principal_balance', 'current_interest_rate', 'remaining_term',
             'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery'
         ]]
-
         if cash_flow_df is None:
             self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
             self.cash_flows_df['losses'] = self.losses_for_cash_flow()
@@ -32,7 +31,6 @@ class LoanPortfolio:
             self.generate_loan_cash_flows,
             axis=1
         )
-
         cash_flows_list_dicts = list(chain.from_iterable(cash_flow_list_list_dicts))
 
         cash_flows_data_frame = pd.DataFrame(cash_flows_list_dicts)
@@ -47,14 +45,21 @@ class LoanPortfolio:
 
         Returns: Cash flows represented as a list of period dictionaries.
         """
+        loan_pk = int(row.name)
+        orig_bal = float(row['current_principal_balance'])
+        int_rate = float(row['current_interest_rate'])
+        rem_term = int(row['remaining_term'])
+        adj_cdr = float(row['adjusted_cdr'])
+        adj_cpr = float(row['adjusted_cpr'])
+        recov_percent = float(row['adjusted_recovery'])
         cash_flows_list_of_dicts = payment_schedule_for_loan(
-            loan_df_pk=row.name,
-            original_balance=float(row['current_principal_balance']),
-            interest_rate=float(row['current_interest_rate']),
-            maturity=row['remaining_term'],
-            cdr=row['adjusted_cdr'],
-            cpr=row['adjusted_cpr'],
-            recovery_percentage=row['adjusted_recovery']
+            loan_df_pk=loan_pk,
+            original_balance=orig_bal,
+            interest_rate=int_rate,
+            maturity=rem_term,
+            cdr=adj_cdr,
+            cpr=adj_cpr,
+            recovery_percentage=recov_percent
         )
 
         return cash_flows_list_of_dicts
@@ -227,14 +232,11 @@ class LoanPortfolio:
         Returns: A series representing the internal rates of return of each loan.
 
         """
-        print('IRR for Portfolio STARTED')
         internal_rate_of_return_series = self.loan_df.apply(
             self.internal_rate_of_return_for_loan,
             axis=1
         )
-        # print('IRR SERIES: ', internal_rate_of_return_series)
         self.loan_df['irr'] = internal_rate_of_return_series
-        print('Loan DF: ', self.loan_df)
         return internal_rate_of_return_series
 
     def internal_rate_of_return_aggregate_for_portfolio(self):
@@ -243,11 +245,7 @@ class LoanPortfolio:
         Returns: The portfolio's aggregate internal rate of return.
 
         """
-        print('Agg IRR STARTED!')
-        # irr = self.internal_rates_of_return_for_portfolio().sum()
-        # print('IRR: ', irr)
         agg_irr = np.irr(list(self.aggregate_flows_df['total_payments']))
-        print('AGG_IRR: ', agg_irr)
         return float(agg_irr)
 
     def weighted_average_life_for_portfolio(self):
@@ -311,7 +309,7 @@ def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, matur
         .....etc....
     ]
     """
-
+    period_list = [0] * (maturity + 1)
     period_0 = dict(
         loan_df_pk=loan_df_pk,
         period=0,
@@ -325,8 +323,6 @@ def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, matur
         recovery=0,
         end_balance=original_balance
     )
-
-    period_list = [0] * (maturity + 1)
     period_list[0] = period_0
 
     for i in range(1, maturity + 1):

@@ -36,7 +36,6 @@ class CashFlowsAPI(View):
         analysis_results_name = "scenario_{}_portfolio_{}_discount_{}_analysis".format(
             scenario_id, portfolio_id, discount_rate
         )
-
         cash_flow_results = self.model.objects.filter(
             scenario_id=scenario_id,
             portfolio_id=portfolio_id,
@@ -74,8 +73,8 @@ def create_aggregate_cash_flows(analysis_results_name, cash_flow_results, discou
     )
     aggregate_cash_flow_df = analysis_portfolio.cash_flows_aggregate_for_portfolio()
     analysis_portfolio.cash_flows_df.to_pickle(analysis_results_name + '_aggregate_flows.pk')
-    cash_flow_results[0].aggregated = True
-    cash_flow_results[0].save()
+    cash_flow_results.aggregated = True
+    cash_flow_results.save()
     return aggregate_cash_flow_df
 
 
@@ -105,7 +104,8 @@ class AggregateCashFlowsAPI(View):
         )
 
         if cash_flow_results.exists():
-            if not cash_flow_results[0].aggregated:
+            cash_flow_results = cash_flow_results[0]
+            if not cash_flow_results.aggregated:
                 aggregate_cash_flow_df = create_aggregate_cash_flows(
                     analysis_results_name, cash_flow_results, discount_rate
                 )
@@ -142,10 +142,11 @@ class AnalysisSummaryAPI(View):
         )
 
         if cash_flow_results.exists():
+            cash_flow_results = cash_flow_results[0]
             loan_df = pd.read_pickle(analysis_results_name + '_loans.pk')
             cash_flow_df = pd.read_pickle(analysis_results_name + '_cash_flows.pk')
 
-            if cash_flow_results[0].aggregated:
+            if cash_flow_results.aggregated:
                 aggregate_flows_df = pd.read_pickle(analysis_results_name + '_aggregate_flows.pk')
             else:
                 aggregate_flows_df = create_aggregate_cash_flows(
@@ -166,8 +167,8 @@ class AnalysisSummaryAPI(View):
 
             yield_irr = analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()
             weighted_average_life = analysis_portfolio.weighted_average_life_for_portfolio()
-            original_cdr = float(cash_flow_results[0].scenario.assumption_profile.constant_default_rate)
-            original_cpr = float(cash_flow_results[0].scenario.assumption_profile.constant_prepayment_rate)
+            original_cdr = float(cash_flow_results.scenario.assumption_profile.constant_default_rate)
+            original_cpr = float(cash_flow_results.scenario.assumption_profile.constant_prepayment_rate)
             original_recovery_percentage = float(cash_flow_results[0].scenario.assumption_profile.recovery_percentage)
             weighted_average_cdr = analysis_portfolio.weighted_average_cdr_for_portfolio()
             weighted_average_cpr = analysis_portfolio.weighted_average_cpr_for_portfolio()
