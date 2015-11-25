@@ -5,7 +5,7 @@ import pandas as pd
 
 
 class LoanPortfolio:
-    def __init__(self, discount_rate, loan_df, cash_flow_df=None):
+    def __init__(self, discount_rate, loan_df, cash_flow_df=None, aggregate_cash_flows_df=None):
         self.discount_rate = discount_rate
         self.loan_df = loan_df[[
             'current_principal_balance', 'current_interest_rate', 'remaining_term',
@@ -20,6 +20,8 @@ class LoanPortfolio:
             self.cash_flows_df['total_payments'] = self.total_payments_for_cash_flow()
         else:
             self.cash_flows_df = cash_flow_df
+
+        self.aggregate_cash_flows_df = aggregate_cash_flows_df
 
     def cash_flows_data_frame_for_portfolio(self):
         """ Creates a pandas DataFrame containing all of cash flows for the loans in the LoanPortfolio.
