@@ -202,20 +202,6 @@ class LoanPortfolio:
         npv = np.npv(self.discount_rate / 12, df['total_payments'])
         return float(npv)
 
-    def internal_rates_of_return_for_portfolio(self):
-        """ Calculates the internal rates of return for each loan in a portfolio.
-
-        Returns: A series representing the internal rates of return of each loan.
-
-        """
-        print('IRR for Portfolio Started')
-        internal_rate_of_return_series = self.loan_df.apply(
-            self.internal_rate_of_return_for_loan,
-            axis=1
-        )
-        print('IRR Series: ', internal_rate_of_return_series)
-        return internal_rate_of_return_series
-
     def internal_rate_of_return_for_loan(self, loan):
         """ Calculates a loan's internal rate of return from its cash flows.
 
@@ -229,6 +215,20 @@ class LoanPortfolio:
         total_payments = list(cash_flows['total_payments'])
         internal_rate_of_return = np.irr(total_payments)
         return internal_rate_of_return
+
+    def internal_rates_of_return_for_portfolio(self):
+        """ Calculates the internal rates of return for each loan in a portfolio.
+
+        Returns: A series representing the internal rates of return of each loan.
+
+        """
+        print('IRR for Portfolio Started')
+        internal_rate_of_return_series = self.loan_df.apply(
+            self.internal_rate_of_return_for_loan,
+            axis=1
+        )
+        print('IRR Series: ', internal_rate_of_return_series)
+        return internal_rate_of_return_series
 
     # TODO Portfolio IRR MUST BE FROM AGG CASH FLOWS - NOT SUM
     def internal_rate_of_return_aggregate_for_portfolio(self):
