@@ -473,24 +473,23 @@ analyticsTab = {
 			discount_rate: $("#discount-rate").val()
 		}
 		$.get("/analytics/get_analysis_summary", send_data, function (data) {
-			console.log(data)
-		})
 
-		//DELETE LATER
-		// var testData = {
-		// 	price: "1,500,000",
-		// 	npv: "100,0000,000",
-		// 	total_remaining_balance: "87,000,440.90",
-		// 	yield: "5.4",
-		// 	wa_avg_life: "278",
-		// 	assumption_cpr: "7.8",
-		// 	wa_cpr: "6.5",
-		// 	assumption_cdr: "13.5",
-		// 	wa_cdr: "9.95",
-		// 	assumption_recovery: "77.90",
-		// 	wa_recovery: "65"
-		// };
-		// helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", testData);
+			var summaryObj = {
+				price: (data.price).formatNumberSeparator(2),
+				npv: (data.npv).formatNumberSeparator(2),
+				total_remaining_balance: (data.portfolio_balance).formatNumberSeparator(2),
+				yield: (data.yield_irr).formatNumberSeparator(2) + "%",
+				wa_avg_life: data.weighted_average_life.formatNumberSeparator(2),
+				assumption_cdr: (data.original_cdr).formatNumberSeparator(2),
+				wa_cdr: (data.weighted_average_cdr).formatNumberSeparator(2),
+				assumption_cpr: (data.original_cpr).formatNumberSeparator(2),
+				wa_cpr: (data.weighted_average_cpr).formatNumberSeparator(2),
+				assumption_recovery: (data.original_recovery).formatNumberSeparator(2),
+				wa_recovery: (data.weighted_average_recovery).formatNumberSeparator(2)
+			};
+	
+			helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", summaryObj);
+		})
 	},
 
 	//Load cash flows tab
@@ -590,9 +589,13 @@ helperFunctions = {
 }
 
 
-
-
-
+//General functions
+//===============================================================================================================================================
+//Formating numbers: 100,000,000.55
+Number.prototype.formatNumberSeparator = function(n, x) {
+	var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+	return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
+}
 
 
 
