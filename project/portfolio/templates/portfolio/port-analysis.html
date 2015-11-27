@@ -121,13 +121,13 @@
 
 
 <script id="cash-flow-tab" type="x-tmpl-mustache">
-<table id="cash-flow-table"></table>
+	<table id="cash-flow-table"></table>
 </script>
 
 
 
 <script id="graphs-tab" type="x-tmpl-mustache">
-	<div class="row">
+<!--	<div class="row">
 		<div class="col-sm-8">
 			<h4 class="graphs-btn-header">Cash Flow</h4>
 		</div>
@@ -135,31 +135,22 @@
 			<h4 class="graphs-btn-header">US Map</h4>
 		</div>
 	</div>
-
+-->
 	<div class="row">
-		<div class="col-sm-4">
+		<div class="col-sm-12">
 			<div id="toolbar" class="graph-buttons">
 				<button type="button" class="btn btn-primary" id="btn-cf-principal">Principal</button>
 				<button type="button" class="btn btn-primary" id="btn-cf-scheduled-principal">Scheduled</button>
 				<button type="button" class="btn btn-primary" id="btn-cf-unscheduled-principal">Unscheduled</button>
 			</div>
 		</div>
-		<div class="col-sm-4">
-			<div id="toolbar" class="graph-buttons">
-				<button type="button" class="btn btn-primary" id="btn-cf-default">Default</button>
-				<button type="button" class="btn btn-primary" id="btn-cf-losses">Losses</button>
-				<button type="button" class="btn btn-primary" id="btn-cf-recovery">Recovery</button>
-			</div>			
-		</div>
-		<div class="col-sm-4">
-			<div id="toolbar" class="graph-buttons">
-				<button type="button" class="btn btn-primary" id="btn-map-cdr">CDR</button>
-				<button type="button" class="btn btn-primary" id="btn-map-cpr">CPR</button>
-			</div>		
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="ct-chart ct-perfect-fourth"></div>
 		</div>
 	</div>
 	
-	<div class="ct-chart ct-perfect-fourth"></div>
-
 </script>
 

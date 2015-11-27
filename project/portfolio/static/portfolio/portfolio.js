@@ -115,14 +115,18 @@ $(document).ready(function(){
 //ANALYTICS >> GRAPHS TAB
 //................................................................................................................................................	
 	//Button to generate graphs
-	$("#portfolio-content").on("click", "#test-graph", function (event) {
+	$("#portfolio-content").on("click", "#btn-cf-principal", function (event) {
 		event.preventDefault();
 
-		var data = {
-			labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-			series: [[5, 2, 4, 2, 0], [2,5,3,1,2]]
-		};
-		new Chartist.Line('.ct-chart', data);
+		console.log(globalVariable.principal_graph_data);
+
+
+
+		// var data = {
+		// 	labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+		// 	series: [[5, 2, 4, 2, 0], [2,5,3,1,2]]
+		// };
+		// new Chartist.Line('.ct-chart', data);
 
 
 	})
@@ -146,6 +150,7 @@ $(document).on({
 //===============================================================================================================================================
 globalVariable = {
 	portfolio_id: window.location.pathname.split('/')[3], 
+	graphs_payments_data: undefined,
 }
 
 
@@ -471,7 +476,7 @@ analyticsTab = {
 			portfolio_id: globalVariable.portfolio_id,
 			scenario_id: $("#select-scenario-analysis").val(),
 			discount_rate: $("#discount-rate").val()
-		}
+		};
 		$.get("/analytics/get_analysis_summary", send_data, function (data) {
 
 			var summaryObj = {
@@ -560,6 +565,16 @@ analyticsTab = {
 	//Load graphs tab
 	graphsTab: function () {
 		helperFunctions.mustacheLoad("#graphs-tab", "#analysis-tab-content");
+		var send_data = {
+			portfolio_id: globalVariable.portfolio_id,
+			scenario_id: $("#select-scenario-analysis").val(),
+			discount_rate: $("#discount-rate").val()
+		};
+		$.get("/analytics/principal_graph_data", send_data, function (data) {
+			console.log(data);
+			globalVariable.graphs_payments_data = data;
+		})
+
 	}
 }
 
