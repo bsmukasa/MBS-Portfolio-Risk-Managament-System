@@ -5,13 +5,12 @@ import pandas as pd
 
 
 class LoanPortfolio:
-    def __init__(self, discount_rate, loan_df, cash_flow_df=None):
+    def __init__(self, discount_rate, loan_df, cash_flow_df=None, aggregate_flows_df=None):
         self.discount_rate = discount_rate
         self.loan_df = loan_df[[
             'current_principal_balance', 'current_interest_rate', 'remaining_term',
             'adjusted_cdr', 'adjusted_cpr', 'adjusted_recovery'
         ]]
-
         if cash_flow_df is None:
             self.cash_flows_df = self.cash_flows_data_frame_for_portfolio()
             self.cash_flows_df['losses'] = self.losses_for_cash_flow()
@@ -20,6 +19,8 @@ class LoanPortfolio:
             self.cash_flows_df['total_payments'] = self.total_payments_for_cash_flow()
         else:
             self.cash_flows_df = cash_flow_df
+
+        self.aggregate_flows_df = aggregate_flows_df
 
     def cash_flows_data_frame_for_portfolio(self):
         """ Creates a pandas DataFrame containing all of cash flows for the loans in the LoanPortfolio.
@@ -30,7 +31,6 @@ class LoanPortfolio:
             self.generate_loan_cash_flows,
             axis=1
         )
-
         cash_flows_list_dicts = list(chain.from_iterable(cash_flow_list_list_dicts))
 
         cash_flows_data_frame = pd.DataFrame(cash_flows_list_dicts)
@@ -45,14 +45,21 @@ class LoanPortfolio:
 
         Returns: Cash flows represented as a list of period dictionaries.
         """
+        loan_pk = int(row.name)
+        orig_bal = float(row['current_principal_balance'])
+        int_rate = float(row['current_interest_rate'])
+        rem_term = int(row['remaining_term'])
+        adj_cdr = float(row['adjusted_cdr'])
+        adj_cpr = float(row['adjusted_cpr'])
+        recov_percent = float(row['adjusted_recovery'])
         cash_flows_list_of_dicts = payment_schedule_for_loan(
-            loan_df_pk=row.name,
-            original_balance=float(row['current_principal_balance']),
-            interest_rate=float(row['current_interest_rate']),
-            maturity=row['remaining_term'],
-            cdr=row['adjusted_cdr'],
-            cpr=row['adjusted_cpr'],
-            recovery_percentage=row['adjusted_recovery']
+            loan_df_pk=loan_pk,
+            original_balance=orig_bal,
+            interest_rate=int_rate,
+            maturity=rem_term,
+            cdr=adj_cdr,
+            cpr=adj_cpr,
+            recovery_percentage=recov_percent
         )
 
         return cash_flows_list_of_dicts
@@ -93,7 +100,7 @@ class LoanPortfolio:
         Returns: Portfolio's total current balance.
 
         """
-        return self.loan_df['current_principal_balance'].sum()
+        return float(self.loan_df['current_principal_balance'].sum())
 
     def interest_aggregate_for_portfolio(self):
         """ Gets the portfolio's total interest from aggregate cash flows.
@@ -101,7 +108,7 @@ class LoanPortfolio:
         Returns: Portfolio's aggregate total interest from cash flows.
 
         """
-        return self.cash_flows_df['total_interest'].sum()
+        return self.aggregate_flows_df['total_interest'].sum()
 
     def scheduled_principal_aggregate_for_portfolio(self):
         """ Gets the portfolio's total scheduled principal from aggregate cash flows.
@@ -109,7 +116,7 @@ class LoanPortfolio:
         Returns: Portfolio's aggregate total scheduled principal from cash flows.
 
         """
-        return self.cash_flows_df['scheduled_principal'].sum()
+        return self.aggregate_flows_df['scheduled_principal'].sum()
 
     def unscheduled_principal_aggregate_for_portfolio(self):
         """ Gets the portfolio's total unscheduled principal from aggregate cash flows.
@@ -117,7 +124,7 @@ class LoanPortfolio:
         Returns: Portfolio's aggregate total unscheduled principal from cash flows.
 
         """
-        return self.cash_flows_df['unscheduled_principal'].sum()
+        return self.aggregate_flows_df['unscheduled_principal'].sum()
 
     def defaults__aggregate_for_portfolio(self):
         """ Gets the portfolio's total defaults from aggregate cash flows.
@@ -125,7 +132,7 @@ class LoanPortfolio:
         Returns: Portfolio's aggregate total defaults from cash flows.
 
         """
-        return self.cash_flows_df['defaults'].sum()
+        return self.aggregate_flows_df['defaults'].sum()
 
     def losses_aggregate_for_portfolio(self):
         """ Gets the portfolio's total losses from aggregate cash flows.
@@ -133,7 +140,7 @@ class LoanPortfolio:
         Returns: Portfolio's aggregate total losses from cash flows.
 
         """
-        return self.cash_flows_df['losses'].sum()
+        return self.aggregate_flows_df['losses'].sum()
 
     def recovery_aggregate_for_portfolio(self):
         """ Gets the portfolio's total recovery value from aggregate cash flows.
@@ -141,7 +148,7 @@ class LoanPortfolio:
         Returns: Portfolio's aggregate total recoveries from cash flows.
 
         """
-        return self.cash_flows_df['recovery'].sum()
+        return self.aggregate_flows_df['recovery'].sum()
 
     def cash_flows_aggregate_for_portfolio(
             self,
@@ -149,9 +156,13 @@ class LoanPortfolio:
                 'start_balance',
                 'scheduled_principal',
                 'unscheduled_principal',
-                'interest', 'defaults',
+                'interest',
+                'defaults',
                 'losses',
-                'recovery'
+                'recovery',
+                'total_interest',
+                'total_principal',
+                'total_payments'
             )
     ):
         """ Generates a portfolio's aggregate cash flows for a given set of fields.
@@ -162,10 +173,10 @@ class LoanPortfolio:
         Returns: The portfolio's aggregated cash flows.
 
         """
-        aggregate_cash_flows_df = self.cash_flows_df.groupby('period')[
+        self.aggregate_flows_df = self.cash_flows_df.groupby('period')[
             fields_list
         ].sum().reset_index()
-        return aggregate_cash_flows_df
+        return self.aggregate_flows_df
 
     def net_present_values_for_portfolio(self):
         """ Calculates net present values for each loan in a portfolio.
@@ -189,7 +200,7 @@ class LoanPortfolio:
 
         """
         cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
-        npv = np.npv(self.discount_rate / 12, cash_flows['total_payment'])
+        npv = np.npv(self.discount_rate / 12, cash_flows['total_payments'])
         return npv
 
     def net_present_value_aggregate_for_portfolio(self):
@@ -198,21 +209,8 @@ class LoanPortfolio:
         Returns: The portfolio's aggregate net present value.
 
         """
-        df = self.cash_flows_df.groupby('period')['total_payments'].sum().reset_index()
-        npv = np.npv(self.discount_rate / 12, df['total_payments'])
-        return npv
-
-    def internal_rates_of_return_for_portfolio(self):
-        """ Calculates the internal rates of return for each loan in a portfolio.
-
-        Returns: A series representing the internal rates of return of each loan.
-
-        """
-        internal_rate_of_return_series = self.loan_df.apply(
-            self.internal_rate_of_return_for_loan,
-            axis=1
-        )
-        return internal_rate_of_return_series
+        npv = np.npv(self.discount_rate / 12, list(self.aggregate_flows_df['total_payments']))
+        return float(npv)
 
     def internal_rate_of_return_for_loan(self, loan):
         """ Calculates a loan's internal rate of return from its cash flows.
@@ -224,42 +222,54 @@ class LoanPortfolio:
 
         """
         cash_flows = self.cash_flows_df[self.cash_flows_df['loan_df_pk'] == loan.name]
-        total_payments = list(cash_flows['total_payment'])
-        total_payments[0] = -loan['current_principal_balance']
-        internal_rate_of_return = np.irr(total_payments)
+        total_payments_list = list(cash_flows['total_payments'])
+        internal_rate_of_return = np.irr(total_payments_list)
         return internal_rate_of_return
 
-    # TODO Portfolio IRR MUST BE FROM AGG CASH FLOWS - NOT SUM
+    def internal_rates_of_return_for_portfolio(self):
+        """ Calculates the internal rates of return for each loan in a portfolio.
+
+        Returns: A series representing the internal rates of return of each loan.
+
+        """
+        internal_rate_of_return_series = self.loan_df.apply(
+            self.internal_rate_of_return_for_loan,
+            axis=1
+        )
+        self.loan_df['irr'] = internal_rate_of_return_series
+        return internal_rate_of_return_series
+
     def internal_rate_of_return_aggregate_for_portfolio(self):
         """ Calculates the portfolio's aggregate internal rate of return.
 
         Returns: The portfolio's aggregate internal rate of return.
 
         """
-        return self.internal_rates_of_return_for_portfolio().sum()
+        agg_irr = np.irr(list(self.aggregate_flows_df['total_payments']))
+        return float(agg_irr)
 
     def weighted_average_life_for_portfolio(self):
         df = self.cash_flows_df.groupby('period')['total_principal'].sum().reset_index()
         period_principal_sum = (df['period'] * df['total_principal']).sum()
-        return period_principal_sum / self.current_balance_aggregate_for_portfolio()
+        return float(period_principal_sum / self.current_balance_aggregate_for_portfolio())
 
     def weighted_average_cdr_for_portfolio(self):
         aggregate_cdr_principal_balance_product = (
             self.loan_df['adjusted_cdr'] * self.loan_df['current_principal_balance']
         ).sum()
-        return aggregate_cdr_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+        return float(aggregate_cdr_principal_balance_product / self.current_balance_aggregate_for_portfolio())
 
     def weighted_average_cpr_for_portfolio(self):
         aggregate_cpr_principal_balance_product = (
             self.loan_df['adjusted_cpr'] * self.loan_df['current_principal_balance']
         ).sum()
-        return aggregate_cpr_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+        return float(aggregate_cpr_principal_balance_product / self.current_balance_aggregate_for_portfolio())
 
     def weighted_average_recovery_for_portfolio(self):
         aggregate_recovery_principal_balance_product = (
             self.loan_df['adjusted_recovery'] * self.loan_df['current_principal_balance']
         ).sum()
-        return aggregate_recovery_principal_balance_product / self.current_balance_aggregate_for_portfolio()
+        return float(aggregate_recovery_principal_balance_product / self.current_balance_aggregate_for_portfolio())
 
 
 def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, maturity, cdr, cpr, recovery_percentage):
@@ -299,7 +309,7 @@ def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, matur
         .....etc....
     ]
     """
-
+    period_list = [0] * (maturity + 1)
     period_0 = dict(
         loan_df_pk=loan_df_pk,
         period=0,
@@ -313,8 +323,6 @@ def payment_schedule_for_loan(loan_df_pk, original_balance, interest_rate, matur
         recovery=0,
         end_balance=original_balance
     )
-
-    period_list = [0] * (maturity + 1)
     period_list[0] = period_0
 
     for i in range(1, maturity + 1):
