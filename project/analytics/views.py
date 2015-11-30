@@ -213,13 +213,18 @@ class PrincipalGraphDataAPI(View):
 
         if cash_flow_results.exists():
             aggregate_cash_flow_df = pd.read_pickle(analysis_results_name + '_aggregate_flows.pk')
-            periods = list(aggregate_cash_flow_df['period'])
-            scheduled_principals = list(aggregate_cash_flow_df['scheduled_principal'])
-            unscheduled_principals = list(aggregate_cash_flow_df['unscheduled_principal'])
-            principals_sums = list(
-                aggregate_cash_flow_df['scheduled_principal'] + aggregate_cash_flow_df['unscheduled_principal']
-            )
-
+            periods = [float(period) for period in list(aggregate_cash_flow_df['period'])]
+            scheduled_principals = [
+                float(sched_principal) for sched_principal in list(aggregate_cash_flow_df['scheduled_principal'])
+                ]
+            unscheduled_principals = [
+                float(unsched_principal) for unsched_principal in list(aggregate_cash_flow_df['unscheduled_principal'])
+                ]
+            principals_sums = [
+                float(principals_sum) for principals_sum in list(
+                    aggregate_cash_flow_df['scheduled_principal'] + aggregate_cash_flow_df['unscheduled_principal']
+                )
+                ]
             return JsonResponse(dict(
                 periods=periods,
                 scheduled_principals=scheduled_principals,
