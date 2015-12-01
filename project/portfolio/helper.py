@@ -11,11 +11,11 @@ def calculate_aggregate_portfolio_data(loans_list):
     wal = calculate_wal(active_loans)
 
     result_calculations = {
-        "total_loan_balance": loans_data['total_balance'],
-        "total_loan_count": loans_data['total_count'],
-        "avg_loan_balance": loans_data['avg_balance'],
-        "weighted_avg_coupon": wac,
-        "weighted_avg_life_to_maturity": wal,
+        "total_loan_balance": float(loans_data['total_balance']),
+        "total_loan_count": int(loans_data['total_count']),
+        "avg_loan_balance": float(loans_data['avg_balance']),
+        "weighted_avg_coupon": float(wac),
+        "weighted_avg_life_to_maturity": float(wal),
     }
     return result_calculations
 
@@ -116,17 +116,17 @@ def loans_status_summary(loans_query_result):
         claim_balance = 0
         claim_count = 0
 
-    result = [
-        {"status": "CURRENT", "balance": str(current_balance), "count": str(current_count)},
-        {"status": "90 DPD", "balance": str(dpd90_balance), "count": str(dpd90_count)},
-        {"status": "FC", "balance": str(fc_balance), "count": str(fc_count)},
-        {"status": "60 DPD", "balance": str(dpd60_balance), "count": str(dpd60_count)},
-        {"status": "REO", "balance": str(reo_balance), "count": str(reo_count)},
-        {"status": "REPERF", "balance": str(reperf_balance), "count": str(reperf_count)},
-        {"status": "30 DPD", "balance": str(dpd30_balance), "count": str(dpd30_count)},
-        {"status": "REM", "balance": str(rem_balance), "count": str(rem_count)},
-        {"status": "CLAIM", "balance": str(claim_balance), "count": str(claim_count)}
-    ]
+    result = {
+        "CURRENT": {"balance": str(current_balance), "count": str(current_count)},
+        "90 DPD": {"balance": str(dpd90_balance), "count": str(dpd90_count)},
+        "FC": {"balance": str(fc_balance), "count": str(fc_count)},
+        "60 DPD": {"balance": str(dpd60_balance), "count": str(dpd60_count)},
+        "REO": {"balance": str(reo_balance), "count": str(reo_count)},
+        "REPERF": {"balance": str(reperf_balance), "count": str(reperf_count)},
+        "30 DPD": {"balance": str(dpd30_balance), "count": str(dpd30_count)},
+        "REM": {"balance": str(rem_balance), "count": str(rem_count)},
+        "CLAIM": {"balance": str(claim_balance), "count": str(claim_count)}
+    }
     return result
 
 
@@ -141,8 +141,6 @@ def fico_summary(loans_query_result):
     balance = df['current_principal_balance'].astype(np.dtype('float64'))
     wa_fico = np.average(fico, weights=balance)
 
-    result = [
-        {"max_fico": str(max_fico), "min_fico": str(min_fico), "wa_fico": str(int(wa_fico))}
-    ]
+    result = {"max_fico": max_fico, "min_fico": min_fico, "wa_fico": int(wa_fico)}
 
     return result
