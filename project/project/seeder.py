@@ -35,10 +35,26 @@ def create_risk_profiles():
         RiskProfile.objects.bulk_create(risk_profiles)
 
 
+def create_risk_factors():
+    with open('risk_factors.csv') as csv_file:
+        risk_factors = []
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            risk_factors.append(RiskFactor(
+                risk_profile_id=row['risk_profile_id'],
+                attribute=row['attribute'],
+                changing_assumption=row['changing_assumption'],
+                percentage_change=row['percentage_change']
+            ))
+        RiskFactor.objects.bulk_create(risk_factors)
+
+
 if __name__ == '__main__':
     print("Starting seed script...")
     create_assumption_profiles()
     print("Assumptions created...")
     create_risk_profiles()
     print("Risk profiles created...")
+    create_risk_factors()
+    print("Risk factors created...")
     print("Seeding complete...")
