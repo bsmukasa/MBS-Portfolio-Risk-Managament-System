@@ -80,7 +80,7 @@ $(document).ready(function(){
 				});
 				helperFunctions.updateTableData("#user-risk-details", table_data);
 			})
-		})	
+		})
 	});
 
 
@@ -98,9 +98,9 @@ $(document).ready(function(){
 				var empty_conditional_data = [{"conditional": "", "value":""}];
 				helperFunctions.displayTableData("#all-conditionals-table", empty_conditional_data);
 			}
-		})		
+		})
 	});
-		
+
 
 	//Complete new attribute form based on attribute selection
 	$main_content.on('change',"#select-risk-factor-attribute", function() {
@@ -164,7 +164,7 @@ $(document).ready(function(){
 				}
 				helperFunctions.updateTableData("#all-conditionals-table", table_data);
 			})
-		})	
+		})
 	});
 
 
@@ -221,7 +221,7 @@ $(document).ready(function(){
 		$.get("/risk_management/assumption_profile", {"id": selected_assumption}, function (return_data) {
 			var data = return_data.assumption_profiles[0];
 			helperFunctions.mustacheLoad("#assumptions-form-template", "#new-scenario-assumptions-load", data);
-		})	
+		})
 	});
 
 
@@ -243,7 +243,7 @@ $(document).ready(function(){
 		name = $("#scenario-name").val();
 		selected_assumption = $("#select-economic-assumption").val();
 		risk_profiles = $("#scenario-modal-selected-risk-profiles").bootstrapTable('getData');
-		
+
 		dataToSave = {
 			scenario_name: name,
 			assumption_profile_id: selected_assumption,
@@ -266,7 +266,7 @@ $(document).ready(function(){
 	//View selected scenario
 	$main_content.on('click',"#view-scenario", function () {
 		var selected_scenario = helperFunctions.getTableSelections('#user-scenario');
-		
+
 		$.get("/risk_management/single_scenario", {"id": selected_scenario[0]}, function (return_data) {
 			var riskProfilesNames = [];
 			var risk_profiles_array = return_data.risk_profiles;
@@ -277,16 +277,16 @@ $(document).ready(function(){
 			}
 			var scenario_data = return_data["scenario"][0];
 			var assumption_id = scenario_data.assumption_profile_id;
-			$.get("/risk_management/assumption_profile", {"id": assumption_id}, function (return_data) {	
+			$.get("/risk_management/assumption_profile", {"id": assumption_id}, function (return_data) {
 				helperFunctions.mustacheLoad(
                     "#assumptions-form-template", "#assumptions-scenario-load", return_data.assumption_profiles[0]
                 );
 				helperFunctions.updateTableData('#scenario-risk-profiles-table', riskProfilesNames);
 			})
-		})	
+		})
 	});
 
-	
+
 // $ document closing
 //................................................................................................................................................
 });
@@ -296,7 +296,7 @@ $(document).ready(function(){
 //===============================================================================================================================================
 $(document).on({
     ajaxStart: function() { $("body").addClass("loading"); },
-    ajaxStop: function() { $("body").removeClass("loading"); }    
+    ajaxStop: function() { $("body").removeClass("loading"); }
 });
 
 
@@ -309,9 +309,9 @@ var helperFunctions = {
 		var data, informationToLoad;
 		data = insert_data || {};
 		informationToLoad = Mustache.render(template, data);
-		return informationToLoad	
+		return informationToLoad
 	},
-	
+
 	//Loads mustache template (params: script selector, loader selector and data to be inserted)
 	mustacheLoad: function(script_selector, loader_selector, insert_data) {
 		var data, template, informationToLoad;
@@ -319,7 +319,7 @@ var helperFunctions = {
 		template = $(script_selector).html();
 		informationToLoad = Mustache.render(template, data);
 		$(loader_selector).html(informationToLoad);
-	}, 
+	},
 
 	//Get items selected in a table (params: table selector)
 	getTableSelections: function(table_selector) {
@@ -343,7 +343,7 @@ var helperFunctions = {
 	removeModal: function(modal_selector) {
   		$(modal_selector).modal('hide');
 		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();		
+		$('.modal-backdrop').remove();
 	}
 };
 
@@ -355,18 +355,18 @@ var tabLoaderFunctions = {
 	//Portfolio tab
 	portfolioTabLoader: function() {
 		helperFunctions.mustacheLoad("#portfolio-template", "#main-content-load");
-		$.get( "/portfolio/get_portfolios", function( data ) {	
+		$.get( "/portfolio/get_portfolios", function( data ) {
 			var temp_string, template;
 			temp_string = "";
 			template = $("#portfolio-load-script").html();
 			data.portfolios.forEach(function (portfolio) {
-				
+
 				portfolio.total_loan_count = (portfolio.total_loan_count).formatNumberSeparator();
 				portfolio.total_loan_balance = (portfolio.total_loan_balance).formatNumberSeparator(2);
 				portfolio.average_loan_balance = parseFloat(portfolio.average_loan_balance).formatNumberSeparator(2);
 				portfolio.weighted_average_coupon = parseFloat(portfolio.weighted_average_coupon * 100).formatNumberSeparator(3);
 				portfolio.weighted_average_life_to_maturity = parseFloat(portfolio.weighted_average_life_to_maturity).formatNumberSeparator(2);
-				
+
 				temp_string += helperFunctions.getMustacheHTMLString(template, portfolio);
 			});
 			$("#portfolio-load").html(temp_string);
@@ -374,7 +374,7 @@ var tabLoaderFunctions = {
 	},
 
 	//Risk Profile tab
-	riskProfileTabLoader: function() {		
+	riskProfileTabLoader: function() {
 		helperFunctions.mustacheLoad("#riskProfile-template", "#main-content-load");
 		helperFunctions.mustacheLoad("#risk-tables-template", "#risk-profiles-table-load");
 
@@ -386,7 +386,7 @@ var tabLoaderFunctions = {
 				else {
 					helperFunctions.displayTableData('#user-risk-profiles', [{"name": ""}])
 		    	}
-		    	helperFunctions.displayTableData('#user-risk-details', 
+		    	helperFunctions.displayTableData('#user-risk-details',
 		    		[{"attribute": "", "changing_assumption": "", "percentage_change": ""}])
 	    	});
 		});
