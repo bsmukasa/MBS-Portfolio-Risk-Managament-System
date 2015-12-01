@@ -26,8 +26,19 @@ def create_assumption_profiles():
         AssumptionProfile.objects.bulk_create(assumption_profiles)
 
 
+def create_risk_profiles():
+    with open('risk_profiles.csv') as csv_file:
+        risk_profiles = []
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            risk_profiles.append(RiskProfile(name=row['name']))
+        RiskProfile.objects.bulk_create(risk_profiles)
+
+
 if __name__ == '__main__':
     print("Starting seed script...")
     create_assumption_profiles()
     print("Assumptions created...")
+    create_risk_profiles()
+    print("Risk profiles created...")
     print("Seeding complete...")
