@@ -6,11 +6,38 @@ class Portfolio(models.Model):
     name = models.CharField(max_length=128)
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_update = models.DateField(auto_now=True)
-    total_loan_balance = models.IntegerField()
-    total_loan_count = models.IntegerField()
-    average_loan_balance = models.DecimalField(decimal_places=2, max_digits=20)
-    weighted_average_coupon = models.DecimalField(decimal_places=5, max_digits=20)
-    weighted_average_life_to_maturity = models.DecimalField(decimal_places=5, max_digits=20)
+
+    # Aggregate Portfolio Summary Values
+    total_loan_balance = models.IntegerField(default=0)
+    total_loan_count = models.IntegerField(default=0)
+    average_loan_balance = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    weighted_average_coupon = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    weighted_average_life_to_maturity = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+
+    # Loan Status Values
+    current_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    current_count = models.IntegerField(default=0)
+    dpd90_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    dpd90_count = models.IntegerField(default=0)
+    fc_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    fc_count = models.IntegerField(default=0)
+    dpd60_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    dpd60_count = models.IntegerField(default=0)
+    reo_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    reo_count = models.IntegerField(default=0)
+    reperf_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    reperf_count = models.IntegerField(default=0)
+    dpd30_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    dpd30_count = models.IntegerField(default=0)
+    rem_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    rem_count = models.IntegerField(default=0)
+    claim_balance = models.DecimalField(decimal_places=5, max_digits=20, default=0)
+    claim_count = models.IntegerField(default=0)
+
+    # Fico Summary Values
+    max_fico = models.IntegerField(default=0)
+    min_fico = models.IntegerField(default=0)
+    weighted_average_fico = models.IntegerField(default=0)
 
 
 class Loan(models.Model):
@@ -207,10 +234,3 @@ class Loan(models.Model):
     last_payment_received = models.DateField(null=True, blank=True)
     senior_lien_balance_date = models.DateField(null=True, blank=True)
     junior_lien_balance_date = models.DateField(null=True, blank=True)
-
-# class LoanAdjustedAssumptions(models.Model):
-#     loan = models.ForeignKey(Loan)  # TODO Change to loan snapshot when functionality is added.
-#     adjusted_cdr = models.DecimalField()
-#     adjusted_cpr = models.DecimalField()
-#     adjusted_recovery = models.DecimalField()
-#     adjusted_lag = models.DecimalField()
