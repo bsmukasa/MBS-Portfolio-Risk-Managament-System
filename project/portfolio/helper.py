@@ -117,15 +117,15 @@ def loans_status_summary(loans_query_result):
         claim_count = 0
 
     result = {
-        "CURRENT": {"balance": str(current_balance), "count": str(current_count)},
-        "90 DPD": {"balance": str(dpd90_balance), "count": str(dpd90_count)},
-        "FC": {"balance": str(fc_balance), "count": str(fc_count)},
-        "60 DPD": {"balance": str(dpd60_balance), "count": str(dpd60_count)},
-        "REO": {"balance": str(reo_balance), "count": str(reo_count)},
-        "REPERF": {"balance": str(reperf_balance), "count": str(reperf_count)},
-        "30 DPD": {"balance": str(dpd30_balance), "count": str(dpd30_count)},
-        "REM": {"balance": str(rem_balance), "count": str(rem_count)},
-        "CLAIM": {"balance": str(claim_balance), "count": str(claim_count)}
+        "CURRENT": {"balance": current_balance, "count": int(current_count)},
+        "90 DPD": {"balance": dpd90_balance, "count": int(dpd90_count)},
+        "FC": {"balance": fc_balance, "count": str(fc_count)},
+        "60 DPD": {"balance": dpd60_balance, "count": str(dpd60_count)},
+        "REO": {"balance": reo_balance, "count": str(reo_count)},
+        "REPERF": {"balance": reperf_balance, "count": str(reperf_count)},
+        "30 DPD": {"balance": dpd30_balance, "count": str(dpd30_count)},
+        "REM": {"balance": rem_balance, "count": str(rem_count)},
+        "CLAIM": {"balance": claim_balance, "count": str(claim_count)}
     }
     return result
 
