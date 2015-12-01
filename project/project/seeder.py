@@ -129,6 +129,7 @@ def reset_database():
 if __name__ == '__main__':
     # Loan count for profiles to be created. Must correspond to csv file.
     loan_number_list = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
+    loan_number_files_list = []
 
     print("Emptying Database...")
     reset_database()
@@ -142,9 +143,9 @@ if __name__ == '__main__':
     print("Risk factors created...")
     create_risk_conditionals()
     print("Risk conditionals created...")
-    print("Generating new loan csv files...")
-    generate_loan_csv_files(loan_number_list)
-    print("CSV Files generated....")
+    # print("Generating new loan csv files...")
+    # generate_loan_csv_files(loan_number_files_list)
+    # print("CSV Files generated....")
     create_portfolios(loan_number_list)
     print("Portfolios created...")
     print("Seeding complete...")
