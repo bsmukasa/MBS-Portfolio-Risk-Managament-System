@@ -5,7 +5,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from risk_management.models import AssumptionProfile, RiskProfile, RiskFactor
+from risk_management.models import AssumptionProfile, RiskProfile, RiskFactor, RiskConditional
 
 
 def create_assumption_profiles():
@@ -49,6 +49,19 @@ def create_risk_factors():
         RiskFactor.objects.bulk_create(risk_factors)
 
 
+def create_risk_conditionals():
+    with open('risk_conditionals.csv') as csv_file:
+        risk_conditionals = []
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            risk_conditionals.append(RiskConditional(
+                risk_factor_id=row['risk_factor_id'],
+                conditional=row['conditional'],
+                value=row['value']
+            ))
+        RiskConditional.objects.bulk_create(risk_conditionals)
+
+
 if __name__ == '__main__':
     print("Starting seed script...")
     create_assumption_profiles()
@@ -57,4 +70,6 @@ if __name__ == '__main__':
     print("Risk profiles created...")
     create_risk_factors()
     print("Risk factors created...")
+    create_risk_conditionals()
+    print("Risk conditionals created...")
     print("Seeding complete...")
