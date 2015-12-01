@@ -31,25 +31,25 @@ def create_loan(loan_id):
         original_amount, current_interest_rate, original_term, remaining_term
     )
     return dict(
-        bank_loan_id=loan_id,
-        property_type_code=property_type_code,
-        occupancy_code='AB',
-        city=address[1],
-        us_state=address[2],
-        zipcode=address[0],
+        LoanID=loan_id,
+        Property=property_type_code,
+        Occupancy='AB',
+        CITY=address[1],
+        STATE=address[2],
+        ZIP=address[0],
         # as_of_date=,
         # first_payment_date=,
         # original_date=,
         # first_index_rate_adjustment_date=,
-        fico=fico,
-        current_FICO_score=current_fico,
-        current_interest_rate=current_interest_rate,
-        original_amount=original_amount,
-        original_term=original_term,
-        original_appraisal_amount=original_appraisal_amount,
-        remaining_term=remaining_term,
-        amortized_term=amortized_term,
-        current_principal_balance=current_principal_balance,
+        FICO=fico,
+        Current_FICO_Score=current_fico,
+        Current_Interest_Rate=current_interest_rate,
+        Original_Amount=original_amount,
+        Original_Term=original_term,
+        Original_Appraisal_Amount=original_appraisal_amount,
+        Remaining_Term=remaining_term,
+        Amor_Term=amortized_term,
+        Current_Principal_Balance=current_principal_balance,
     )
 
 
@@ -69,30 +69,39 @@ def get_property_type_code():
 def next_bank_loan_id(last_id=None):
     return last_id + random.randint(151, 1127)
 
-if __name__ == '__main__':
-    bank_loan_id = random.randint(500000, 600000)
-    with open('30000_sample_loans.csv', 'w') as csv_file:
-        field_names = [
-            'bank_loan_id',
-            'property_type_code',
-            'occupancy_code',
-            'city',
-            'us_state',
-            'zipcode',
-            'fico',
-            'current_FICO_score',
-            'current_interest_rate',
-            'original_amount',
-            'original_term',
-            'original_appraisal_amount',
-            'remaining_term',
-            'amortized_term',
-            'current_principal_balance'
-        ]
-        writer = csv.DictWriter(csv_file, fieldnames=field_names)
 
-        writer.writeheader()
-        for i in range(30000):
-            bank_loan_id = next_bank_loan_id(bank_loan_id)
-            loan_dict = create_loan(bank_loan_id)
-            writer.writerow(loan_dict)
+def generate_loan_csv_files(loan_number_list):
+    bank_loan_id = random.randint(500000, 600000)
+    for loan_number in loan_number_list:
+        file_name = str(loan_number)
+        file_name += '_sample_loans.csv'
+        # TODO Update so that all field names are included.
+        with open(file_name, 'w') as csv_file:
+            field_names = [
+                'LoanID',
+                'Property',
+                'Occupancy',
+                'CITY',
+                'STATE',
+                'ZIP',
+                'FICO',
+                'Current_FICO_Score',
+                'Current_Interest_Rate',
+                'Original_Amount',
+                'Original_Term',
+                'Original_Appraisal_Amount',
+                'Remaining_Term',
+                'Amor_Term',
+                'Current_Principal_Balance'
+            ]
+            writer = csv.DictWriter(csv_file, fieldnames=field_names)
+
+            writer.writeheader()
+            for i in range(loan_number):
+                bank_loan_id = next_bank_loan_id(bank_loan_id)
+                loan_dict = create_loan(bank_loan_id)
+                writer.writerow(loan_dict)
+
+
+if __name__ == '__main__':
+    generate_loan_csv_files()
