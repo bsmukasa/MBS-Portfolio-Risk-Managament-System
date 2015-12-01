@@ -212,7 +212,7 @@ def reset_database():
 
 if __name__ == '__main__':
     # Loan count for profiles to be created.
-    loan_number_list = [1000, 100, 25, 10, 2500, 10000]
+    loan_number_list = [1000, 100, 25, 500]
 
     reset_database()
     print("Database Rest...")
