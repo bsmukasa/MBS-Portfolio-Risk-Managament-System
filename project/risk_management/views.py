@@ -366,7 +366,6 @@ class AssumptionProfileAPI(View):
         :param request: Request.
         :return: JsonResponse with status and message.
         """
-
         post_data = request.POST.dict()
         name = post_data['name']
         gdp_growth = post_data['gdp_growth']
@@ -385,7 +384,7 @@ class AssumptionProfileAPI(View):
         default_assumptions = {
             "constant_default_rate": post_data['constant_default_rate'],
             "constant_prepayment_rate": post_data['constant_prepayment_rate'],
-            "recovery": post_data['recovery']
+            "recovery_percentage": post_data['recovery_percentage']
         }
 
         for key, value in default_assumptions.items():
@@ -399,9 +398,9 @@ class AssumptionProfileAPI(View):
                 if key == 'constant_prepayment_rate':
                     cpr = high_yield_spread * -10 / 9 + 245 / 9
                     new_assumption_profile.constant_prepayment_rate = cpr
-                if key == 'recovery':
-                    recovery = national_home_price_index * 2.5 + 50
-                    new_assumption_profile.recovery = recovery
+                if key == 'recovery_percentage':
+                    recovery_percentage = national_home_price_index * 2.5 + 50
+                    new_assumption_profile.recovery_percentage = recovery_percentage
 
         new_assumption_profile.save()
         return JsonResponse({'status': 'OK', 'message': 'Assumption Profile Created!!'})
@@ -543,5 +542,7 @@ class SingleScenarioAPI(View):
         filter_dict = request.GET.dict()
         scenario_id = filter_dict["id"]
         single_scenario = self.model.objects.filter(pk=scenario_id).values()
+        single = self.model.objects.get(pk=scenario_id)
+        risk_profiles_ids = single.risk_profiles.all().values()
 
-        return JsonResponse(dict(scenario=list(single_scenario)))
+        return JsonResponse(dict(scenario=list(single_scenario), risk_profiles=list(risk_profiles_ids)))

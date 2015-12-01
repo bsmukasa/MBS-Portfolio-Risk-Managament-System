@@ -24,7 +24,7 @@ urlpatterns = patterns(
 
     url(
         regex=r'^principal_graph_data$',
-        view=views.PrincipalGraphAPI.as_view(),
+        view=views.PrincipalGraphDataAPI.as_view(),
         name='get_principal_graph_data_api'
     ),
 )

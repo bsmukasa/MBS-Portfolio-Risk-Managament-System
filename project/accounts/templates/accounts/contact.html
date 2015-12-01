@@ -1,0 +1,52 @@
+{% extends "accounts/base_auth.html" %}
+{% load staticfiles %}
+
+
+{% block head_title %} 
+	<title>Scroogies Contact</title>
+{% endblock head_title %}
+
+{% block head_js_files %}
+	<link rel="stylesheet" href="{% static 'accounts/auth.js' %}"> 
+{% endblock head_js_files %}
+
+{% block head_css_files %}
+	<link rel="stylesheet" href="{% static 'accounts/auth.css' %}"> 
+{% endblock head_css_files %}
+
+
+
+
+{% block navbar %}
+	<div id="navbar_menu">
+		<nav class="navbar navbar-default navbar-custom">
+			<div class="container-fluid">
+   				<div class="navbar-header">
+	      			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+		        		<span class="icon-bar"></span>
+		        		<span class="icon-bar"></span>
+		        		<span class="icon-bar"></span>
+	      			</button>
+	      			<a class="navbar-brand" href="/">$CROOGIE$</a>
+    			</div>
+    			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    				<ul class="nav navbar-nav navbar-right">
+    					<li><a href="{% url 'portfolio:dashboard' %}">Go to DEMO DASHBOARD</a></li>
+    				</ul>
+    			</div>
+    		</div>
+    	</nav>
+	</div>
+
+{% endblock navbar %}
+
+
+
+{% block main_content %}
+    <div class="container">
+    	<h3 class="page-title">Project developed by:</h3>
+
+    </div> 
+
+{% endblock main_content %}
