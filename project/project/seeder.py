@@ -128,7 +128,7 @@ def reset_database():
 
 if __name__ == '__main__':
     # Loan count for profiles to be created. Must correspond to csv file.
-    loan_number_list = [10, 25, 50, 100, 250, 500, 1000]
+    loan_number_list = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
 
     print("Emptying Database...")
     reset_database()
