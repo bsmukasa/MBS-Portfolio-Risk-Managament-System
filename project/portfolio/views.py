@@ -1,6 +1,7 @@
 import codecs
 import csv
 import datetime
+import locale
 import random
 
 from django.http import JsonResponse
@@ -37,20 +38,7 @@ class PortfolioAPI(View):
         return super(PortfolioAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        user_portfolios = self.model.objects.all()
-
-        portfolios = []
-        for portfolio in user_portfolios:
-            portfolios.append(
-                {
-                    'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
-                    'total_loan_count': convert_int_with_commas(portfolio.total_loan_count),
-                    'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
-                    'weighted_average_coupon': '{:.2%}'.format(portfolio.weighted_average_coupon),
-                    'weighted_average_life_to_maturity': convert_decimal_to_currency(
-                        portfolio.weighted_average_life_to_maturity)
-                }
-            )
+        user_portfolios = self.model.objects.all().values()
 
         return JsonResponse(dict(portfolios=list(user_portfolios)))
 
@@ -205,11 +193,12 @@ class PortfolioView(View):
 
     def get(self, request, portfolio_id):
         portfolio = self.model.objects.get(pk=portfolio_id)
+        # portfolio['weighted_average_coupon'] *= 100
         portfolio = {
             'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
-            'total_loan_count': portfolio.total_loan_count,
+            'total_loan_count': convert_int_to_comma_separated(portfolio.total_loan_count),
             'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
-            'weighted_average_coupon': '{:.2%}'.format(portfolio.weighted_average_coupon),
+            'weighted_average_coupon': convert_decimal_to_percentage(portfolio.weighted_average_coupon),
             'weighted_average_life_to_maturity': convert_decimal_to_currency(
                 portfolio.weighted_average_life_to_maturity
             )
@@ -279,19 +268,15 @@ class PortfolioStatusAPI(View):
 
 
 def convert_decimal_to_currency(decimal_number):
-    float_number = float(decimal_number)
-    return '{:.2%}'.format(float_number)
-
-
-def convert_int_with_commas(db_int_number):
-    int_number = int(db_int_number)
-    return '{:,}'.format(int_number)
+    return '{:,.2f}'.format(decimal_number)
 
 
 def convert_decimal_to_percentage(decimal_number):
-    float_number = float(decimal_number)
-    return '{:.2%}'.format(float_number)
+    return '{:.2%}'.format(decimal_number)
 
+
+def convert_int_to_comma_separated(int_number):
+    return '{:,}'.format(int_number)
 
 class PortfolioFICOAPI(View):
     @method_decorator(csrf_exempt)
