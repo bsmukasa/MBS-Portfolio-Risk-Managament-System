@@ -1,7 +1,6 @@
 import codecs
 import csv
 import datetime
-import locale
 import random
 
 from django.http import JsonResponse
@@ -38,9 +37,25 @@ class PortfolioAPI(View):
         return super(PortfolioAPI, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        user_portfolios = self.model.objects.all().values()
+        user_portfolios = self.model.objects.all()
+        portfolios_list = []
 
-        return JsonResponse(dict(portfolios=list(user_portfolios)))
+        for portfolio in user_portfolios:
+            portfolios_list.append(
+                {
+                    'id': portfolio.id,
+                    'name': portfolio.name,
+                    'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
+                    'total_loan_count': convert_int_to_comma_separated(portfolio.total_loan_count),
+                    'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
+                    'weighted_average_coupon': convert_decimal_to_percentage(portfolio.weighted_average_coupon),
+                    'weighted_average_life_to_maturity': convert_decimal_to_comma_separated(
+                        portfolio.weighted_average_life_to_maturity
+                    )
+                }
+            )
+
+        return JsonResponse(dict(portfolios=portfolios_list))
 
     def post(self, request):
         form = FileForm(data=request.POST, files=request.FILES)
@@ -163,10 +178,6 @@ class PortfolioAPI(View):
             return JsonResponse({'status': 'OK', 'message': 'Risk Profile Created!!'})
 
 
-def next_bank_loan_id(last_id=None):
-    return last_id + random.randint(151, 1127)
-
-
 class LoanPaginationAPI(View):
     model = Loan
 
@@ -196,10 +207,12 @@ class PortfolioView(View):
         # portfolio['weighted_average_coupon'] *= 100
         portfolio_basic_data = {
             'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
-            'total_loan_count': portfolio.total_loan_count,
+            'total_loan_count': convert_int_to_comma_separated(portfolio.total_loan_count),
             'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
-            'weighted_average_coupon': '{:.2%}'.format(portfolio.weighted_average_coupon),
-            'weighted_average_life_to_maturity': convert_decimal_to_currency(portfolio.weighted_average_life_to_maturity)
+            'weighted_average_coupon': convert_decimal_to_percentage(portfolio.weighted_average_coupon),
+            'weighted_average_life_to_maturity': convert_decimal_to_comma_separated(
+                portfolio.weighted_average_life_to_maturity
+            )
         }
         return render(request, self.template, {"portfolio": portfolio_basic_data})
 
@@ -265,14 +278,25 @@ class PortfolioStatusAPI(View):
         return JsonResponse({'data': result}, safe=False)
 
 
+def next_bank_loan_id(last_id=None):
+    return last_id + random.randint(151, 1127)
+
+
 def convert_decimal_to_currency(decimal_number):
-    locale.setlocale(locale.LC_ALL, 'en_US.utf8')
-    float_number = float(decimal_number)
-    return locale.format("%.2f", float_number, grouping=True)
+    return '$ {:,.2f}'.format(decimal_number)
 
 
 def convert_decimal_to_percentage(decimal_number):
     return '{:.2%}'.format(decimal_number)
+
+
+def convert_decimal_to_comma_separated(decimal_number):
+    return '{:,.2f}'.format(decimal_number)
+
+
+def convert_int_to_comma_separated(int_number):
+    return '{:,}'.format(int_number)
+
 
 class PortfolioFICOAPI(View):
     @method_decorator(csrf_exempt)
