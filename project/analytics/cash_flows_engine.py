@@ -209,7 +209,7 @@ class LoanPortfolio:
         Returns: The portfolio's aggregate net present value.
 
         """
-        npv = np.npv(self.discount_rate / 12, list(self.aggregate_flows_df['total_payments']))
+        npv = np.npv(self.discount_rate / 12, list(self.aggregate_flows_df[1:]['total_payments']))
         return float(npv)
 
     def internal_rate_of_return_for_loan(self, loan):
