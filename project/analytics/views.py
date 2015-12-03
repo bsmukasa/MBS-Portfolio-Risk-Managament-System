@@ -72,7 +72,6 @@ def create_aggregate_cash_flows(analysis_results_name, cash_flow_results, discou
         discount_rate=discount_rate, loan_df=loan_df, cash_flow_df=cash_flow_df
     )
     aggregate_cash_flow_df = analysis_portfolio.cash_flows_aggregate_for_portfolio()
-    analysis_portfolio.cash_flows_df.to_pickle(analysis_results_name + '_aggregate_flows.pk')
     cash_flow_results.aggregated = True
     cash_flow_results.save()
     return aggregate_cash_flow_df
@@ -152,7 +151,7 @@ class AnalysisSummaryAPI(View):
                 aggregate_flows_df = create_aggregate_cash_flows(
                     analysis_results_name, cash_flow_results, discount_rate
                 )
-
+                aggregate_flows_df.to_pickle(analysis_results_name + '_aggregate_flows.pk')
             analysis_portfolio = LoanPortfolio(
                 discount_rate=discount_rate,
                 loan_df=loan_df,
@@ -164,7 +163,7 @@ class AnalysisSummaryAPI(View):
             npv = analysis_portfolio.net_present_value_aggregate_for_portfolio()
             current_balance = analysis_portfolio.current_balance_aggregate_for_portfolio()
             price = npv / current_balance * 100
-            yield_irr = float(analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio()) * 100
+            yield_irr = float(analysis_portfolio.internal_rate_of_return_aggregate_for_portfolio())
             weighted_average_life = analysis_portfolio.weighted_average_life_for_portfolio()
             original_cdr = float(cash_flow_results.scenario.assumption_profile.constant_default_rate)
             original_cpr = float(cash_flow_results.scenario.assumption_profile.constant_prepayment_rate)
@@ -213,6 +212,7 @@ class PrincipalGraphDataAPI(View):
 
         if cash_flow_results.exists():
             aggregate_cash_flow_df = pd.read_pickle(analysis_results_name + '_aggregate_flows.pk')
+            print(aggregate_cash_flow_df)
             periods = [float(period) for period in list(aggregate_cash_flow_df['period'])]
             scheduled_principals = [
                 float(sched_principal) for sched_principal in list(aggregate_cash_flow_df['scheduled_principal'])
