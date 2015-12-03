@@ -174,17 +174,17 @@ class AnalysisSummaryAPI(View):
             weighted_average_recovery = float(analysis_portfolio.weighted_average_recovery_for_portfolio()) * 100
 
             return JsonResponse(dict(
-                portfolio_balance=remaining_balance,
-                npv=npv,
-                price=price,
-                yield_irr=yield_irr,
-                weighted_average_life=weighted_average_life,
-                original_cdr=original_cdr,
-                original_cpr=original_cpr,
-                original_recovery=original_recovery_percentage,
-                weighted_average_cdr=weighted_average_cdr,
-                weighted_average_cpr=weighted_average_cpr,
-                weighted_average_recovery=weighted_average_recovery
+                portfolio_balance='$ {:,.2f}'.format(remaining_balance),
+                npv='$ {:,.2f}'.format(npv),
+                price='$ {:,.2f}'.format(price),
+                yield_irr='{:.2%}'.format(yield_irr),
+                weighted_average_life='{:,.2f}'.format(weighted_average_life),
+                original_cdr='{:.2%}'.format(original_cdr),
+                original_cpr='{:.2%}'.format(original_cpr),
+                original_recovery='{:.2%}'.format(original_recovery_percentage),
+                weighted_average_cdr='{:.2%}'.format(weighted_average_cdr),
+                weighted_average_cpr='{:.2%}'.format(weighted_average_cpr),
+                weighted_average_recovery='{:.2%}'.format(weighted_average_recovery)
             ))
 
 

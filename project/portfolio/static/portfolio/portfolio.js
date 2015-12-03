@@ -525,7 +525,6 @@ analyticsTab = {
 		} else {
 			helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", cookieSummary);
 		}		
-	},
 
 	//Load cash flows tab
 	cashFlowTab: function () {
