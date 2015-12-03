@@ -11,12 +11,11 @@ django.setup()
 from portfolio.models import Loan, Portfolio
 from risk_management.models import AssumptionProfile, RiskProfile, RiskFactor, RiskConditional
 from portfolio.helper import calculate_aggregate_portfolio_data, fico_summary, loans_status_summary
-# from project.sample_loan_csv_creator import generate_loan_csv_files
 from portfolio.views import is_set, convert_date_string
 
 
 def create_assumption_profiles():
-    with open('assumptions_profiles.csv') as csv_file:
+    with open('seeder_csv_files/assumptions_profiles.csv') as csv_file:
         assumption_profiles = []
         reader = csv.DictReader(csv_file)
         for row in reader:
@@ -34,7 +33,7 @@ def create_assumption_profiles():
 
 
 def create_risk_profiles():
-    with open('risk_profiles.csv') as csv_file:
+    with open('seeder_csv_files/risk_profiles.csv') as csv_file:
         risk_profiles = []
         reader = csv.DictReader(csv_file)
         for row in reader:
@@ -43,7 +42,7 @@ def create_risk_profiles():
 
 
 def create_risk_factors():
-    with open('risk_factors.csv') as csv_file:
+    with open('seeder_csv_files/risk_factors.csv') as csv_file:
         risk_factors = []
         reader = csv.DictReader(csv_file)
         for row in reader:
@@ -57,7 +56,7 @@ def create_risk_factors():
 
 
 def create_risk_conditionals():
-    with open('risk_conditionals.csv') as csv_file:
+    with open('seeder_csv_files/risk_conditionals.csv') as csv_file:
         risk_conditionals = []
         reader = csv.DictReader(csv_file)
         for row in reader:
