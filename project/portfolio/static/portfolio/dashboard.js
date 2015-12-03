@@ -360,13 +360,6 @@ var tabLoaderFunctions = {
 			temp_string = "";
 			template = $("#portfolio-load-script").html();
 			data.portfolios.forEach(function (portfolio) {
-
-				//portfolio.total_loan_count = (portfolio.total_loan_count).formatNumberSeparator();
-				//portfolio.total_loan_balance = (portfolio.total_loan_balance).formatNumberSeparator(2);
-				//portfolio.average_loan_balance = parseFloat(portfolio.average_loan_balance).formatNumberSeparator(2);
-				//portfolio.weighted_average_coupon = parseFloat(portfolio.weighted_average_coupon * 100).formatNumberSeparator(3);
-				//portfolio.weighted_average_life_to_maturity = parseFloat(portfolio.weighted_average_life_to_maturity).formatNumberSeparator(2);
-
 				temp_string += helperFunctions.getMustacheHTMLString(template, portfolio);
 			});
 			$("#portfolio-load").html(temp_string);
