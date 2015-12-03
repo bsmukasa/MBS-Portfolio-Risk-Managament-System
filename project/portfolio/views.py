@@ -2,6 +2,7 @@ import codecs
 import csv
 import datetime
 import locale
+import random
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -52,12 +53,15 @@ class PortfolioAPI(View):
             new_portfolio = self.model(name=name)
             new_portfolio.save()
 
-            loan_list = []
+            bank_loan_id = random.randint(300000, 800000)
+            loans = []
 
             data = csv.DictReader(codecs.iterdecode(request.FILES['loan_file'], 'utf-8'))
             for row in data:
-                loan = Loan(
+                bank_loan_id = next_bank_loan_id(bank_loan_id)
+                loans.append(Loan(
                     portfolio=new_portfolio,
+                    bank_loan_id=bank_loan_id,
                     deferred_balance=is_set(row['DEFERRED_BAL']),
                     pmi_insurance=is_set(row['PMI']),
                     first_payment_date=convert_date_string(row['First_Payment_Date']),
@@ -107,14 +111,14 @@ class PortfolioAPI(View):
                     original_rate=is_set(row['ORATE']),
                     original_date=convert_date_string(row['Origination_Date']),
                     city=is_set(row['CITY']),
-                    bank_loan_id=is_set(row['LoanID']),
                     second_lien_piggyback_flag=is_set(row['2nd Lien Piggyback Flag']),
                     junior_lien_balance_date=convert_date_string(row['Junior Lien Bal Date']),
-                    first_index_rate_adjustment_date=convert_date_string(row['First_Interest_Rate_Adjustment_Date']),
-                )
-                loan_list.append(loan)
+                    first_index_rate_adjustment_date=convert_date_string(
+                        row['First_Interest_Rate_Adjustment_Date']
+                    )
+                ))
 
-            Loan.objects.bulk_create(loan_list)
+            Loan.objects.bulk_create(loans)
 
             saved_loans = Loan.objects.filter(portfolio=new_portfolio).values()
             portfolio_loans_calculations = calculate_aggregate_portfolio_data(saved_loans)
@@ -155,9 +159,12 @@ class PortfolioAPI(View):
             new_portfolio.weighted_average_fico = fico_results["wa_fico"]
 
             new_portfolio.save()
-            # End Tab
 
             return JsonResponse({'status': 'OK', 'message': 'Risk Profile Created!!'})
+
+
+def next_bank_loan_id(last_id=None):
+    return last_id + random.randint(151, 1127)
 
 
 class LoanPaginationAPI(View):
