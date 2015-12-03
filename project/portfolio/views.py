@@ -196,10 +196,12 @@ class PortfolioView(View):
         # portfolio['weighted_average_coupon'] *= 100
         portfolio = {
             'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
-            'total_loan_count': portfolio.total_loan_count,
+            'total_loan_count': convert_int_to_comma_separated(portfolio.total_loan_count),
             'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
-            'weighted_average_coupon': '{:.2%}'.format(portfolio.weighted_average_coupon),
-            'weighted_average_life_to_maturity': convert_decimal_to_currency(portfolio.weighted_average_life_to_maturity)
+            'weighted_average_coupon': convert_decimal_to_percentage(portfolio.weighted_average_coupon),
+            'weighted_average_life_to_maturity': convert_decimal_to_currency(
+                portfolio.weighted_average_life_to_maturity
+            )
         }
         return render(request, self.template, {"portfolio": portfolio})
 
@@ -266,13 +268,15 @@ class PortfolioStatusAPI(View):
 
 
 def convert_decimal_to_currency(decimal_number):
-    locale.setlocale(locale.LC_ALL, 'en_US.utf8')
-    float_number = float(decimal_number)
-    return locale.format("%.2f", float_number, grouping=True)
+    return '{:,.2f}'.format(decimal_number)
 
 
 def convert_decimal_to_percentage(decimal_number):
     return '{:.2%}'.format(decimal_number)
+
+
+def convert_int_to_comma_separated(int_number):
+    return '{:,}'.format(int_number)
 
 class PortfolioFICOAPI(View):
     @method_decorator(csrf_exempt)
