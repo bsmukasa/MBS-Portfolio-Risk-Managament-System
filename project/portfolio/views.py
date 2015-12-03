@@ -43,11 +43,13 @@ class PortfolioAPI(View):
         for portfolio in user_portfolios:
             portfolios_list.append(
                 {
+                    'id': portfolio.id,
+                    'name': portfolio.name,
                     'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
                     'total_loan_count': convert_int_to_comma_separated(portfolio.total_loan_count),
                     'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
                     'weighted_average_coupon': convert_decimal_to_percentage(portfolio.weighted_average_coupon),
-                    'weighted_average_life_to_maturity': convert_decimal_to_currency(
+                    'weighted_average_life_to_maturity': convert_decimal_to_comma_separated(
                         portfolio.weighted_average_life_to_maturity
                     )
                 }
@@ -208,7 +210,7 @@ class PortfolioView(View):
             'total_loan_count': convert_int_to_comma_separated(portfolio.total_loan_count),
             'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
             'weighted_average_coupon': convert_decimal_to_percentage(portfolio.weighted_average_coupon),
-            'weighted_average_life_to_maturity': convert_decimal_to_currency(
+            'weighted_average_life_to_maturity': convert_decimal_to_comma_separated(
                 portfolio.weighted_average_life_to_maturity
             )
         }
@@ -281,11 +283,15 @@ def next_bank_loan_id(last_id=None):
 
 
 def convert_decimal_to_currency(decimal_number):
-    return '{:,.2f}'.format(decimal_number)
+    return '$ {:,.2f}'.format(decimal_number)
 
 
 def convert_decimal_to_percentage(decimal_number):
     return '{:.2%}'.format(decimal_number)
+
+
+def convert_decimal_to_comma_separated(decimal_number):
+    return '{:,.2f}'.format(decimal_number)
 
 
 def convert_int_to_comma_separated(int_number):
