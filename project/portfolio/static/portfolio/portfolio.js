@@ -489,7 +489,6 @@ analyticsTab = {
 		var cookieSummary = Cookies.getJSON("summary_data");
 	
 		if (cookieSummary == undefined) {
-			console.log("no break")
 			$.get("/analytics/get_analysis_summary", send_data, function (data) {
             /**
              * @typedef {Object} data
@@ -503,28 +502,16 @@ analyticsTab = {
              * @property {string} original_recovery
              * @property {string} weighted_average_recovery
              *
-             * @type {{price, npv, total_remaining_balance, yield: string, wa_avg_life, assumption_cdr, wa_cdr, assumption_cpr, wa_cpr, assumption_recovery, wa_recovery}}
+             * @type {{price, npv, portfolio_balance, yield_irr, weighted_average_life, original_cdr, 
+             weighted_average_cdr, original_cpr, weighted_average_cpr, original_recovery, weighted_average_recovery}}
              */
-	            var summaryObj = {
-					price: (data.price).formatNumberSeparator(2),
-					npv: (data.npv).formatNumberSeparator(2),
-					total_remaining_balance: (data.portfolio_balance).formatNumberSeparator(2),
-					yield: (data.yield_irr).formatNumberSeparator(2) + "%",
-					wa_avg_life: data.weighted_average_life.formatNumberSeparator(2),
-					assumption_cdr: (data.original_cdr).formatNumberSeparator(2),
-					wa_cdr: (data.weighted_average_cdr).formatNumberSeparator(2),
-					assumption_cpr: (data.original_cpr).formatNumberSeparator(2),
-					wa_cpr: (data.weighted_average_cpr).formatNumberSeparator(2),
-					assumption_recovery: (data.original_recovery).formatNumberSeparator(2),
-					wa_recovery: (data.weighted_average_recovery).formatNumberSeparator(2)
-				};
-
-				Cookies.set("summary_data", summaryObj);
-				helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", summaryObj);
+				Cookies.set("summary_data", data);
+				helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", data);
 			})
 		} else {
 			helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", cookieSummary);
-		}		
+		}
+	},		
 
 	//Load cash flows tab
 	cashFlowTab: function () {

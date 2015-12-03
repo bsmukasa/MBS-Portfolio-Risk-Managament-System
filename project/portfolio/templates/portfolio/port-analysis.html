@@ -70,15 +70,15 @@
 			    	</tr>
 			    	<tr>
 			    		<th>Remaining Balance</th>
-			    		<td>{{ total_remaining_balance }}</td>
+			    		<td>{{ portfolio_balance }}</td>
 			    	</tr>
 			    	<tr>
 			    		<th>Yield</th>
-			    		<td>{{ yield }}</td>
+			    		<td>{{ yield_irr }}</td>
 			    	</tr>
 			    	<tr>
 			    		<th>Weighted Average Life</th>
-			    		<td>{{ wa_avg_life }}</td>
+			    		<td>{{ weighted_average_life }}</td>
 			    	</tr>
 			    </tbody>
 			{% endverbatim %}
@@ -98,18 +98,18 @@
 				<tbody>
 			    	<tr>
 			    		<th scope="row">CPR</th>
-			    		<td>{{ assumption_cpr }}</td>
-			    		<td>{{ wa_cpr }}</td>
+			    		<td>{{ original_cpr }}</td>
+			    		<td>{{ weighted_average_cpr }}</td>
 			    	</tr>
 			    	<tr>
 			    		<th scope="row">CDR</th>
-			    		<td>{{ assumption_cdr }}</td>
-			    		<td>{{ wa_cdr }}</td>
+			    		<td>{{ original_cdr }}</td>
+			    		<td>{{ weighted_average_cdr }}</td>
 			    	</tr>
 			    	<tr>
 			    		<th scope="row">Recovery</th>
-			    		<td>{{ assumption_recovery }}</td>
-			    		<td>{{ wa_recovery }}</td>
+			    		<td>{{ original_recovery }}</td>
+			    		<td>{{ weighted_average_recovery }}</td>
 			    	</tr>
 			    </tbody>
 			{% endverbatim %}
