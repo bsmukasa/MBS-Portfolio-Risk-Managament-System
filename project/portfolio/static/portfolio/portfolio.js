@@ -499,17 +499,17 @@ analyticsTab = {
              * @type {{price, npv, total_remaining_balance, yield: string, wa_avg_life, assumption_cdr, wa_cdr, assumption_cpr, wa_cpr, assumption_recovery, wa_recovery}}
              */
             var summaryObj = {
-				price: (data.price).formatNumberSeparator(2),
-				npv: (data.npv).formatNumberSeparator(2),
-				total_remaining_balance: (data.portfolio_balance).formatNumberSeparator(2),
-				yield: (data.yield_irr).formatNumberSeparator(2) + "%",
-				wa_avg_life: data.weighted_average_life.formatNumberSeparator(2),
-				assumption_cdr: (data.original_cdr).formatNumberSeparator(2),
-				wa_cdr: (data.weighted_average_cdr).formatNumberSeparator(2),
-				assumption_cpr: (data.original_cpr).formatNumberSeparator(2),
-				wa_cpr: (data.weighted_average_cpr).formatNumberSeparator(2),
-				assumption_recovery: (data.original_recovery).formatNumberSeparator(2),
-				wa_recovery: (data.weighted_average_recovery).formatNumberSeparator(2)
+				price: data.price,
+				npv: data.npv,
+				total_remaining_balance: data.portfolio_balance,
+				yield: data.yield_irr,
+				wa_avg_life: data.weighted_average_life,
+				assumption_cdr: data.original_cdr,
+				wa_cdr: data.weighted_average_cdr,
+				assumption_cpr: data.original_cpr,
+				wa_cpr: data.weighted_average_cpr,
+				assumption_recovery: data.original_recovery,
+				wa_recovery: data.weighted_average_recovery
 			};
 	
 			helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", summaryObj);
