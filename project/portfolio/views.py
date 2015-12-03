@@ -194,14 +194,14 @@ class PortfolioView(View):
     def get(self, request, portfolio_id):
         portfolio = self.model.objects.get(pk=portfolio_id)
         # portfolio['weighted_average_coupon'] *= 100
-        portfolio = {
+        portfolio_basic_data = {
             'total_loan_balance': convert_decimal_to_currency(portfolio.total_loan_balance),
             'total_loan_count': portfolio.total_loan_count,
             'average_loan_balance': convert_decimal_to_currency(portfolio.average_loan_balance),
             'weighted_average_coupon': '{:.2%}'.format(portfolio.weighted_average_coupon),
             'weighted_average_life_to_maturity': convert_decimal_to_currency(portfolio.weighted_average_life_to_maturity)
         }
-        return render(request, self.template, {"portfolio": portfolio})
+        return render(request, self.template, {"portfolio": portfolio_basic_data})
 
 
 class PortfolioStatusAPI(View):
