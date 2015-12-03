@@ -43,6 +43,7 @@ $(document).ready(function(){
 	$main_content.on('submit',"#save-upload-csv", function(event) {
 		event.preventDefault();
 		var data = new FormData($('#save-upload-csv').get(0));
+    	helperFunctions.removeModal("#upload-csv-modal");
 		$.ajax({
     		url: '/portfolio/get_portfolios',
     		type: 'POST',
@@ -52,7 +53,6 @@ $(document).ready(function(){
 	    	contentType: false,
     		success: function(data) {
     			if (data.status == "OK") {
-    				helperFunctions.removeModal("#upload-csv-modal");
     				tabLoaderFunctions.portfolioTabLoader();
     			}
     		}
