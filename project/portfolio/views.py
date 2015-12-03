@@ -271,8 +271,15 @@ def convert_decimal_to_currency(decimal_number):
     return locale.format("%.2f", float_number, grouping=True)
 
 
+def convert_int_with_commas(db_int_number):
+    locale.setlocale(locale.LC_ALL, 'en_US')
+    int_number = int(db_int_number)
+    return locale.format("%d", int_number, grouping=True)
+
+
 def convert_decimal_to_percentage(decimal_number):
     return '{:.2%}'.format(decimal_number)
+
 
 class PortfolioFICOAPI(View):
     @method_decorator(csrf_exempt)
