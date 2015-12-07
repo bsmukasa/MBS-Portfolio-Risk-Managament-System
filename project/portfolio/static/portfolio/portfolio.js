@@ -125,7 +125,8 @@ $(document).ready(function(){
 	$portfolio_content.on("click", "#btn-cf-principal", function (event) {
 		event.preventDefault();
 
-		console.log(globalVariable.principal_graph_data);
+		var test = Cookies.getJSON("graphs_data");
+		console.log(test);
 
 
 
@@ -505,7 +506,7 @@ analyticsTab = {
              * @type {{price, npv, portfolio_balance, yield_irr, weighted_average_life, original_cdr, 
              weighted_average_cdr, original_cpr, weighted_average_cpr, original_recovery, weighted_average_recovery}}
              */
-				Cookies.set("summary_data", data);
+             	Cookies.set("summary_data", data);
 				helperFunctions.mustacheLoad("#summary-tab", "#analysis-tab-content", data);
 			})
 		} else {
@@ -585,15 +586,16 @@ analyticsTab = {
 	},
 
 	//Load graphs tab
-	graphsTab: function () {
-		helperFunctions.mustacheLoad("#graphs-tab", "#analysis-tab-content");
+	graphsTab: function () {		
 		var send_data = {
 			portfolio_id: globalVariable.portfolio_id,
 			scenario_id: $("#select-scenario-analysis").val(),
 			discount_rate: $("#discount-rate").val()
 		};
 		$.get("/analytics/principal_graph_data", send_data, function (data) {
-			globalVariable.graphs_payments_data = data;
+			Cookies.set("graphs_data", data);
+			console.log("123", data);
+			helperFunctions.mustacheLoad("#graphs-tab", "#analysis-tab-content");
 		})
 
 	}
