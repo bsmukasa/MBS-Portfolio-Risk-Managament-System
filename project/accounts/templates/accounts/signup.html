@@ -1,0 +1,56 @@
+{% extends "accounts/base_auth.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+
+{% block head_title %} 
+	<title>Scroogies Sign Up</title>
+{% endblock head_title %}
+
+{% block head_js_files %}
+	<link rel="stylesheet" href="{% static 'accounts/auth.js' %}"> 
+{% endblock head_js_files %}
+
+{% block head_css_files %}
+	<link rel="stylesheet" href="{% static 'accounts/auth.css' %}"> 
+{% endblock head_css_files %}
+
+
+
+{% block navbar %}
+	<div id="navbar_menu">
+		<nav class="navbar navbar-default navbar-custom">
+			<div class="container-fluid">
+   				<div class="navbar-header">
+	      			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+		        		<span class="icon-bar"></span>
+		        		<span class="icon-bar"></span>
+		        		<span class="icon-bar"></span>
+	      			</button>
+	      			<a class="navbar-brand" href="/">$CROOGIE$</a>
+    			</div>
+    			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    				<ul class="nav navbar-nav navbar-right">
+    					<li><a href="{% url 'accounts:login' %}">Login</a></li>
+    					<li><a href="#">Create an account</a></li>
+    				</ul>
+    			</div>
+    		</div>
+    	</nav>
+	</div>
+{% endblock navbar %}
+
+
+{% block main_content %}
+    <div class="container">
+    	<form class="form-signin" action="{% url 'accounts:signup' %}" method="POST" enctype="multipart/form-data" role="form">
+			<h2 class="form-signin-heading">Create an account</h2>
+			{% csrf_token %}
+			{{ form|bootstrap }}
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</form>
+    </div> 
+{% endblock main_content %}

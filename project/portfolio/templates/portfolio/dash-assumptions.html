@@ -1,0 +1,157 @@
+{% load bootstrap %}
+
+<script id="assumptions-template" type="x-tmpl-mustache">
+
+	<div class="row ">	
+			
+		<div class="col-sm-4">
+			<h3 class="table-heading-risks">Economic Assumptions</h3>
+			<div class="dash-buttons-toolbar" id="toolbar">
+				<button type="button" class="btn btn-info" data-toggle="modal" data-target="#new-assumption-modal">
+					<i class="glyphicon glyphicon-plus"></i>
+				</button> 
+				<button id="view-assumption" class="btn btn-info" type="button">
+					<i class="glyphicon glyphicon-eye-open"></i>
+	    		</button>
+				<button id="edit-assumption" class="btn btn-info">
+					<i class="glyphicon glyphicon-pencil"></i>
+	    		</button>
+	    		<button id="remove-assumption" class="btn btn-info">
+					<i class="glyphicon glyphicon-trash"></i>
+	    		</button>
+			</div>
+
+			<div class="modal fade" id="new-assumption-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">Crete new economic assumption</h4>
+						</div>
+						<div class="modal-body">
+							<form role="form" id="form-new-assumption">
+									{% csrf_token %}
+									{{ form_assumptions.non_field_errors }}
+								
+								<div class='row'>	
+									<div class='col-md-12'>
+										{{ form_assumptions.name | bootstrap }}
+									</div>
+								</div>
+								<div class='row'>	
+									<div class='col-md-6'>
+										{{ form_assumptions.gdp_growth|bootstrap }}									
+									</div>
+									<div class='col-md-6'>
+										{{ form_assumptions.unemployment_rate | bootstrap }}
+									</div>
+								</div>
+								<div class='row'>	
+									<div class='col-md-6'>
+										{{ form_assumptions.national_home_price_index_growth | bootstrap }}								
+									</div>
+									<div class='col-md-6'>
+										{{ form_assumptions.high_yield_spread | bootstrap }}
+									</div>
+								</div>
+								<div class='row'>	
+									<div class='col-md-6'>
+										{{ form_assumptions.constant_default_rate | bootstrap }}								
+									</div>
+									<div class='col-md-6'>
+										{{ form_assumptions.constant_prepayment_rate | bootstrap }}	
+									</div>
+								</div>
+								<div class='row'>	
+									<div class='col-md-6'>
+										{{ form_assumptions.recovery_percentage | bootstrap }}								
+									</div>
+								</div>
+
+									
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        				<button type="submit" class="btn btn-primary">Save</button>
+		        			</form>
+	    				</div>
+	    			</div>
+  				</div>	  	
+       		</div>
+       	</div>
+
+		<div class="col-sm-7"></div>
+
+    </div>
+
+
+    <div class="row ">
+    	<div class="col-sm-4">
+	        <table id="assumptions-table" data-single-select="true" data-unique-id="id" data-toggle="table">
+				<thead>
+			    	<tr>
+					   	<th data-field="state" data-checkbox="true"></th>
+				 		<th data-field="name">Name</th>
+
+				</thead>
+			</table>
+		</div>
+
+
+	    <div class="col-sm-1"></div>
+	    <div class="col-sm-5">
+	    	<div id="assumption-details-loader">
+		</div>
+
+		<div class="col-sm-1"></div>
+	
+    </div>
+</script>
+
+
+
+
+<script id="assumptions-details-script" type="x-tmpl-mustache">
+
+
+	<table id="assumptions-conditionals-table" class='table'>
+		{% verbatim %}
+			<tbody>
+		    	<tr>
+		    		<th>GDP Growth</th>
+		    		<td>{{ gdp_growth }}</td>
+		    	</tr>
+		    	<tr>
+		    		<th>Unemployment Rate</th>
+		    		<td>{{ unemployment_rate }}</td>
+		    	</tr>
+		    	<tr>
+		    		<th>National Home Price Index Growth</th>
+		    		<td>{{ national_home_price_index_growth }}</td>
+		    	</tr>
+		    	<tr>
+		    		<th>High Yield Spread</th>
+		    		<td>{{ high_yield_spread }}</td>
+		    	</tr>
+		    	<tr>
+		    		<th>Constant Default Rate (CDR)</th>
+		    		<td>{{ constant_default_rate }}</td>
+		    	</tr>
+		    	<tr>
+		    		<th>Constante Prepayment Rate (CPR)</th>
+		    		<td>{{ constant_prepayment_rate }}</td>
+		    	</tr>
+		    	<tr>
+		    		<th>Recovery Percentage</th>
+		    		<td>{{ recovery_percentage }}</td>
+		    	</tr>
+		    </tbody>
+		{% endverbatim %}
+	</table>
+
+</script>
+
+
+
+		
+
+
+

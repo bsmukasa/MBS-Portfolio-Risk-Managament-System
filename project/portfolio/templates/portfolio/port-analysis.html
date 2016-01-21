@@ -1,0 +1,156 @@
+
+<script id="analysis-script" type="x-tmpl-mustache">
+	
+	<form role="form" id="form-analysis-criteria">
+		<div class="row">
+			<div class="col-sm-5">
+				<h4 class="form-analysis-h4">Scenario:</h4>
+				<select class="form-control" id="select-scenario-analysis" name="scenario" required>
+						<option value=""> - Select Scenario - </option>
+							{% verbatim %}
+								{{ #scenarios }}
+									<option value={{ id }}>{{ name }}</option>
+								{{ /scenarios }}
+							{% endverbatim %}
+				</select>
+			</div>
+
+			<div class="col-sm-1"></div>
+
+			<div class="col-sm-3">
+				<div class="form-group">
+					<h4 class="form-analysis-h4">Discount Rate:</h4>
+					<input id="discount-rate" type="number" step="any" class="form-control" name='discount-rate' placeholder="Cash flow discount rate" required>
+				</div>
+			</div>
+
+			<div class="col-sm-1"></div>
+			
+			<div class="col-sm-2">
+				<h4 class="form-analysis-h4">&nbsp</h4>
+				<button type="submit" class="btn btn-primary" id="run-scenario-btn">RUN</button>
+			</div>
+		</div>
+	</form>
+
+	<br><br>
+	<div id="analysis-results"></div>
+
+
+</script>
+
+
+
+<script id="analysis-tabs" type="x-tmpl-mustache">
+	<ul class="nav nav-tabs" id="analysis-tabs-list">
+		<li class="active"><a href="#summary" id="tab-analysis">Summary</a></li>
+		<li><a href="#cash-flow">Cash Flow</a></li>
+		<li><a href="#graphs">Graphs</a></li>
+	</ul>
+	<br><br>
+	<div id="analysis-tab-content"></div>
+</script>
+
+
+
+<script id="summary-tab" type="x-tmpl-mustache">
+	<div class="row">
+		
+		<div class="col-sm-5">
+			<table id="summary-main-table" class='table'>
+			{% verbatim %}
+				<tbody>
+			    	<tr>
+			    		<th>Price</th>
+			    		<td>{{ price }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>NPV</th>
+			    		<td>{{ npv }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Remaining Balance</th>
+			    		<td>{{ portfolio_balance }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Yield</th>
+			    		<td>{{ yield_irr }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Weighted Average Life</th>
+			    		<td>{{ weighted_average_life }}</td>
+			    	</tr>
+			    </tbody>
+			{% endverbatim %}
+			</table>
+		</div>
+
+		<div class="col-sm-2"></div>
+
+		<div class="col-sm-5">
+			<table id="summary-attributes-table" class='table'>
+			{% verbatim %}
+				<thead>
+					<th>&nbsp</th>
+					<th>Initial Assumption</th>
+					<th>New WA</th>
+				</thead>
+				<tbody>
+			    	<tr>
+			    		<th scope="row">CPR</th>
+			    		<td>{{ original_cpr }}</td>
+			    		<td>{{ weighted_average_cpr }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th scope="row">CDR</th>
+			    		<td>{{ original_cdr }}</td>
+			    		<td>{{ weighted_average_cdr }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th scope="row">Recovery</th>
+			    		<td>{{ original_recovery }}</td>
+			    		<td>{{ weighted_average_recovery }}</td>
+			    	</tr>
+			    </tbody>
+			{% endverbatim %}
+			</table>
+		</div>
+	</div>
+</script>
+
+
+
+<script id="cash-flow-tab" type="x-tmpl-mustache">
+	<table id="cash-flow-table"></table>
+</script>
+
+
+
+<script id="graphs-tab" type="x-tmpl-mustache">
+<!--	<div class="row">
+		<div class="col-sm-8">
+			<h4 class="graphs-btn-header">Cash Flow</h4>
+		</div>
+		<div class="col-sm-4">
+			<h4 class="graphs-btn-header">US Map</h4>
+		</div>
+	</div>
+-->
+	<div class="row">
+		<div class="col-sm-12">
+			<div id="toolbar" class="graph-buttons">
+				<button type="button" class="btn btn-primary" id="btn-cf-principal">Principal</button>
+				<button type="button" class="btn btn-primary" id="btn-cf-scheduled-principal">Scheduled</button>
+				<button type="button" class="btn btn-primary" id="btn-cf-unscheduled-principal">Unscheduled</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="ct-chart ct-perfect-fourth"></div>
+		</div>
+	</div>
+	
+</script>
+

@@ -1,0 +1,53 @@
+{% extends "portfolio/base_logged_user.html" %}
+
+{% load staticfiles %}
+{% load bootstrap %}
+
+
+
+{% block head_title %} 
+	<title>Dashboard</title>
+{% endblock head_title %}
+
+
+{% block head_js_files %}
+	<script src="{% static 'portfolio/dashboard.js' %}"></script> 
+{% endblock head_js_files %}
+
+
+{% block head_css_files %}
+	<link rel="stylesheet" href="{% static 'portfolio/dashboard.css' %}"> 
+{% endblock head_css_files %}
+
+
+{% block scripts %}
+	{% include "portfolio/dash-portfolios.html" %}
+	{% include "portfolio/dash-riskProfile.html" %}
+	{% include "portfolio/dash-assumptions.html" %}
+	{% include "portfolio/dash-scenarios.html" %}
+	{% include "portfolio/dash-scorecards.html" %}
+{% endblock scripts %}
+
+
+
+{% block tabs_content %}
+	<div class="container">
+		<ul class="nav nav-tabs" id="dashboard-tabs">
+			<li class="active"><a href="#portfolios" id="tab-portoflios">PORTFOLIOS</a></li>
+			<li><a href="#risk-profiles">RISK PROFILES</a></li>
+			<li><a href="#economic">ECONOMIC ASSUMPTIONS</a></li>
+			<!-- <li><a href="#scorecards">SCORECARDS</a></li> -->
+			<li><a href="#scenarios">GLOBAL SCENARIOS</a></li>
+		</ul>		
+	</div>
+{% endblock tabs_content %}
+
+
+
+{% block main_content %}
+	<div class="container" id="main-content">
+		<div id="main-content-load"></div>
+	</div>
+{% endblock main_content %}
+
+

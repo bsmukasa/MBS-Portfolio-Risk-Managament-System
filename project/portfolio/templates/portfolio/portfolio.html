@@ -1,0 +1,60 @@
+{% extends "portfolio/base_logged_user.html" %}
+{% load staticfiles %}
+
+
+{% block head_title %} 
+	<title>Portfolio</title>
+{% endblock head_title %}
+
+
+{% block head_js_files %}
+	<script src="{% static 'portfolio/portfolio.js' %}"></script>
+	<script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+{% endblock head_js_files %}
+
+
+{% block head_css_files %}
+	<link rel="stylesheet" href="{% static 'portfolio/portfolio.css' %}"> 
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+{% endblock head_css_files %}
+
+
+{% block scripts %}
+	{% include "portfolio/port-overview.html" %}
+	{% include "portfolio/port-loans.html" %}
+	{% include "portfolio/port-analysis.html" %}
+{% endblock scripts %}
+
+
+{% block main_content %}
+	<div class="container-fluid">
+
+        	<div class="col-sm-3 col-md-2 sidebar">
+        		<a href="/portfolio/dashboard">Back</a>	
+        		<br>
+        		<br>
+        		<br>
+				<ul class="nav nav-sidebar" id="portfolio-nav">
+					<li class="active"><a href="#overview">Overview <span class="sr-only">(current)</span></a></li>
+					<li><a href="#loans">Loans</a></li>
+					<!-- <li><a href="#scenarios">Risk Scenarios</a></li> -->
+					<li><a href="#analysis">Analysis</a></li>
+				</ul>
+			</div>
+
+			<div class="col-sm-9 main">
+				<h1 class="page-header" id="{{portfolio.id}}">{{portfolio.name}}</h1>
+
+
+				<div id="portfolio-content"></div>
+				
+			</div>
+
+	</div>
+
+{% endblock main_content %}
+
+
+
+
+

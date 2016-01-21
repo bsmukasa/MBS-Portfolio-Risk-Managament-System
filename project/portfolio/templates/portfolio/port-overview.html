@@ -1,0 +1,72 @@
+{% load humanize %}
+
+<script id="portfolio-overview-script" type="x-tmpl-mustache">
+	<div class="row">
+		<div class="col-sm-5">
+			<table id="portfolio-summary-table" class='table'>
+				<tbody>
+			    	<tr>
+			    		<th>Total Loan Count</th>
+			    		<td>{{ portfolio.total_loan_count | intcomma }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Total Loan Balance</th>
+			    		<td>{{ portfolio.total_loan_balance | intcomma }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>Average Loan Balance</th>
+			    		<td>{{ portfolio.average_loan_balance | intcomma }}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>WAC</th>
+			    		<td>{{ portfolio.weighted_average_coupon | intcomma}}</td>
+			    	</tr>
+			    	<tr>
+			    		<th>WAL</th>
+			    		<td>{{ portfolio.weighted_average_life_to_maturity | intcomma}}</td>
+			    	</tr>
+			    </tbody>
+			</table>
+			<br>
+			<h4 class=table-heading-overview>FICO</h4>
+			<table id="fico-summary-table" data-unique-id="id" data-height='82'>
+			    <thead>
+			    	<tr>
+			    		<th data-field="max_fico" data-halign="center" data-align="center">Max</th>
+			    		<th data-field="min_fico" data-halign="center" data-align="center">Min</th>
+			    		<th data-field="wa_fico" data-halign="center" data-align="center">WA</th>
+			    	</tr>
+			    </thead>
+			</table>
+		</div>
+
+		<div class="col-sm-1"></div>
+		
+		<div class="col-sm-5">
+			<table id="status-summary-table" data-unique-id="id" data-height="395">
+			    <thead>
+			    	<tr>
+			    		<th data-field="status" data-halign="center">Loan Status</th>
+			    		<th data-field="balance" data-halign="center">Total Balance</th>
+			    		<th data-field="count" data-halign="center">Loan Count</th>
+			    	</tr>
+			    </thead>
+			</table>
+		</div>
+
+		
+	</div>
+
+	<div class="row">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-7">
+		</div>
+		<div class="col-sm-1"></div>
+	</div>
+
+	<div class="row">
+		<div id="container" style="height: 500px; min-width: 310px; max-width: 800px; margin: 0 auto"></div>
+	</div>
+</script>
+
+
